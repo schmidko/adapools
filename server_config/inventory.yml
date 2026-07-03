@@ -1,0 +1,4 @@
+[moo]
+adapools ansible_host=r01
+
+ansible_python_interpreter=/usr/bin/python3

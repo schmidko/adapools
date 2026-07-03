@@ -1,0 +1,30 @@
+services:
+  frontend:
+    image: node:22
+    container_name: adapools
+    restart: unless-stopped
+    working_dir: /app
+    env_file:
+      - path: ./config/.env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /var/www/adapools:/app
+      - adapools-node-modules:/app/node_modules
+    networks:
+      - ows
+    ports:
+      - "5056:5056"
+    command: >
+      sh -c "unset NODE_ENV &&
+      npm ci &&
+      npm run build &&
+      PORT=5056 node server/index.js"
+
+networks:
+  ows:
+    external: true
+
+volumes:
+  adapools-node-modules:

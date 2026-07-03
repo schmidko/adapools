@@ -1,0 +1,38 @@
+---
+- hosts: adapools
+  remote_user: mog
+  gather_facts: yes
+  tasks:
+
+    - name: Ensure project directory exists
+      file:
+        path: "/var/www/adapools"
+        state: directory
+        owner: mog
+        group: mog
+
+    - name: Update git repository
+      git:
+        repo: "git@github.com:schmidko/adapools.git"
+        version: "main"
+        dest: "/var/www/adapools/"
+        force: yes
+        accept_hostkey: yes
+
+    - name: Ensure config directory exists
+      file:
+        path: "/var/www/adapools/config"
+        state: directory
+        owner: mog
+        group: mog
+
+    - name: Copy env
+      copy:
+        src: "/home/mog/env/adapools/.env"
+        dest: "/var/www/adapools/config/.env"
+        remote_src: true
+
+    - name: Recreate adapools container
+      shell:
+        cmd: "docker compose up --detach --force-recreate frontend"
+        chdir: /var/www/adapools/
