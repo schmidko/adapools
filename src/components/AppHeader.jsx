@@ -7,7 +7,7 @@ import ThemeToggle from './ThemeToggle.jsx';
 
 const AppHeader = () => {
   const { mode } = useThemeMode();
-  const logo = mode === 'dark' ? logoWhite : logoBlack;
+  const logo = mode === 'dark' ? logoBlack : logoWhite;
 
   return (
     <Layout.Header className="app-header">
