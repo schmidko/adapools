@@ -1,15 +1,22 @@
 import { Layout } from 'antd';
 import { Link } from 'react-router-dom';
-import AdapoolsLogo from './AdapoolsLogo.jsx';
+import logoBlack from '../assets/logoblack.png';
+import logoWhite from '../assets/logowhite.png';
+import { useThemeMode } from '../context/ThemeContext.jsx';
 import ThemeToggle from './ThemeToggle.jsx';
 
-const AppHeader = () => (
-  <Layout.Header className="app-header">
-    <Link to="/" className="brand">
-      <AdapoolsLogo />
-    </Link>
-    <ThemeToggle />
-  </Layout.Header>
-);
+const AppHeader = () => {
+  const { mode } = useThemeMode();
+  const logo = mode === 'dark' ? logoWhite : logoBlack;
+
+  return (
+    <Layout.Header className="app-header">
+      <Link to="/" className="brand">
+        <img className="brand-logo" src={logo} alt="adapools.xyz" />
+      </Link>
+      <ThemeToggle />
+    </Layout.Header>
+  );
+};
 
 export default AppHeader;

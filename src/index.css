@@ -67,8 +67,8 @@ body {
 
 .brand-logo {
   display: block;
-  width: 246px;
-  height: 58px;
+  width: 238px;
+  height: auto;
 }
 
 .app-main {
@@ -178,8 +178,7 @@ body {
   }
 
   .brand-logo {
-    width: 196px;
-    height: 46px;
+    width: 188px;
   }
 
   .app-main {
