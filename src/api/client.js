@@ -11,5 +11,6 @@ export const api = {
   getLatestBlocks: (limit = 120) => fetchJson(`/api/blocks/latest?limit=${limit}`),
   getPoolMetrics: (poolId) => fetchJson(`/api/pools/${encodeURIComponent(poolId)}/metrics`),
   getPoolRecentBlocks: (poolId) => fetchJson(`/api/pools/${encodeURIComponent(poolId)}/recent-blocks`),
+  getPoolSearchIndex: () => fetchJson('/api/pools/search-index'),
   getSyncStatus: () => fetchJson('/api/sync/status')
 };

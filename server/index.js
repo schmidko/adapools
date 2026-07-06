@@ -8,6 +8,7 @@ import cors from 'cors';
 import { createMongo } from './mongo.js';
 import { registerBlockRoutes } from './blockModule.js';
 import { registerMetricsRoutes } from './metricsModule.js';
+import { registerPoolRoutes } from './poolModule.js';
 import { attachBlockWebSocket } from './websocketModule.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -29,6 +30,7 @@ app.get('/api/health', (req, res) => {
 
 registerBlockRoutes({ app, collections: mongo.collections });
 registerMetricsRoutes({ app, collections: mongo.collections });
+registerPoolRoutes({ app, collections: mongo.collections });
 
 const distDir = path.resolve(__dirname, '../dist');
 if (existsSync(distDir)) {

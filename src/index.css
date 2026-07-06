@@ -46,6 +46,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 24px;
   min-height: 78px;
   height: auto;
   line-height: normal;
@@ -69,6 +70,45 @@ body {
   display: block;
   width: auto;
   height: 42px;
+}
+
+.header-actions {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
+.pool-search {
+  width: min(560px, 48vw);
+}
+
+.pool-search-input {
+  height: 46px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.pool-search-input .ant-input-prefix {
+  color: var(--tile-muted);
+  margin-inline-end: 10px;
+}
+
+.pool-search-option {
+  display: grid;
+  gap: 2px;
+  min-width: 280px;
+}
+
+.pool-search-option-title {
+  color: inherit;
+  font-weight: 700;
+}
+
+.pool-search-option-subtitle {
+  color: #6b7280;
+  font-size: 12px;
 }
 
 .app-main {
@@ -173,12 +213,28 @@ body {
 
 @media (max-width: 760px) {
   .app-header {
+    flex-wrap: wrap;
+    gap: 12px;
     min-height: 70px;
-    padding: 0 14px;
+    padding: 12px 14px;
   }
 
   .brand-logo {
     height: 32px;
+  }
+
+  .header-actions {
+    width: 100%;
+    order: 2;
+    gap: 10px;
+  }
+
+  .pool-search {
+    width: 100%;
+  }
+
+  .pool-search-input {
+    height: 42px;
   }
 
   .app-main {
