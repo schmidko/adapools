@@ -62,7 +62,11 @@ const PoolPage = () => {
           />
         </div>
         {blockView === 'grid' ? (
-          <BlockTicker blocks={blocks.map((block) => ({ ...block, pool: { ...pool, bech32_pool_id: poolId } }))} loading={loading} />
+          <BlockTicker
+            blocks={blocks.map((block) => ({ ...block, pool: { ...pool, bech32_pool_id: poolId } }))}
+            loading={loading}
+            tileProps={{ showPool: false, prominentAda: true }}
+          />
         ) : (
           <PoolBlockTimeline poolId={poolId} />
         )}

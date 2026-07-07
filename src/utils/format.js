@@ -12,9 +12,9 @@ export const formatPercent = (value) => {
   return `${number.toLocaleString(undefined, { maximumFractionDigits: 1 })}%`;
 };
 
-export const formatAge = (value) => {
+export const formatAge = (value, now = Date.now()) => {
   if (!value) return '';
-  const diffSeconds = Math.max(Math.floor((Date.now() - new Date(value).getTime()) / 1000), 0);
+  const diffSeconds = Math.max(Math.floor((now - new Date(value).getTime()) / 1000), 0);
   if (diffSeconds < 60) return `${diffSeconds}s`;
   if (diffSeconds < 3600) return `${Math.floor(diffSeconds / 60)}m`;
   if (diffSeconds < 86400) return `${Math.floor(diffSeconds / 3600)}h`;

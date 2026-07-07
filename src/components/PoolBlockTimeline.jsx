@@ -94,7 +94,7 @@ const PoolBlockTimeline = ({ poolId }) => {
           <div className="timeline-blocks">
             {group.blocks.map((block) => (
               <div className="timeline-block-tile" key={block.block_no}>
-                <BlockTile block={block} />
+                <BlockTile block={block} showPool={false} prominentAda />
               </div>
             ))}
           </div>

@@ -1,7 +1,7 @@
 import { Empty, Spin } from 'antd';
 import BlockTile from './BlockTile.jsx';
 
-const BlockTicker = ({ blocks = [], loading = false }) => {
+const BlockTicker = ({ blocks = [], loading = false, tileProps = {}, now }) => {
   if (loading && blocks.length === 0) {
     return <div className="center-state"><Spin /></div>;
   }
@@ -13,7 +13,7 @@ const BlockTicker = ({ blocks = [], loading = false }) => {
   return (
     <div className="block-grid">
       {blocks.map((block) => (
-        <BlockTile key={block.block_no || block.hash} block={block} />
+        <BlockTile key={block.block_no || block.hash} block={block} now={now} {...tileProps} />
       ))}
     </div>
   );

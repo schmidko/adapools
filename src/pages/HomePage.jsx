@@ -16,6 +16,7 @@ const HomePage = () => {
   const [blocks, setBlocks] = useState([]);
   const [syncStates, setSyncStates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [now, setNow] = useState(Date.now());
 
   const wsUrl = useMemo(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -78,6 +79,11 @@ const HomePage = () => {
     };
   }, [wsUrl]);
 
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="page-stack">
       <div>
@@ -86,7 +92,7 @@ const HomePage = () => {
       </div>
       <MetricsBar metrics={metrics} />
       <SyncStatus states={syncStates} />
-      <BlockTicker blocks={blocks} loading={loading} />
+      <BlockTicker blocks={blocks} loading={loading} now={now} />
     </section>
   );
 };
