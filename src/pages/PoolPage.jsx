@@ -12,7 +12,7 @@ const PoolPage = () => {
   const { poolId } = useParams();
   const [metrics, setMetrics] = useState(null);
   const [recentBlocks, setRecentBlocks] = useState(null);
-  const [blockView, setBlockView] = useState('grid');
+  const [blockView, setBlockView] = useState('history');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

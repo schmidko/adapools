@@ -1,7 +1,7 @@
 import { Empty, Spin } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client.js';
-import { formatAda, formatAge, formatPercent } from '../utils/format.js';
+import BlockTile from './BlockTile.jsx';
 
 const PAGE_SIZE = 20;
 
@@ -17,28 +17,6 @@ const groupByEpoch = (blocks) => {
     }
   }
   return groups;
-};
-
-const TimelineBlock = ({ block }) => {
-  const fullness = Math.max(0, Math.min(Number(block.fullness_percent || 0), 100));
-
-  return (
-    <article className="timeline-block">
-      <div className="timeline-block-main">
-        <span className="timeline-block-no">#{block.block_no}</span>
-        <span className="timeline-block-age">{formatAge(block.time)}</span>
-      </div>
-      <div className="timeline-block-metrics">
-        <span>{block.tx_count || 0} tx</span>
-        <span>{formatAda(block.total_fees_lovelace, 4)} fees</span>
-        <span>{formatPercent(fullness)} full</span>
-        <span>{formatAda(block.total_output_lovelace, 0)}</span>
-      </div>
-      <div className="timeline-fullness" aria-hidden="true">
-        <span style={{ width: `${fullness}%` }} />
-      </div>
-    </article>
-  );
 };
 
 const PoolBlockTimeline = ({ poolId }) => {
@@ -115,7 +93,9 @@ const PoolBlockTimeline = ({ poolId }) => {
           <div className="epoch-number">Epoch {group.epoch}</div>
           <div className="timeline-blocks">
             {group.blocks.map((block) => (
-              <TimelineBlock key={block.block_no} block={block} />
+              <div className="timeline-block-tile" key={block.block_no}>
+                <BlockTile block={block} />
+              </div>
             ))}
           </div>
         </section>
