@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography } from 'antd';
+import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
+import { Segmented, Typography } from 'antd';
 import { api } from '../api/client.js';
 import BlockTicker from '../components/BlockTicker.jsx';
 import MetricsBar from '../components/MetricsBar.jsx';
+import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
 import PoolIdentity from '../components/PoolIdentity.jsx';
 
 const PoolPage = () => {
   const { poolId } = useParams();
   const [metrics, setMetrics] = useState(null);
   const [recentBlocks, setRecentBlocks] = useState(null);
+  const [blockView, setBlockView] = useState('grid');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,9 +47,25 @@ const PoolPage = () => {
     <section className="page-stack">
       <PoolIdentity pool={pool} poolId={poolId} />
       <MetricsBar metrics={metrics || {}} type="pool" />
-      <div>
-        <Typography.Title level={3}>Recent pool blocks</Typography.Title>
-        <BlockTicker blocks={blocks.map((block) => ({ ...block, pool: { ...pool, bech32_pool_id: poolId } }))} loading={loading} />
+      <div className="block-view-section">
+        <div className="section-toolbar">
+          <Typography.Title level={3}>
+            {blockView === 'grid' ? 'Recent pool blocks' : 'Pool block history'}
+          </Typography.Title>
+          <Segmented
+            value={blockView}
+            onChange={setBlockView}
+            options={[
+              { label: 'Grid', value: 'grid', icon: <AppstoreOutlined /> },
+              { label: 'History', value: 'history', icon: <BarsOutlined /> }
+            ]}
+          />
+        </div>
+        {blockView === 'grid' ? (
+          <BlockTicker blocks={blocks.map((block) => ({ ...block, pool: { ...pool, bech32_pool_id: poolId } }))} loading={loading} />
+        ) : (
+          <PoolBlockTimeline poolId={poolId} />
+        )}
       </div>
     </section>
   );
