@@ -139,12 +139,13 @@ body {
 
 .block-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+  grid-template-columns: repeat(auto-fill, 176px);
+  justify-content: center;
   gap: 12px;
 }
 
 .home-block-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(5, 176px);
 }
 
 .block-tile {
@@ -271,6 +272,9 @@ body {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+  justify-content: center;
+  width: max-content;
+  margin: 0 auto;
   gap: 8px;
 }
 
@@ -322,12 +326,12 @@ body {
   }
 
   .block-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, 150px);
     gap: 10px;
   }
 
   .home-block-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 150px);
   }
 
   .section-toolbar {
