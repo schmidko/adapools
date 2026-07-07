@@ -22,8 +22,8 @@ body {
   --app-bg: #f5f7fb;
   --app-surface: #ffffff;
   --app-text: #151923;
-  --epoch-bg: #eef3fa;
-  --epoch-number: rgba(21, 25, 35, 0.16);
+  --epoch-bg: #f2f5fa;
+  --epoch-number: rgba(21, 25, 35, 0.1);
   --tile-bg: #ffffff;
   --tile-border: #d9e1ec;
   --tile-fill: rgba(22, 119, 255, 0.16);
@@ -35,8 +35,8 @@ body {
   --app-bg: #111418;
   --app-surface: #171c22;
   --app-text: #eef2f8;
-  --epoch-bg: #1d242d;
-  --epoch-number: rgba(238, 242, 248, 0.12);
+  --epoch-bg: #141920;
+  --epoch-number: rgba(238, 242, 248, 0.08);
   --tile-bg: #171c22;
   --tile-border: #2b3542;
   --tile-fill: rgba(63, 177, 255, 0.24);

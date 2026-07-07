@@ -30,7 +30,7 @@ const BlockTile = ({ block, showPool = true, prominentAda = false, now }) => {
         )}
         <div className="block-stats">
           {!prominentAda && <span>{adaValue}</span>}
-          <span>{formatAda(block.total_fees_lovelace, 4)} fee</span>
+          <span>{formatAda(block.total_fees_lovelace, 2)} fee</span>
           <span>{block.tx_count || 0} tx</span>
           <span>{formatPercent(fullness)}</span>
         </div>
