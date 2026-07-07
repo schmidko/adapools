@@ -6,7 +6,8 @@ const MetricsBar = ({ metrics = {}, type = 'cardano' }) => {
     ? [
         ['Active stake', formatAda(metrics.active_stake_lovelace, 0)],
         ['Delegators', formatNumber(metrics.delegators)],
-        ['Blocks epoch', formatNumber(metrics.blocks_epoch)],
+        ['Blocks this epoch', formatNumber(metrics.blocks_epoch)],
+        ['Total blocks', formatNumber(metrics.total_blocks ?? metrics.lifetime_blocks)],
         ['Saturation', formatPercent(metrics.saturation_percent)]
       ]
     : [

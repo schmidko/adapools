@@ -16,7 +16,22 @@ export const registerMetricsRoutes = ({ app, collections }) => {
       const metrics = await collections.poolMetrics.findOne({
         bech32_pool_id: req.params.poolId
       });
-      res.json(serializeDocument(metrics) || null);
+      if (!metrics) {
+        res.json(null);
+        return;
+      }
+
+      const lifetimeBlocks = Number.isFinite(Number(metrics.lifetime_blocks))
+        ? Number(metrics.lifetime_blocks)
+        : await collections.blocks.countDocuments({
+          'pool.bech32_pool_id': req.params.poolId
+        });
+
+      res.json(serializeDocument({
+        ...metrics,
+        lifetime_blocks: lifetimeBlocks,
+        total_blocks: lifetimeBlocks
+      }));
     } catch (error) {
       console.error('[adapools] Failed to load pool metrics:', error);
       res.status(500).json({ error: 'failed_to_load_pool_metrics' });
