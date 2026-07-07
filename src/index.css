@@ -139,8 +139,12 @@ body {
 
 .block-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
   gap: 12px;
+}
+
+.home-block-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .block-tile {
@@ -271,7 +275,7 @@ body {
 }
 
 .timeline-block-tile {
-  width: 148px;
+  width: 176px;
 }
 
 .timeline-sentinel {
@@ -318,8 +322,12 @@ body {
   }
 
   .block-grid {
-    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
+  }
+
+  .home-block-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .section-toolbar {
@@ -336,6 +344,6 @@ body {
   }
 
   .timeline-block-tile {
-    width: 132px;
+    width: 150px;
   }
 }
