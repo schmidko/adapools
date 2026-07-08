@@ -28,16 +28,22 @@ const DelegationChangeItem = ({ item }) => {
   const isIn = direction === 'in';
   const oldPool = item.delegation?.old_pool;
   const newPool = item.delegation?.new_pool;
+  const stakeAmount = item.delegation?.stake_lovelace
+    ? formatAda(item.delegation.stake_lovelace, 0)
+    : null;
 
   return (
     <article className={`timeline-event delegation-event ${isIn ? 'event-positive' : 'event-negative'}`}>
       <div className="timeline-event-heading">
         <div className="timeline-event-icon"><SwapOutlined /></div>
         <div className="timeline-event-title">
-          {isIn ? 'new delegation' : 'delegation moved'}
+          {isIn ? 'New delegation' : 'delegation moved'}
         </div>
       </div>
       <div className="timeline-event-body">
+        {isIn && stakeAmount && (
+          <div className="timeline-event-amount">+{stakeAmount}</div>
+        )}
         <div className="timeline-pool-switch">
           <Tooltip title={oldPool?.bech32_pool_id || 'No previous pool'}>
             <span>{poolLabel(oldPool) || 'New wallet'}</span>
