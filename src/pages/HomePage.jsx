@@ -92,7 +92,13 @@ const HomePage = () => {
       </div>
       <MetricsBar metrics={metrics} />
       <SyncStatus states={syncStates} />
-      <BlockTicker blocks={blocks} loading={loading} now={now} className="home-block-grid" />
+      <BlockTicker
+        blocks={blocks}
+        loading={loading}
+        now={now}
+        className="home-block-grid"
+        tileProps={{ clickable: true }}
+      />
     </section>
   );
 };

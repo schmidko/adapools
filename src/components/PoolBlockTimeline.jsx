@@ -59,7 +59,7 @@ const AdaFlowItem = ({ item }) => {
   return (
     <article className={`timeline-event ada-flow-event ${isIn ? 'event-positive' : 'event-negative'}`}>
       <div className="timeline-event-icon">
-        {isIn ? <ArrowDownOutlined /> : <ArrowUpOutlined />}
+        {isIn ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
       </div>
       <div className="timeline-event-body">
         <div className="timeline-event-title">
