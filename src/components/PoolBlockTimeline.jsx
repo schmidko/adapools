@@ -1,32 +1,85 @@
-import { Empty, Spin } from 'antd';
+import { ArrowDownOutlined, ArrowUpOutlined, SwapOutlined } from '@ant-design/icons';
+import { Empty, Spin, Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client.js';
 import BlockTile from './BlockTile.jsx';
+import { compactPoolId, formatAda } from '../utils/format.js';
 
 const PAGE_SIZE = 20;
 
-const groupByEpoch = (blocks) => {
+const groupByEpoch = (items) => {
   const groups = [];
-  for (const block of blocks) {
-    const epoch = block.epoch_no ?? 'unknown';
+  for (const item of items) {
+    const epoch = item.epoch_no ?? 'unknown';
     const current = groups[groups.length - 1];
     if (current?.epoch === epoch) {
-      current.blocks.push(block);
+      current.items.push(item);
     } else {
-      groups.push({ epoch, blocks: [block] });
+      groups.push({ epoch, items: [item] });
     }
   }
   return groups;
 };
 
+const poolLabel = (pool) => pool?.ticker || pool?.name || compactPoolId(pool?.bech32_pool_id || '');
+
+const DelegationChangeItem = ({ item }) => {
+  const direction = item.delegation?.direction;
+  const isIn = direction === 'in';
+  const oldPool = item.delegation?.old_pool;
+  const newPool = item.delegation?.new_pool;
+
+  return (
+    <article className={`timeline-event delegation-event ${isIn ? 'event-positive' : 'event-negative'}`}>
+      <div className="timeline-event-icon"><SwapOutlined /></div>
+      <div className="timeline-event-body">
+        <div className="timeline-event-title">
+          {isIn ? 'Delegation added' : 'Delegation removed'}
+        </div>
+        <div className="timeline-pool-switch">
+          <Tooltip title={oldPool?.bech32_pool_id || 'No previous pool'}>
+            <span>{poolLabel(oldPool) || 'New wallet'}</span>
+          </Tooltip>
+          <span className="timeline-switch-arrow">{'->'}</span>
+          <Tooltip title={newPool?.bech32_pool_id || 'Unknown pool'}>
+            <span>{poolLabel(newPool) || 'Unknown pool'}</span>
+          </Tooltip>
+        </div>
+        <div className="timeline-event-meta">{compactPoolId(item.stake_address)}</div>
+      </div>
+    </article>
+  );
+};
+
+const AdaFlowItem = ({ item }) => {
+  const direction = item.ada_flow?.direction;
+  const isIn = direction === 'in';
+  const amount = formatAda(item.ada_flow?.amount_lovelace, 0);
+
+  return (
+    <article className={`timeline-event ada-flow-event ${isIn ? 'event-positive' : 'event-negative'}`}>
+      <div className="timeline-event-icon">
+        {isIn ? <ArrowDownOutlined /> : <ArrowUpOutlined />}
+      </div>
+      <div className="timeline-event-body">
+        <div className="timeline-event-title">
+          {isIn ? 'ADA received' : 'ADA sent'}
+        </div>
+        <div className="timeline-event-amount">{isIn ? '+' : '-'}{amount}</div>
+        <div className="timeline-event-meta">{compactPoolId(item.stake_address)}</div>
+      </div>
+    </article>
+  );
+};
+
 const PoolBlockTimeline = ({ poolId }) => {
-  const [blocks, setBlocks] = useState([]);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const sentinelRef = useRef(null);
 
-  const loadBlocks = useCallback(async ({ reset = false, beforeBlockNo } = {}) => {
+  const loadBlocks = useCallback(async ({ reset = false, beforeTime } = {}) => {
     if (!poolId) return;
 
     if (reset) {
@@ -36,20 +89,20 @@ const PoolBlockTimeline = ({ poolId }) => {
     }
 
     try {
-      const nextBlocks = await api.getPoolBlocks(poolId, {
+      const nextItems = await api.getPoolTimeline(poolId, {
         limit: PAGE_SIZE,
-        beforeBlockNo
+        beforeTime
       });
-      setBlocks((current) => {
+      setItems((current) => {
         const base = reset ? [] : current;
-        const known = new Set(base.map((block) => block.block_no));
+        const known = new Set(base.map((item) => item.event_id || `block:${item.block_no}`));
         const merged = [
           ...base,
-          ...nextBlocks.filter((block) => !known.has(block.block_no))
+          ...nextItems.filter((item) => !known.has(item.event_id || `block:${item.block_no}`))
         ];
-        return merged.sort((a, b) => b.block_no - a.block_no);
+        return merged.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
       });
-      setHasMore(nextBlocks.length === PAGE_SIZE);
+      setHasMore(nextItems.length === PAGE_SIZE);
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -57,7 +110,7 @@ const PoolBlockTimeline = ({ poolId }) => {
   }, [poolId]);
 
   useEffect(() => {
-    setBlocks([]);
+    setItems([]);
     setHasMore(true);
     loadBlocks({ reset: true });
   }, [loadBlocks]);
@@ -68,22 +121,22 @@ const PoolBlockTimeline = ({ poolId }) => {
 
     const observer = new IntersectionObserver((entries) => {
       if (entries.some((entry) => entry.isIntersecting)) {
-        loadBlocks({ beforeBlockNo: blocks[blocks.length - 1]?.block_no });
+        loadBlocks({ beforeTime: items[items.length - 1]?.time });
       }
     }, { rootMargin: '600px 0px' });
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [blocks, hasMore, loadBlocks, loading, loadingMore]);
+  }, [items, hasMore, loadBlocks, loading, loadingMore]);
 
-  const groups = useMemo(() => groupByEpoch(blocks), [blocks]);
+  const groups = useMemo(() => groupByEpoch(items), [items]);
 
-  if (loading && blocks.length === 0) {
+  if (loading && items.length === 0) {
     return <div className="center-state"><Spin /></div>;
   }
 
-  if (blocks.length === 0) {
-    return <Empty description="No block history yet" />;
+  if (items.length === 0) {
+    return <Empty description="No timeline history yet" />;
   }
 
   return (
@@ -92,16 +145,27 @@ const PoolBlockTimeline = ({ poolId }) => {
         <section className="epoch-block-group" key={group.epoch}>
           <div className="epoch-number">Epoch {group.epoch}</div>
           <div className="timeline-blocks">
-            {group.blocks.map((block) => (
-              <div className="timeline-block-tile" key={block.block_no}>
-                <BlockTile block={block} showPool={false} prominentAda />
-              </div>
-            ))}
+            {group.items.map((item) => {
+              if (item.kind === 'block') {
+                return (
+                  <div className="timeline-block-tile" key={`block-${item.block_no}`}>
+                    <BlockTile block={item} showPool={false} prominentAda />
+                  </div>
+                );
+              }
+              if (item.kind === 'delegation_change') {
+                return <DelegationChangeItem key={item.event_id} item={item} />;
+              }
+              if (item.kind === 'wallet_ada_flow') {
+                return <AdaFlowItem key={item.event_id} item={item} />;
+              }
+              return null;
+            })}
           </div>
         </section>
       ))}
       <div ref={sentinelRef} className="timeline-sentinel">
-        {loadingMore ? <Spin size="small" /> : hasMore ? null : 'Full loaded history'}
+        {loadingMore ? <Spin size="small" /> : hasMore ? null : 'Full history loaded'}
       </div>
     </div>
   );

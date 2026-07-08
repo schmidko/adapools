@@ -9,6 +9,7 @@ export const formatNumber = (value) => Number(value || 0).toLocaleString();
 
 export const formatPercent = (value) => {
   const number = Number(value || 0);
+  if (number > 0 && number < 0.1) return '<0.1%';
   return `${number.toLocaleString(undefined, { maximumFractionDigits: 1 })}%`;
 };
 

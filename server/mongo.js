@@ -32,6 +32,7 @@ export const createMongo = async () => {
       cardanoMetrics: db.collection('adapools_cardano_metrics'),
       poolCache: db.collection('pool_cache'),
       poolMetrics: db.collection('adapools_pool_metrics'),
+      poolTimelineEvents: db.collection('adapools_pool_timeline_events'),
       poolRecentBlocks: db.collection('adapools_pool_recent_blocks'),
       syncState: db.collection('adapools_sync_state')
     }
