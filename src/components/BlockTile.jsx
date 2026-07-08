@@ -1,3 +1,4 @@
+import { AppstoreOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import { formatAda, formatAge, formatPercent } from '../utils/format.js';
@@ -23,6 +24,10 @@ const BlockTile = ({ block, showPool = true, prominentAda = false, now, clickabl
         <div className="block-topline">
           <span className="block-number">#{block.block_no}</span>
           <span>{formatAge(block.time, now)}</span>
+        </div>
+        <div className="block-event-heading">
+          <span className="block-event-icon"><AppstoreOutlined /></span>
+          <span>Block found</span>
         </div>
         {prominentAda ? (
           <div className="block-pool block-ada-primary">{adaValue}</div>

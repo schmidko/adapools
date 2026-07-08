@@ -31,11 +31,13 @@ const DelegationChangeItem = ({ item }) => {
 
   return (
     <article className={`timeline-event delegation-event ${isIn ? 'event-positive' : 'event-negative'}`}>
-      <div className="timeline-event-icon"><SwapOutlined /></div>
-      <div className="timeline-event-body">
+      <div className="timeline-event-heading">
+        <div className="timeline-event-icon"><SwapOutlined /></div>
         <div className="timeline-event-title">
-          {isIn ? 'Delegation added' : 'Delegation removed'}
+          {isIn ? 'new delegation' : 'delegation moved'}
         </div>
+      </div>
+      <div className="timeline-event-body">
         <div className="timeline-pool-switch">
           <Tooltip title={oldPool?.bech32_pool_id || 'No previous pool'}>
             <span>{poolLabel(oldPool) || 'New wallet'}</span>
@@ -58,13 +60,15 @@ const AdaFlowItem = ({ item }) => {
 
   return (
     <article className={`timeline-event ada-flow-event ${isIn ? 'event-positive' : 'event-negative'}`}>
-      <div className="timeline-event-icon">
-        {isIn ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-      </div>
-      <div className="timeline-event-body">
+      <div className="timeline-event-heading">
+        <div className="timeline-event-icon">
+          {isIn ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+        </div>
         <div className="timeline-event-title">
           {isIn ? 'ADA received' : 'ADA sent'}
         </div>
+      </div>
+      <div className="timeline-event-body">
         <div className="timeline-event-amount">{isIn ? '+' : '-'}{amount}</div>
         <div className="timeline-event-meta">{compactPoolId(item.stake_address)}</div>
       </div>

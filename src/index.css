@@ -198,7 +198,7 @@ body {
   z-index: 1;
   display: grid;
   height: 100%;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto auto auto 1fr;
   gap: 6px;
   padding: 12px;
 }
@@ -223,6 +223,27 @@ body {
 .block-number {
   color: var(--app-text);
   font-weight: 700;
+}
+
+.block-event-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--app-text);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.block-event-icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--event-positive);
+  background: var(--event-positive-bg);
+  font-size: 14px;
 }
 
 .block-pool {
@@ -334,6 +355,13 @@ body {
   font-size: 19px;
 }
 
+.timeline-event-heading {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+
 .timeline-event-body {
   display: grid;
   min-width: 0;
@@ -341,10 +369,13 @@ body {
 }
 
 .timeline-event-title {
+  overflow: hidden;
   color: var(--app-text);
   font-size: 13px;
   font-weight: 800;
   line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .timeline-event-amount {
@@ -481,6 +512,12 @@ body {
     width: 34px;
     height: 34px;
     font-size: 17px;
+  }
+
+  .block-event-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
   }
 
   .timeline-event-title {
