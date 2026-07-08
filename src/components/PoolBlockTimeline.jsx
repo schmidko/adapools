@@ -65,7 +65,7 @@ const AdaFlowItem = ({ item }) => {
           {isIn ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
         </div>
         <div className="timeline-event-title">
-          {isIn ? 'ADA received' : 'ADA sent'}
+          {isIn ? 'ADA added' : 'ADA removed'}
         </div>
       </div>
       <div className="timeline-event-body">
