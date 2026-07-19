@@ -29,12 +29,14 @@ const BlockTile = ({ block, showPool = true, prominentAda = false, now, clickabl
       <Root {...rootProps}>
         <div className="block-tile-fill" style={{ height: `${fullness}%` }} />
         <div className="block-tile-content">
-          <div className="timeline-event-topline">
-            <time dateTime={block.time}>{formatAgeAgo(block.time, now)}</time>
-          </div>
-          <div className="block-event-heading">
-            <span className="block-event-icon"><AppstoreOutlined /></span>
-            <span className={`block-event-title${fitClass('Block found')}`}>Block found</span>
+          <div className="timeline-event-header">
+            <span className="timeline-event-icon block-event-icon"><AppstoreOutlined /></span>
+            <div className="timeline-event-header-copy">
+              <div className="timeline-event-topline">
+                <time dateTime={block.time}>{formatAgeAgo(block.time, now)}</time>
+              </div>
+              <span className={`timeline-event-title block-event-title${fitClass('Block found')}`}>Block found</span>
+            </div>
           </div>
           <div className={`block-pool block-ada-primary${fitClass(adaValue)}`}>{adaValue}</div>
           <div className="block-stats">

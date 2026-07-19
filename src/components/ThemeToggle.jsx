@@ -1,5 +1,5 @@
 import { Button, Tooltip } from 'antd';
-import { BulbOutlined, MoonOutlined } from '@ant-design/icons';
+import { MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { useThemeMode } from '../context/ThemeContext.jsx';
 
 const ThemeToggle = () => {
@@ -9,8 +9,9 @@ const ThemeToggle = () => {
   return (
     <Tooltip title={isDark ? 'Light mode' : 'Dark mode'}>
       <Button
+        className="theme-toggle"
         aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-        icon={isDark ? <BulbOutlined /> : <MoonOutlined />}
+        icon={isDark ? <SunOutlined /> : <MoonOutlined />}
         onClick={toggleMode}
       />
     </Tooltip>

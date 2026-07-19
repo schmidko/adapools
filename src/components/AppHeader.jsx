@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import logo from '../assets/logobw.png';
 import PoolSearch from './PoolSearch.jsx';
 import ThemeToggle from './ThemeToggle.jsx';
 

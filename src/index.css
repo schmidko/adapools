@@ -28,10 +28,12 @@ body {
   --tile-border: #d9e1ec;
   --tile-fill: rgba(22, 119, 255, 0.16);
   --tile-muted: #5c6675;
-  --event-positive: #15803d;
-  --event-positive-bg: rgba(21, 128, 61, 0.1);
-  --event-negative: #b91c1c;
-  --event-negative-bg: rgba(185, 28, 28, 0.1);
+  --event-positive: #0f766e;
+  --event-positive-bg: #ccfbf1;
+  --event-negative: #be123c;
+  --event-negative-bg: #ffe4e6;
+  --event-block: #2563eb;
+  --event-block-bg: #dbeafe;
 }
 
 .theme-dark {
@@ -45,10 +47,12 @@ body {
   --tile-border: #2b3542;
   --tile-fill: rgba(63, 177, 255, 0.24);
   --tile-muted: #a7b0bd;
-  --event-positive: #4ade80;
-  --event-positive-bg: rgba(74, 222, 128, 0.12);
-  --event-negative: #f87171;
-  --event-negative-bg: rgba(248, 113, 113, 0.12);
+  --event-positive: #2dd4bf;
+  --event-positive-bg: rgba(45, 212, 191, 0.14);
+  --event-negative: #fb7185;
+  --event-negative-bg: rgba(251, 113, 133, 0.14);
+  --event-block: #60a5fa;
+  --event-block-bg: rgba(96, 165, 250, 0.14);
 }
 
 .app-header {
@@ -62,7 +66,7 @@ body {
   min-height: 78px;
   height: auto;
   line-height: normal;
-  padding: 0 24px;
+  padding: 8px 24px 8px 8px;
   background: var(--app-surface);
   border-bottom: 1px solid var(--tile-border);
 }
@@ -80,8 +84,11 @@ body {
 
 .brand-logo {
   display: block;
-  width: auto;
-  height: 42px;
+  width: 250px;
+  height: auto;
+  border: 1px solid #27313d;
+  border-radius: 6px;
+  background: #ffffff;
 }
 
 .header-actions {
@@ -97,9 +104,17 @@ body {
 }
 
 .pool-search-input {
-  height: 46px;
+  height: 56px;
   border-radius: 8px;
   font-size: 16px;
+}
+
+.theme-toggle {
+  width: 54px;
+  min-width: 54px;
+  height: 54px;
+  padding: 0;
+  font-size: 20px;
 }
 
 .pool-search-input .ant-input-prefix {
@@ -204,8 +219,8 @@ body {
 }
 
 .timeline-block-card .block-tile-content {
-  grid-template-rows: auto 24px minmax(23px, auto) minmax(0, 1fr);
-  gap: 6px;
+  grid-template-rows: auto minmax(23px, auto) minmax(0, 1fr);
+  gap: 8px;
 }
 
 .block-topline {
@@ -341,17 +356,17 @@ body {
 .timeline-block-tile {
   flex: 0 0 176px;
   width: 176px;
+  height: 176px;
 }
 
 .timeline-event {
   display: grid;
-  grid-template-rows: auto auto auto 1fr;
+  grid-template-rows: auto auto 1fr;
   flex: 0 0 176px;
   width: 176px;
-  aspect-ratio: 1 / 1;
+  height: 176px;
   gap: 10px;
   border: 1px solid var(--tile-border);
-  border-top-width: 4px;
   border-radius: 8px;
   background: var(--tile-bg);
   padding: 12px;
@@ -365,7 +380,7 @@ body {
   color: var(--tile-muted);
   font-size: 12px;
   line-height: 1.15;
-  text-align: center;
+  text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -375,13 +390,27 @@ body {
   color: var(--tile-muted);
 }
 
+.timeline-event-header {
+  display: grid;
+  grid-template-columns: 35px minmax(0, 1fr);
+  min-width: 0;
+  gap: 10px;
+}
+
+.timeline-event-header-copy {
+  display: grid;
+  min-width: 0;
+  grid-template-rows: 14px minmax(0, 1fr);
+  gap: 4px;
+}
+
 .timeline-event-icon {
   display: grid;
-  width: 24px;
-  height: 24px;
+  width: 35px;
+  height: 35px;
   place-items: center;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: 17px;
 }
 
 .timeline-event-heading {
@@ -409,9 +438,15 @@ body {
 }
 
 .block-event-title {
+  font-size: 14px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.timeline-block-card .block-event-icon {
+  color: var(--event-block);
+  background: var(--event-block-bg);
 }
 
 .timeline-event-amount {
@@ -431,6 +466,14 @@ body {
 
 .timeline-fit-xs {
   font-size: 11px;
+}
+
+.timeline-event-title.timeline-fit-sm {
+  font-size: 12px;
+}
+
+.timeline-event-title.timeline-fit-xs {
+  font-size: 9px;
 }
 
 .timeline-event-meta {
@@ -461,17 +504,9 @@ body {
   color: var(--tile-muted);
 }
 
-.event-positive {
-  border-top-color: var(--event-positive);
-}
-
 .event-positive .timeline-event-icon {
   color: var(--event-positive);
   background: var(--event-positive-bg);
-}
-
-.event-negative {
-  border-top-color: var(--event-negative);
 }
 
 .event-negative .timeline-event-icon {
@@ -496,6 +531,7 @@ body {
   }
 
   .brand-logo {
+    width: auto;
     height: 32px;
   }
 
@@ -511,6 +547,14 @@ body {
 
   .pool-search-input {
     height: 42px;
+  }
+
+  .theme-toggle {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 0;
+    font-size: 16px;
   }
 
   .app-main {
@@ -547,31 +591,40 @@ body {
   .timeline-block-tile {
     flex-basis: 150px;
     width: 150px;
+    height: 150px;
   }
 
   .timeline-event {
     flex-basis: 150px;
     width: 150px;
+    height: 150px;
     gap: 8px;
     padding: 10px;
   }
 
   .timeline-event-icon {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
     font-size: 14px;
   }
 
   .block-event-icon {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
     font-size: 14px;
   }
 
   .timeline-block-card .block-tile-content {
-    grid-template-rows: auto 24px minmax(20px, auto) minmax(0, 1fr);
+    grid-template-rows: auto minmax(20px, auto) minmax(0, 1fr);
     gap: 4px;
     padding: 10px;
+  }
+
+  .timeline-event-header {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 8px;
   }
 
   .timeline-block-card .block-stats {

@@ -57,13 +57,15 @@ const DelegationChangeItem = ({ item, now }) => {
 
   return (
     <article className={`timeline-event delegation-event ${isIn ? 'event-positive' : 'event-negative'}`}>
-      <div className="timeline-event-topline">
-        <EventAge time={eventTime(item)} now={now} />
-      </div>
-      <div className="timeline-event-heading">
+      <div className="timeline-event-header">
         <div className="timeline-event-icon"><SwapOutlined /></div>
-        <div className={`timeline-event-title${titleFitClass(title)}`}>
-          {title}
+        <div className="timeline-event-header-copy">
+          <div className="timeline-event-topline">
+            <EventAge time={eventTime(item)} now={now} />
+          </div>
+          <div className={`timeline-event-title${titleFitClass(title)}`}>
+            {title}
+          </div>
         </div>
       </div>
       {stakeAmount && (
@@ -74,11 +76,10 @@ const DelegationChangeItem = ({ item, now }) => {
       <div className="timeline-event-body">
         <div className="timeline-pool-switch">
           <Tooltip title={oldPool?.bech32_pool_id || 'No previous pool'}>
-            <span>{poolLabel(oldPool) || 'New wallet'}</span>
+            <span>from: {poolLabel(oldPool) || 'New wallet'}</span>
           </Tooltip>
-          <span className="timeline-switch-arrow">{'->'}</span>
           <Tooltip title={newPool?.bech32_pool_id || 'Unknown pool'}>
-            <span>{poolLabel(newPool) || 'Unknown pool'}</span>
+            <span>to: {poolLabel(newPool) || 'Unknown pool'}</span>
           </Tooltip>
         </div>
         <div className="timeline-event-meta">{compactPoolId(item.stake_address)}</div>
@@ -96,15 +97,17 @@ const AdaFlowItem = ({ item, now }) => {
 
   return (
     <article className={`timeline-event ada-flow-event ${isIn ? 'event-positive' : 'event-negative'}`}>
-      <div className="timeline-event-topline">
-        <EventAge time={eventTime(item)} now={now} />
-      </div>
-      <div className="timeline-event-heading">
+      <div className="timeline-event-header">
         <div className="timeline-event-icon">
           {isIn ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
         </div>
-        <div className={`timeline-event-title${titleFitClass(title)}`}>
-          {title}
+        <div className="timeline-event-header-copy">
+          <div className="timeline-event-topline">
+            <EventAge time={eventTime(item)} now={now} />
+          </div>
+          <div className={`timeline-event-title${titleFitClass(title)}`}>
+            {title}
+          </div>
         </div>
       </div>
       <div className={`timeline-event-amount${fitClass(signedAmount)}`}>{signedAmount}</div>
