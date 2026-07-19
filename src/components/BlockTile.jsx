@@ -1,7 +1,14 @@
 import { AppstoreOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
-import { formatAda, formatAge, formatPercent } from '../utils/format.js';
+import { formatAda, formatAge, formatAgeAgo, formatPercent } from '../utils/format.js';
+
+const fitClass = (value) => {
+  const length = String(value || '').length;
+  if (length > 24) return ' timeline-fit-xs';
+  if (length > 18) return ' timeline-fit-sm';
+  return '';
+};
 
 const BlockTile = ({ block, showPool = true, prominentAda = false, now, clickable = false }) => {
   const pool = block.pool || {};
@@ -12,10 +19,34 @@ const BlockTile = ({ block, showPool = true, prominentAda = false, now, clickabl
   const rootProps = isClickable
     ? {
         to: `/pool/${pool.bech32_pool_id}`,
-        className: 'block-tile block-tile-link',
+        className: `block-tile block-tile-link${prominentAda ? ' timeline-block-card' : ''}`,
         'aria-label': `Open pool ${pool.ticker || pool.name || pool.bech32_pool_id}`
       }
-    : { className: 'block-tile' };
+    : { className: `block-tile${prominentAda ? ' timeline-block-card' : ''}` };
+
+  if (prominentAda) {
+    return (
+      <Root {...rootProps}>
+        <div className="block-tile-fill" style={{ height: `${fullness}%` }} />
+        <div className="block-tile-content">
+          <div className="timeline-event-topline">
+            <time dateTime={block.time}>{formatAgeAgo(block.time, now)}</time>
+          </div>
+          <div className="block-event-heading">
+            <span className="block-event-icon"><AppstoreOutlined /></span>
+            <span className={`block-event-title${fitClass('Block found')}`}>Block found</span>
+          </div>
+          <div className={`block-pool block-ada-primary${fitClass(adaValue)}`}>{adaValue}</div>
+          <div className="block-stats">
+            <span className="block-number">#{block.block_no}</span>
+            <span>{formatAda(block.total_fees_lovelace, 2)} fee</span>
+            <span>{block.tx_count || 0} tx</span>
+            <span>{formatPercent(fullness)}</span>
+          </div>
+        </div>
+      </Root>
+    );
+  }
 
   return (
     <Root {...rootProps}>
@@ -29,9 +60,7 @@ const BlockTile = ({ block, showPool = true, prominentAda = false, now, clickabl
           <span className="block-event-icon"><AppstoreOutlined /></span>
           <span>Block found</span>
         </div>
-        {prominentAda ? (
-          <div className="block-pool block-ada-primary">{adaValue}</div>
-        ) : isClickable && showPool ? (
+        {isClickable && showPool ? (
           <div className="block-pool">
             <Tooltip title={pool.name || pool.bech32_pool_id}>
               <span>{pool.ticker || pool.name || 'POOL'}</span>
@@ -45,9 +74,7 @@ const BlockTile = ({ block, showPool = true, prominentAda = false, now, clickabl
           </Link>
         ) : showPool ? (
           <span className="block-pool">Unknown</span>
-        ) : (
-          <div className="block-pool block-ada-primary">{adaValue}</div>
-        )}
+        ) : null}
         <div className="block-stats">
           {!prominentAda && <span>{adaValue}</span>}
           <span>{formatAda(block.total_fees_lovelace, 2)} fee</span>

@@ -203,6 +203,11 @@ body {
   padding: 12px;
 }
 
+.timeline-block-card .block-tile-content {
+  grid-template-rows: auto auto auto 1fr;
+  gap: 10px;
+}
+
 .block-topline {
   display: flex;
   justify-content: space-between;
@@ -230,9 +235,15 @@ body {
   align-items: center;
   gap: 7px;
   color: var(--app-text);
+  min-width: 0;
   font-size: 12px;
   font-weight: 800;
   line-height: 1.1;
+  white-space: nowrap;
+}
+
+.timeline-block-card .block-event-heading {
+  font-size: 18px;
 }
 
 .block-event-icon {
@@ -332,19 +343,27 @@ body {
 }
 
 .timeline-event {
-  position: relative;
   display: grid;
-  align-content: start;
+  grid-template-rows: auto auto auto 1fr;
   flex: 0 0 176px;
   width: 176px;
   aspect-ratio: 1 / 1;
-  gap: 12px;
+  gap: 10px;
   border: 1px solid var(--tile-border);
   border-top-width: 4px;
   border-radius: 8px;
   background: var(--tile-bg);
   padding: 12px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.timeline-event-topline {
+  overflow: hidden;
+  color: var(--tile-muted);
+  font-size: 12px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .timeline-event-icon {
@@ -361,21 +380,6 @@ body {
   align-items: center;
   min-width: 0;
   gap: 8px;
-  padding-right: 42px;
-}
-
-.timeline-event-age {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  overflow: hidden;
-  max-width: 42px;
-  color: var(--tile-muted);
-  font-size: 11px;
-  font-weight: 800;
-  line-height: 1;
-  text-align: right;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -388,18 +392,35 @@ body {
 .timeline-event-title {
   overflow: hidden;
   color: var(--app-text);
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 800;
   line-height: 1.15;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.block-event-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .timeline-event-amount {
+  overflow: hidden;
   color: var(--app-text);
   font-size: 18px;
   font-weight: 900;
   line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timeline-fit-sm {
+  font-size: 15px;
+}
+
+.timeline-fit-xs {
+  font-size: 13px;
 }
 
 .timeline-event-meta {
@@ -525,17 +546,6 @@ body {
     padding: 10px;
   }
 
-  .timeline-event-heading {
-    padding-right: 36px;
-  }
-
-  .timeline-event-age {
-    top: 10px;
-    right: 10px;
-    max-width: 36px;
-    font-size: 10px;
-  }
-
   .timeline-event-icon {
     width: 34px;
     height: 34px;
@@ -549,11 +559,19 @@ body {
   }
 
   .timeline-event-title {
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .timeline-event-amount {
     font-size: 16px;
+  }
+
+  .timeline-fit-sm {
+    font-size: 13px;
+  }
+
+  .timeline-fit-xs {
+    font-size: 11px;
   }
 
   .timeline-blocks {

@@ -3,7 +3,7 @@ import { Empty, Spin, Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client.js';
 import BlockTile from './BlockTile.jsx';
-import { compactPoolId, formatAda, formatAge } from '../utils/format.js';
+import { compactPoolId, formatAda, formatAgeAgo } from '../utils/format.js';
 
 const PAGE_SIZE = 20;
 
@@ -25,32 +25,44 @@ const poolLabel = (pool) => pool?.ticker || pool?.name || compactPoolId(pool?.be
 
 const EventAge = ({ time, now }) => (
   <time className="timeline-event-age" dateTime={time}>
-    {formatAge(time, now)}
+    {formatAgeAgo(time, now)}
   </time>
 );
+
+const fitClass = (value) => {
+  const length = String(value || '').length;
+  if (length > 24) return ' timeline-fit-xs';
+  if (length > 18) return ' timeline-fit-sm';
+  return '';
+};
 
 const DelegationChangeItem = ({ item, now }) => {
   const direction = item.delegation?.direction;
   const isIn = direction === 'in';
   const oldPool = item.delegation?.old_pool;
   const newPool = item.delegation?.new_pool;
+  const title = isIn ? 'New delegation' : 'Removed delegation';
   const stakeAmount = item.delegation?.stake_lovelace
     ? formatAda(item.delegation.stake_lovelace, 0)
     : null;
 
   return (
     <article className={`timeline-event delegation-event ${isIn ? 'event-positive' : 'event-negative'}`}>
-      <EventAge time={item.time} now={now} />
+      <div className="timeline-event-topline">
+        <EventAge time={item.time} now={now} />
+      </div>
       <div className="timeline-event-heading">
         <div className="timeline-event-icon"><SwapOutlined /></div>
-        <div className="timeline-event-title">
-          {isIn ? 'New delegation' : 'delegation moved'}
+        <div className={`timeline-event-title${fitClass(title)}`}>
+          {title}
         </div>
       </div>
+      {stakeAmount && (
+        <div className={`timeline-event-amount${fitClass(stakeAmount)}`}>
+          {isIn ? '+' : '-'}{stakeAmount}
+        </div>
+      )}
       <div className="timeline-event-body">
-        {isIn && stakeAmount && (
-          <div className="timeline-event-amount">+{stakeAmount}</div>
-        )}
         <div className="timeline-pool-switch">
           <Tooltip title={oldPool?.bech32_pool_id || 'No previous pool'}>
             <span>{poolLabel(oldPool) || 'New wallet'}</span>
@@ -70,20 +82,24 @@ const AdaFlowItem = ({ item, now }) => {
   const direction = item.ada_flow?.direction;
   const isIn = direction === 'in';
   const amount = formatAda(item.ada_flow?.amount_lovelace, 0);
+  const title = isIn ? 'ADA added' : 'ADA removed';
+  const signedAmount = `${isIn ? '+' : '-'}${amount}`;
 
   return (
     <article className={`timeline-event ada-flow-event ${isIn ? 'event-positive' : 'event-negative'}`}>
-      <EventAge time={item.time} now={now} />
+      <div className="timeline-event-topline">
+        <EventAge time={item.time} now={now} />
+      </div>
       <div className="timeline-event-heading">
         <div className="timeline-event-icon">
           {isIn ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
         </div>
-        <div className="timeline-event-title">
-          {isIn ? 'ADA added' : 'ADA removed'}
+        <div className={`timeline-event-title${fitClass(title)}`}>
+          {title}
         </div>
       </div>
+      <div className={`timeline-event-amount${fitClass(signedAmount)}`}>{signedAmount}</div>
       <div className="timeline-event-body">
-        <div className="timeline-event-amount">{isIn ? '+' : '-'}{amount}</div>
         <div className="timeline-event-meta">{compactPoolId(item.stake_address)}</div>
       </div>
     </article>
@@ -173,7 +189,7 @@ const PoolBlockTimeline = ({ poolId }) => {
               if (item.kind === 'block') {
                 return (
                   <div className="timeline-block-tile" key={`block-${item.block_no}`}>
-                    <BlockTile block={item} showPool={false} prominentAda />
+                    <BlockTile block={item} showPool={false} prominentAda now={now} />
                   </div>
                 );
               }
