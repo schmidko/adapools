@@ -23,6 +23,20 @@ const groupByEpoch = (items) => {
 
 const poolLabel = (pool) => pool?.ticker || pool?.name || compactPoolId(pool?.bech32_pool_id || '');
 
+const StakeAddressLink = ({ stakeAddress }) => {
+  if (!stakeAddress) return null;
+  return (
+    <a
+      className="timeline-event-meta"
+      href={`https://adablox.com/stake/${stakeAddress}`}
+      target="_blank"
+      rel="noreferrer"
+    >
+      {compactPoolId(stakeAddress)}
+    </a>
+  );
+};
+
 const EventAge = ({ time, now }) => (
   <time className="timeline-event-age" dateTime={time}>
     {formatAgeAgo(time, now)}
@@ -82,7 +96,7 @@ const DelegationChangeItem = ({ item, now }) => {
             <span>to: {poolLabel(newPool) || 'Unknown pool'}</span>
           </Tooltip>
         </div>
-        <div className="timeline-event-meta">{compactPoolId(item.stake_address)}</div>
+        <StakeAddressLink stakeAddress={item.stake_address} />
       </div>
     </article>
   );
@@ -112,7 +126,7 @@ const AdaFlowItem = ({ item, now }) => {
       </div>
       <div className={`timeline-event-amount${fitClass(signedAmount)}`}>{signedAmount}</div>
       <div className="timeline-event-body">
-        <div className="timeline-event-meta">{compactPoolId(item.stake_address)}</div>
+        <StakeAddressLink stakeAddress={item.stake_address} />
       </div>
     </article>
   );

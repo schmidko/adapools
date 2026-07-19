@@ -561,12 +561,19 @@ body {
 }
 
 .timeline-event-meta {
+  display: block;
   overflow: hidden;
   color: var(--tile-muted);
   font-size: 12px;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-decoration: none;
+}
+
+a.timeline-event-meta:hover {
+  color: var(--app-text);
+  text-decoration: underline;
 }
 
 .timeline-pool-switch {
