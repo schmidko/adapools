@@ -12,6 +12,8 @@ body {
 }
 
 .app-shell {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: var(--app-bg);
   color: var(--app-text);
@@ -140,8 +142,69 @@ body {
 
 .app-main {
   width: min(1440px, calc(100% - 32px));
+  flex: 1 0 auto;
   margin: 0 auto;
   padding: 28px 0 48px;
+}
+
+.app-footer {
+  flex-shrink: 0;
+  background: var(--app-surface);
+  border-top: 1px solid var(--tile-border);
+  padding: 32px 24px 20px;
+}
+
+.footer-inner {
+  width: min(1440px, calc(100% - 32px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.footer-column {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.footer-heading {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.footer-text {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.footer-links {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.footer-links a {
+  color: var(--app-text);
+  opacity: 0.75;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  width: min(1440px, calc(100% - 32px));
+  margin: 24px auto 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--tile-border);
+}
+
+.footer-copyright {
+  font-size: 12px;
 }
 
 .page-stack {
@@ -581,6 +644,16 @@ body {
   .app-main {
     width: min(100% - 20px, 1440px);
     padding-top: 18px;
+  }
+
+  .footer-inner {
+    width: min(100% - 20px, 1440px);
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .footer-bottom {
+    width: min(100% - 20px, 1440px);
   }
 
   .metrics-grid {

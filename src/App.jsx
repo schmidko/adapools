@@ -2,6 +2,7 @@ import { ConfigProvider, theme } from 'antd';
 import { Route, Routes } from 'react-router-dom';
 import { ThemeProvider, useThemeMode } from './context/ThemeContext.jsx';
 import AppHeader from './components/AppHeader.jsx';
+import AppFooter from './components/AppFooter.jsx';
 import HomePage from './pages/HomePage.jsx';
 import PoolPage from './pages/PoolPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
@@ -32,6 +33,7 @@ const ThemedApp = () => {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
+        <AppFooter />
       </div>
     </ConfigProvider>
   );
