@@ -5,6 +5,7 @@ import AppHeader from './components/AppHeader.jsx';
 import HomePage from './pages/HomePage.jsx';
 import PoolPage from './pages/PoolPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import TimelinePreviewPage from './pages/TimelinePreviewPage.jsx';
 
 const ThemedApp = () => {
   const { mode } = useThemeMode();
@@ -27,6 +28,7 @@ const ThemedApp = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/pool/:poolId" element={<PoolPage />} />
+            {import.meta.env.DEV && <Route path="/__timeline-preview" element={<TimelinePreviewPage />} />}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

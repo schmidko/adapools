@@ -29,10 +29,19 @@ const EventAge = ({ time, now }) => (
   </time>
 );
 
+const eventTime = (item) => item.time || item.created_at || item.updated_at;
+
 const fitClass = (value) => {
   const length = String(value || '').length;
   if (length > 17) return ' timeline-fit-xs';
   if (length > 13) return ' timeline-fit-sm';
+  return '';
+};
+
+const titleFitClass = (value) => {
+  const length = String(value || '').length;
+  if (length > 17) return ' timeline-fit-xs';
+  if (length > 10) return ' timeline-fit-sm';
   return '';
 };
 
@@ -49,11 +58,11 @@ const DelegationChangeItem = ({ item, now }) => {
   return (
     <article className={`timeline-event delegation-event ${isIn ? 'event-positive' : 'event-negative'}`}>
       <div className="timeline-event-topline">
-        <EventAge time={item.time} now={now} />
+        <EventAge time={eventTime(item)} now={now} />
       </div>
       <div className="timeline-event-heading">
         <div className="timeline-event-icon"><SwapOutlined /></div>
-        <div className={`timeline-event-title${fitClass(title)}`}>
+        <div className={`timeline-event-title${titleFitClass(title)}`}>
           {title}
         </div>
       </div>
@@ -88,13 +97,13 @@ const AdaFlowItem = ({ item, now }) => {
   return (
     <article className={`timeline-event ada-flow-event ${isIn ? 'event-positive' : 'event-negative'}`}>
       <div className="timeline-event-topline">
-        <EventAge time={item.time} now={now} />
+        <EventAge time={eventTime(item)} now={now} />
       </div>
       <div className="timeline-event-heading">
         <div className="timeline-event-icon">
           {isIn ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
         </div>
-        <div className={`timeline-event-title${fitClass(title)}`}>
+        <div className={`timeline-event-title${titleFitClass(title)}`}>
           {title}
         </div>
       </div>
@@ -106,15 +115,17 @@ const AdaFlowItem = ({ item, now }) => {
   );
 };
 
-const PoolBlockTimeline = ({ poolId }) => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+const PoolBlockTimeline = ({ poolId, previewItems }) => {
+  const hasPreviewItems = Array.isArray(previewItems);
+  const [items, setItems] = useState(() => previewItems || []);
+  const [loading, setLoading] = useState(!hasPreviewItems);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [now, setNow] = useState(Date.now());
   const sentinelRef = useRef(null);
 
   const loadBlocks = useCallback(async ({ reset = false, beforeTime } = {}) => {
+    if (hasPreviewItems) return;
     if (!poolId) return;
 
     if (reset) {
@@ -142,13 +153,19 @@ const PoolBlockTimeline = ({ poolId }) => {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [poolId]);
+  }, [hasPreviewItems, poolId]);
 
   useEffect(() => {
+    if (hasPreviewItems) {
+      setItems(previewItems);
+      setLoading(false);
+      setHasMore(false);
+      return;
+    }
     setItems([]);
     setHasMore(true);
     loadBlocks({ reset: true });
-  }, [loadBlocks]);
+  }, [hasPreviewItems, loadBlocks, previewItems]);
 
   useEffect(() => {
     const interval = window.setInterval(() => setNow(Date.now()), 60000);
@@ -156,6 +173,7 @@ const PoolBlockTimeline = ({ poolId }) => {
   }, []);
 
   useEffect(() => {
+    if (hasPreviewItems) return undefined;
     const sentinel = sentinelRef.current;
     if (!sentinel || !hasMore || loading || loadingMore) return undefined;
 
@@ -167,7 +185,7 @@ const PoolBlockTimeline = ({ poolId }) => {
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [items, hasMore, loadBlocks, loading, loadingMore]);
+  }, [hasPreviewItems, items, hasMore, loadBlocks, loading, loadingMore]);
 
   const groups = useMemo(() => groupByEpoch(items), [items]);
 

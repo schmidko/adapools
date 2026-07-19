@@ -358,12 +358,20 @@ body {
 }
 
 .timeline-event-topline {
+  display: block;
+  min-height: 14px;
   overflow: hidden;
   color: var(--tile-muted);
   font-size: 12px;
   line-height: 1.15;
+  text-align: right;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.timeline-event-age {
+  display: block;
+  color: var(--tile-muted);
 }
 
 .timeline-event-icon {
@@ -421,7 +429,7 @@ body {
 }
 
 .timeline-fit-xs {
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .timeline-event-meta {
@@ -573,6 +581,14 @@ body {
 
   .timeline-fit-xs {
     font-size: 11px;
+  }
+
+  .timeline-event-title.timeline-fit-sm {
+    font-size: 11px;
+  }
+
+  .timeline-event-title.timeline-fit-xs {
+    font-size: 8.5px;
   }
 
   .timeline-blocks {
