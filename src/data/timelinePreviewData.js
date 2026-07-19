@@ -1,5 +1,26 @@
 const minutesAgo = (minutes) => new Date(Date.now() - minutes * 60 * 1000).toISOString();
 
+const EPOCH_LENGTH_SLOTS = 432000;
+const previewEpochSlotNo = 210000;
+
+export const previewCardanoMetrics = {
+  current_epoch: 560,
+  epoch_slot_no: previewEpochSlotNo,
+  epoch_progress_percent: Number(((previewEpochSlotNo / EPOCH_LENGTH_SLOTS) * 100).toFixed(2)),
+  latest_block_no: 11700000,
+  active_pools: 3000,
+  avg_block_fullness_1h: 47.2
+};
+
+export const previewPoolMetrics = {
+  active_stake_lovelace: '123456789000000',
+  delegators: 1234,
+  blocks_epoch: 3,
+  total_blocks: 12345,
+  lifetime_blocks: 12345,
+  saturation_percent: 63.1
+};
+
 export const timelinePreviewItems = [
   {
     event_id: 'preview-delegation-in',

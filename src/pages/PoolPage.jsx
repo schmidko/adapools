@@ -11,6 +11,7 @@ import PoolIdentity from '../components/PoolIdentity.jsx';
 const PoolPage = () => {
   const { poolId } = useParams();
   const [metrics, setMetrics] = useState(null);
+  const [cardanoMetrics, setCardanoMetrics] = useState({});
   const [recentBlocks, setRecentBlocks] = useState(null);
   const [blockView, setBlockView] = useState('history');
   const [loading, setLoading] = useState(true);
@@ -20,13 +21,15 @@ const PoolPage = () => {
 
     const load = async () => {
       try {
-        const [metricsResult, blocksResult] = await Promise.all([
+        const [metricsResult, blocksResult, cardanoMetricsResult] = await Promise.all([
           api.getPoolMetrics(poolId),
-          api.getPoolRecentBlocks(poolId)
+          api.getPoolRecentBlocks(poolId),
+          api.getCardanoMetrics()
         ]);
         if (!mounted) return;
         setMetrics(metricsResult);
         setRecentBlocks(blocksResult);
+        setCardanoMetrics(cardanoMetricsResult || {});
       } finally {
         if (mounted) setLoading(false);
       }
@@ -46,7 +49,7 @@ const PoolPage = () => {
   return (
     <section className="page-stack">
       <PoolIdentity pool={pool} poolId={poolId} />
-      <MetricsBar metrics={metrics || {}} type="pool" />
+      <MetricsBar metrics={metrics || {}} type="pool" epoch={cardanoMetrics} />
       <div className="block-view-section">
         <div className="section-toolbar">
           <Typography.Title level={3}>

@@ -1,7 +1,24 @@
-import { Card, Statistic } from 'antd';
+import { Card, Progress, Statistic, Typography } from 'antd';
 import { formatAda, formatNumber, formatPercent } from '../utils/format.js';
 
-const MetricsBar = ({ metrics = {}, type = 'cardano' }) => {
+const EpochProgressCard = ({ epoch = {} }) => {
+  const epochNo = epoch.current_epoch;
+  const percent = Math.min(Math.max(Number(epoch.epoch_progress_percent || 0), 0), 100);
+
+  return (
+    <Card className="metric-card metric-card-epoch" size="small">
+      <div className="epoch-card-header">
+        <Typography.Text type="secondary" className="epoch-card-label">Epoch</Typography.Text>
+        <Statistic value={epochNo ?? '-'} className="epoch-card-value" />
+      </div>
+      <Progress percent={percent} size="small" status="active" />
+    </Card>
+  );
+};
+
+const MetricsBar = ({ metrics = {}, type = 'cardano', epoch }) => {
+  const epochMetrics = type === 'pool' ? epoch : metrics;
+
   const items = type === 'pool'
     ? [
         ['Active stake', formatAda(metrics.active_stake_lovelace, 0)],
@@ -11,7 +28,6 @@ const MetricsBar = ({ metrics = {}, type = 'cardano' }) => {
         ['Saturation', formatPercent(metrics.saturation_percent)]
       ]
     : [
-        ['Epoch', formatNumber(metrics.current_epoch)],
         ['Latest block', formatNumber(metrics.latest_block_no)],
         ['Active pools', formatNumber(metrics.active_pools)],
         ['Avg full 1h', formatPercent(metrics.avg_block_fullness_1h)]
@@ -19,6 +35,7 @@ const MetricsBar = ({ metrics = {}, type = 'cardano' }) => {
 
   return (
     <div className="metrics-grid">
+      <EpochProgressCard epoch={epochMetrics} />
       {items.map(([label, value]) => (
         <Card key={label} className="metric-card" size="small">
           <Statistic title={label} value={value || '-'} />
