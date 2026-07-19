@@ -24,6 +24,7 @@ Diese Datei enthaelt gemeinsame Regeln fuer agentische Tools in den Blox-Projekt
 ## Git Und Workflow
 
 - Niemals selbststaendig committen. Der Benutzer entscheidet, wann committet wird.
+- Niemals selbststaendig deployen. Deploys auf `r01` oder andere Server nur ausfuehren, wenn der Benutzer explizit dazu auffordert.
 - Arbeite im jeweils passenden Repository unter `/private/var/www/blox`.
 - Codeaenderungen werden lokal im passenden Repository vorgenommen und muessen dort fuer Git persistiert werden. Der Server darf zum Testen oder Verifizieren genutzt werden, aber produktive Codeaenderungen auf dem Server sind nur temporaer; der dauerhafte Weg ist: lokal aendern, vom Benutzer committen lassen, danach aus Git deployen.
 
