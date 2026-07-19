@@ -5,8 +5,8 @@ import { formatAda, formatAge, formatAgeAgo, formatPercent } from '../utils/form
 
 const fitClass = (value) => {
   const length = String(value || '').length;
-  if (length > 24) return ' timeline-fit-xs';
-  if (length > 18) return ' timeline-fit-sm';
+  if (length > 17) return ' timeline-fit-xs';
+  if (length > 13) return ' timeline-fit-sm';
   return '';
 };
 
