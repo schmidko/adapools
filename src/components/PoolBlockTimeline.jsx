@@ -1,4 +1,10 @@
-import { ArrowDownOutlined, ArrowUpOutlined, SwapOutlined } from '@ant-design/icons';
+import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+  FlagOutlined,
+  StopOutlined,
+  SwapOutlined
+} from '@ant-design/icons';
 import { Empty, Spin, Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client.js';
@@ -132,6 +138,51 @@ const AdaFlowItem = ({ item, now }) => {
   );
 };
 
+const PoolLifecycleItem = ({ item, now }) => {
+  const isRetired = item.lifecycle?.stage === 'retired';
+  const title = isRetired ? 'Pool retired' : 'Pool registered';
+  const epoch = isRetired ? item.lifecycle?.retiring_epoch : item.epoch_no;
+  const epochLabel = Number.isFinite(Number(epoch)) ? `Epoch ${epoch}` : null;
+  const announcedAt = item.lifecycle?.announced_time;
+
+  return (
+    <article className={`timeline-event lifecycle-event ${isRetired ? 'event-retired' : 'event-registered'}`}>
+      <div className="timeline-event-header">
+        <div className="timeline-event-icon">
+          {isRetired ? <StopOutlined /> : <FlagOutlined />}
+        </div>
+        <div className="timeline-event-header-copy">
+          <div className="timeline-event-topline">
+            <EventAge time={eventTime(item)} now={now} />
+          </div>
+          <div className={`timeline-event-title${titleFitClass(title)}`}>
+            {title}
+          </div>
+        </div>
+      </div>
+      {epochLabel && <div className={`timeline-event-amount${fitClass(epochLabel)}`}>{epochLabel}</div>}
+      <div className="timeline-event-body">
+        {announcedAt && (
+          <span className="timeline-event-meta">
+            Announced {formatAgeAgo(announcedAt, now)}
+          </span>
+        )}
+        {item.tx_hash && (
+          <a
+            className="timeline-event-meta"
+            href={`https://adablox.com/tx/${item.tx_hash}`}
+            target="_blank"
+            rel="noreferrer"
+            title={item.tx_hash}
+          >
+            {item.tx_hash.slice(0, 12)}
+          </a>
+        )}
+      </div>
+    </article>
+  );
+};
+
 const PoolBlockTimeline = ({ poolId, previewItems }) => {
   const hasPreviewItems = Array.isArray(previewItems);
   const [items, setItems] = useState(() => previewItems || []);
@@ -233,6 +284,9 @@ const PoolBlockTimeline = ({ poolId, previewItems }) => {
               }
               if (item.kind === 'wallet_ada_flow') {
                 return <AdaFlowItem key={item.event_id} item={item} now={now} />;
+              }
+              if (item.kind === 'pool_lifecycle') {
+                return <PoolLifecycleItem key={item.event_id} item={item} now={now} />;
               }
               return null;
             })}

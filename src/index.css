@@ -605,6 +605,16 @@ a.timeline-event-meta:hover {
   background: var(--event-negative-bg);
 }
 
+.event-registered .timeline-event-icon {
+  color: #d4a72c;
+  background: rgba(212, 167, 44, 0.16);
+}
+
+.event-retired .timeline-event-icon {
+  color: #8c7ae6;
+  background: rgba(140, 122, 230, 0.16);
+}
+
 .timeline-sentinel {
   display: grid;
   min-height: 44px;

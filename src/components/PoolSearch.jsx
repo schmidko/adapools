@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../api/client.js';
 import { compactPoolId } from '../utils/format.js';
 
-const normalize = (value = '') => value.toLowerCase().trim();
+const normalize = (value) => String(value || '').toLowerCase().trim();
 
 const buildSearchText = (pool) => normalize([
   pool.ticker,

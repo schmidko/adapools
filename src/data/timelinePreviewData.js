@@ -23,6 +23,18 @@ export const previewPoolMetrics = {
 
 export const timelinePreviewItems = [
   {
+    event_id: 'preview-lifecycle-retired',
+    kind: 'pool_lifecycle',
+    epoch_no: 644,
+    time: minutesAgo(60 * 24 * 12),
+    tx_hash: 'previewretirementtransaction8q7ylx2n39x',
+    lifecycle: {
+      stage: 'retired',
+      retiring_epoch: 644,
+      announced_time: minutesAgo(60 * 24 * 18)
+    }
+  },
+  {
     event_id: 'preview-delegation-in',
     kind: 'delegation_change',
     epoch_no: 644,
@@ -63,6 +75,14 @@ export const timelinePreviewItems = [
     time: minutesAgo(60 * 24 * 35),
     stake_address: 'stake1u9previewremovedada9n39x8qr8q7yl',
     ada_flow: { direction: 'out', amount_lovelace: '75000000000' }
+  },
+  {
+    event_id: 'preview-lifecycle-registered',
+    kind: 'pool_lifecycle',
+    epoch_no: 580,
+    time: minutesAgo(60 * 24 * 360),
+    tx_hash: 'previewregistrationtransaction8q7ylx2n39x',
+    lifecycle: { stage: 'registered' }
   },
   {
     kind: 'block',
