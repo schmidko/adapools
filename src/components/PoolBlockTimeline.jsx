@@ -3,7 +3,7 @@ import { Empty, Spin, Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client.js';
 import BlockTile from './BlockTile.jsx';
-import { compactPoolId, formatAda } from '../utils/format.js';
+import { compactPoolId, formatAda, formatAge } from '../utils/format.js';
 
 const PAGE_SIZE = 20;
 
@@ -23,7 +23,13 @@ const groupByEpoch = (items) => {
 
 const poolLabel = (pool) => pool?.ticker || pool?.name || compactPoolId(pool?.bech32_pool_id || '');
 
-const DelegationChangeItem = ({ item }) => {
+const EventAge = ({ time, now }) => (
+  <time className="timeline-event-age" dateTime={time}>
+    {formatAge(time, now)}
+  </time>
+);
+
+const DelegationChangeItem = ({ item, now }) => {
   const direction = item.delegation?.direction;
   const isIn = direction === 'in';
   const oldPool = item.delegation?.old_pool;
@@ -34,6 +40,7 @@ const DelegationChangeItem = ({ item }) => {
 
   return (
     <article className={`timeline-event delegation-event ${isIn ? 'event-positive' : 'event-negative'}`}>
+      <EventAge time={item.time} now={now} />
       <div className="timeline-event-heading">
         <div className="timeline-event-icon"><SwapOutlined /></div>
         <div className="timeline-event-title">
@@ -59,13 +66,14 @@ const DelegationChangeItem = ({ item }) => {
   );
 };
 
-const AdaFlowItem = ({ item }) => {
+const AdaFlowItem = ({ item, now }) => {
   const direction = item.ada_flow?.direction;
   const isIn = direction === 'in';
   const amount = formatAda(item.ada_flow?.amount_lovelace, 0);
 
   return (
     <article className={`timeline-event ada-flow-event ${isIn ? 'event-positive' : 'event-negative'}`}>
+      <EventAge time={item.time} now={now} />
       <div className="timeline-event-heading">
         <div className="timeline-event-icon">
           {isIn ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -87,6 +95,7 @@ const PoolBlockTimeline = ({ poolId }) => {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [now, setNow] = useState(Date.now());
   const sentinelRef = useRef(null);
 
   const loadBlocks = useCallback(async ({ reset = false, beforeTime } = {}) => {
@@ -124,6 +133,11 @@ const PoolBlockTimeline = ({ poolId }) => {
     setHasMore(true);
     loadBlocks({ reset: true });
   }, [loadBlocks]);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setNow(Date.now()), 60000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -164,10 +178,10 @@ const PoolBlockTimeline = ({ poolId }) => {
                 );
               }
               if (item.kind === 'delegation_change') {
-                return <DelegationChangeItem key={item.event_id} item={item} />;
+                return <DelegationChangeItem key={item.event_id} item={item} now={now} />;
               }
               if (item.kind === 'wallet_ada_flow') {
-                return <AdaFlowItem key={item.event_id} item={item} />;
+                return <AdaFlowItem key={item.event_id} item={item} now={now} />;
               }
               return null;
             })}
