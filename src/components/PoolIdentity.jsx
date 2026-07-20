@@ -12,7 +12,7 @@ const PoolIdentity = ({ pool = {}, poolId }) => {
 
   return (
     <div className="pool-identity">
-      <Avatar size={52} shape="square" src={pool.logo || undefined}>
+      <Avatar size={80} shape="square" src={pool.logo || undefined}>
         {initials}
       </Avatar>
       <Space direction="vertical" size={0}>
