@@ -449,6 +449,15 @@ body {
   gap: 24px;
 }
 
+.epoch-block-group {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--tile-border);
+  border-radius: 8px;
+  background: var(--epoch-bg);
+  padding: 18px 0;
+}
+
 .epoch-block-group-grid {
   overflow: visible;
   border: 0;
@@ -459,15 +468,6 @@ body {
 
 .epoch-block-group-grid .timeline-blocks {
   grid-template-columns: repeat(6, minmax(0, 1fr));
-}
-
-.epoch-block-group {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--tile-border);
-  border-radius: 8px;
-  background: var(--epoch-bg);
-  padding: 18px 0;
 }
 
 .epoch-number {
