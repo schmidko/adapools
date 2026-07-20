@@ -83,7 +83,7 @@ const PoolPage = () => {
               onChange={setBlockView}
               options={[
                 { label: 'Grid', value: 'grid', icon: <AppstoreOutlined /> },
-                { label: 'History', value: 'history', icon: <BarsOutlined /> }
+                { label: 'Timeline', value: 'history', icon: <BarsOutlined /> }
               ]}
             />
           </div>
