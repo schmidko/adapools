@@ -8,14 +8,25 @@ import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
 import PoolIdentity from '../components/PoolIdentity.jsx';
 import Seo from '../components/Seo.jsx';
 
+const BLOCK_VIEW_STORAGE_KEY = 'adapools-pool-block-view';
+
+const getInitialBlockView = () => {
+  const stored = localStorage.getItem(BLOCK_VIEW_STORAGE_KEY);
+  return stored === 'grid' || stored === 'history' ? stored : 'grid';
+};
+
 const PoolPage = () => {
   const { poolId } = useParams();
   const [metrics, setMetrics] = useState(null);
   const [cardanoMetrics, setCardanoMetrics] = useState({});
   const [recentBlocks, setRecentBlocks] = useState(null);
-  const [blockView, setBlockView] = useState('history');
+  const [blockView, setBlockView] = useState(getInitialBlockView);
   const [eventFilter, setEventFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    localStorage.setItem(BLOCK_VIEW_STORAGE_KEY, blockView);
+  }, [blockView]);
 
   useEffect(() => {
     let mounted = true;
