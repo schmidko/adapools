@@ -272,7 +272,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 0;
+  margin: 0 0 12px;
   color: var(--tile-muted);
   font-size: 20px;
   font-weight: 800;
@@ -455,7 +455,7 @@ body {
   border: 1px solid var(--tile-border);
   border-radius: 8px;
   background: var(--epoch-bg);
-  padding: 0 0 18px;
+  padding: 10px 0 18px;
 }
 
 .epoch-block-group-grid {
@@ -754,7 +754,7 @@ a.timeline-event-meta:hover {
   }
 
   .epoch-block-group {
-    padding: 0 0 14px;
+    padding: 8px 0 14px;
   }
 
   .epoch-block-group-grid {
