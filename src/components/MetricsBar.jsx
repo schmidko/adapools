@@ -16,16 +16,31 @@ const EpochProgressCard = ({ epoch = {} }) => {
   );
 };
 
+const FeesMarginCard = ({ metrics = {} }) => (
+  <Card className="metric-card" size="small">
+    <div className="metric-card-split">
+      <div>
+        <Typography.Text type="secondary" className="metric-split-label">Fixed cost</Typography.Text>
+        <div className="metric-split-value">{formatAda(metrics.fixed_cost_lovelace, 0)}</div>
+      </div>
+      <div>
+        <Typography.Text type="secondary" className="metric-split-label">Margin</Typography.Text>
+        <div className="metric-split-value">{formatPercent(metrics.margin_percent)}</div>
+      </div>
+    </div>
+  </Card>
+);
+
 const MetricsBar = ({ metrics = {}, type = 'cardano', epoch }) => {
   const epochMetrics = type === 'pool' ? epoch : metrics;
 
   const items = type === 'pool'
     ? [
         ['Active stake', formatAda(metrics.active_stake_lovelace, 0)],
-        ['Delegators', formatNumber(metrics.delegators)],
-        ['Blocks this epoch', formatNumber(metrics.blocks_epoch)],
-        ['Total blocks', formatNumber(metrics.total_blocks ?? metrics.lifetime_blocks)],
-        ['Saturation', formatPercent(metrics.saturation_percent)]
+        ['Delegators', formatNumber(metrics.delegators), true],
+        ['Blocks this epoch', formatNumber(metrics.blocks_epoch), true],
+        ['Total blocks', formatNumber(metrics.total_blocks ?? metrics.lifetime_blocks), true],
+        ['Saturation', formatPercent(metrics.saturation_percent), true]
       ]
     : [
         ['Latest block', formatNumber(metrics.latest_block_no)],
@@ -36,8 +51,9 @@ const MetricsBar = ({ metrics = {}, type = 'cardano', epoch }) => {
   return (
     <div className="metrics-grid">
       <EpochProgressCard epoch={epochMetrics} />
-      {items.map(([label, value]) => (
-        <Card key={label} className="metric-card" size="small">
+      {type === 'pool' && <FeesMarginCard metrics={metrics} />}
+      {items.map(([label, value, compact]) => (
+        <Card key={label} className={`metric-card${compact ? ' metric-card-compact' : ''}`} size="small">
           <Statistic title={label} value={value || '-'} />
         </Card>
       ))}

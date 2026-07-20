@@ -18,7 +18,9 @@ export const previewPoolMetrics = {
   blocks_epoch: 3,
   total_blocks: 12345,
   lifetime_blocks: 12345,
-  saturation_percent: 63.1
+  saturation_percent: 63.1,
+  fixed_cost_lovelace: '340000000',
+  margin_percent: 1.5
 };
 
 export const previewGridBlocks = [
