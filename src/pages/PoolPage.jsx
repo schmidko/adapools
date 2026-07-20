@@ -6,6 +6,7 @@ import { api } from '../api/client.js';
 import MetricsBar from '../components/MetricsBar.jsx';
 import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
 import PoolIdentity from '../components/PoolIdentity.jsx';
+import Seo from '../components/Seo.jsx';
 
 const PoolPage = () => {
   const { poolId } = useParams();
@@ -44,20 +45,31 @@ const PoolPage = () => {
   }, [poolId]);
 
   const pool = metrics || recentBlocks?.pool || {};
-
-  useEffect(() => {
-    const previousTitle = document.title;
-    const label = pool.ticker || pool.name || poolId;
-    if (label) {
-      document.title = `${label} | adapools.xyz`;
-    }
-    return () => {
-      document.title = previousTitle;
-    };
-  }, [pool.ticker, pool.name, poolId]);
+  const poolDisplayName = pool.ticker || pool.name || poolId;
+  const poolSeoTitle = `${poolDisplayName} | adapools.xyz`;
+  const poolSeoDescription = metrics
+    ? `View ${poolDisplayName} Cardano stake pool details including active stake, delegators, blocks, fixed cost, margin and saturation.`
+    : `View Cardano stake pool details for ${poolId} on adapools.xyz.`;
 
   return (
     <section className="page-stack">
+      <Seo
+        title={poolSeoTitle}
+        description={poolSeoDescription}
+        path={`/pool/${poolId}`}
+        image={pool.logo || '/icon-512.png'}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: poolSeoTitle,
+          description: poolSeoDescription,
+          url: `https://adapools.xyz/pool/${poolId}`,
+          about: {
+            '@type': 'Thing',
+            name: `${poolDisplayName} Cardano stake pool`
+          }
+        }}
+      />
       <PoolIdentity pool={pool} poolId={poolId} />
       <MetricsBar metrics={metrics || {}} type="pool" epoch={cardanoMetrics} />
       <div className="block-view-section">

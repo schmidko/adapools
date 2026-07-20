@@ -3,6 +3,7 @@ import { Typography } from 'antd';
 import { api } from '../api/client.js';
 import BlockTicker from '../components/BlockTicker.jsx';
 import MetricsBar from '../components/MetricsBar.jsx';
+import Seo from '../components/Seo.jsx';
 import SyncStatus from '../components/SyncStatus.jsx';
 
 const mergeBlock = (blocks, nextBlock) => {
@@ -86,6 +87,18 @@ const HomePage = () => {
 
   return (
     <section className="page-stack">
+      <Seo
+        title="adapools.xyz | Cardano Stake Pool Explorer"
+        description="Real-time Cardano stake pool explorer: live block ticker, epoch progress and pool metrics for the Cardano mainnet, updated within seconds of each new block."
+        path="/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: 'adapools.xyz',
+          url: 'https://adapools.xyz/',
+          description: 'Real-time Cardano stake pool explorer with a live block ticker and pool metrics.'
+        }}
+      />
       <div>
         <Typography.Title level={1}>Latest blocks</Typography.Title>
         <Typography.Text type="secondary">Live Cardano pool blocks</Typography.Text>
