@@ -183,7 +183,13 @@ const PoolLifecycleItem = ({ item, now }) => {
   );
 };
 
-const PoolBlockTimeline = ({ poolId, previewItems, showAdaEvents = true, layout = 'history' }) => {
+const EVENT_FILTER_KINDS = {
+  blocks: 'block',
+  ada: 'wallet_ada_flow',
+  delegation: 'delegation_change'
+};
+
+const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout = 'history' }) => {
   const hasPreviewItems = Array.isArray(previewItems);
   const isGridLayout = layout === 'grid';
   const [items, setItems] = useState(() => previewItems || []);
@@ -256,10 +262,10 @@ const PoolBlockTimeline = ({ poolId, previewItems, showAdaEvents = true, layout 
     return () => observer.disconnect();
   }, [hasPreviewItems, items, hasMore, loadBlocks, loading, loadingMore]);
 
-  const visibleItems = useMemo(
-    () => (showAdaEvents ? items : items.filter((item) => item.kind !== 'wallet_ada_flow')),
-    [items, showAdaEvents]
-  );
+  const visibleItems = useMemo(() => {
+    const kind = EVENT_FILTER_KINDS[eventFilter];
+    return kind ? items.filter((item) => item.kind === kind) : items;
+  }, [items, eventFilter]);
   const groups = useMemo(() => groupByEpoch(visibleItems), [visibleItems]);
 
   if (loading && items.length === 0) {

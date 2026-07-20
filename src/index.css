@@ -430,22 +430,14 @@ body {
   margin: 0 !important;
 }
 
-.section-toolbar-actions,
-.ada-events-filter {
+.section-toolbar-actions {
   display: flex;
   align-items: center;
-}
-
-.section-toolbar-actions {
   gap: 12px;
 }
 
-.ada-events-filter {
-  gap: 8px;
-  color: var(--tile-muted);
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
+.event-filter-select {
+  min-width: 168px;
 }
 
 .pool-block-timeline {

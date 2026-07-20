@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
-import { Segmented, Switch, Typography } from 'antd';
+import { Segmented, Select, Typography } from 'antd';
 import { api } from '../api/client.js';
 import MetricsBar from '../components/MetricsBar.jsx';
 import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
@@ -13,7 +13,7 @@ const PoolPage = () => {
   const [cardanoMetrics, setCardanoMetrics] = useState({});
   const [recentBlocks, setRecentBlocks] = useState(null);
   const [blockView, setBlockView] = useState('history');
-  const [showAdaEvents, setShowAdaEvents] = useState(true);
+  const [eventFilter, setEventFilter] = useState('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -66,15 +66,18 @@ const PoolPage = () => {
             {blockView === 'grid' ? 'Recent pool blocks' : 'Pool block history'}
           </Typography.Title>
           <div className="section-toolbar-actions">
-            <label className="ada-events-filter">
-              <span>ADA events</span>
-              <Switch
-                size="small"
-                checked={showAdaEvents}
-                onChange={setShowAdaEvents}
-                aria-label="Show ADA events"
-              />
-            </label>
+            <Select
+              value={eventFilter}
+              onChange={setEventFilter}
+              className="event-filter-select"
+              aria-label="Filter events"
+              options={[
+                { label: 'All events', value: 'all' },
+                { label: 'Only blocks', value: 'blocks' },
+                { label: 'Ada events', value: 'ada' },
+                { label: 'Delegation events', value: 'delegation' }
+              ]}
+            />
             <Segmented
               value={blockView}
               onChange={setBlockView}
@@ -86,9 +89,9 @@ const PoolPage = () => {
           </div>
         </div>
         {blockView === 'grid' ? (
-          <PoolBlockTimeline poolId={poolId} layout="grid" showAdaEvents={showAdaEvents} />
+          <PoolBlockTimeline poolId={poolId} layout="grid" eventFilter={eventFilter} />
         ) : (
-          <PoolBlockTimeline poolId={poolId} showAdaEvents={showAdaEvents} />
+          <PoolBlockTimeline poolId={poolId} eventFilter={eventFilter} />
         )}
       </div>
     </section>
