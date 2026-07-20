@@ -6,7 +6,7 @@ const EpochProgressCard = ({ epoch = {} }) => {
   const percent = Math.min(Math.max(Number(epoch.epoch_progress_percent || 0), 0), 100);
 
   return (
-    <Card className="metric-card metric-card-epoch" size="small">
+    <Card className="metric-card metric-card-wide metric-card-epoch" size="small">
       <div className="epoch-card-header">
         <Typography.Text type="secondary" className="epoch-card-label">Epoch</Typography.Text>
         <Statistic value={epochNo ?? '-'} className="epoch-card-value" />
@@ -17,16 +17,10 @@ const EpochProgressCard = ({ epoch = {} }) => {
 };
 
 const FeesMarginCard = ({ metrics = {} }) => (
-  <Card className="metric-card" size="small">
-    <div className="metric-card-split">
-      <div>
-        <Typography.Text type="secondary" className="metric-split-label">Fixed cost</Typography.Text>
-        <div className="metric-split-value">{formatAda(metrics.fixed_cost_lovelace, 0)}</div>
-      </div>
-      <div>
-        <Typography.Text type="secondary" className="metric-split-label">Margin</Typography.Text>
-        <div className="metric-split-value">{formatPercent(metrics.margin_percent)}</div>
-      </div>
+  <Card className="metric-card metric-card-compact metric-card-fees" size="small">
+    <div className="metric-card-fees-stack">
+      <Statistic title="Fixed cost" value={formatAda(metrics.fixed_cost_lovelace, 0) || '-'} />
+      <Statistic title="Margin" value={formatPercent(metrics.margin_percent) || '-'} />
     </div>
   </Card>
 );
@@ -36,27 +30,27 @@ const MetricsBar = ({ metrics = {}, type = 'cardano', epoch }) => {
 
   const items = type === 'pool'
     ? [
-        ['Active stake', formatAda(metrics.active_stake_lovelace, 0)],
-        ['Delegators', formatNumber(metrics.delegators), true],
-        ['Blocks this epoch', formatNumber(metrics.blocks_epoch), true],
-        ['Total blocks', formatNumber(metrics.total_blocks ?? metrics.lifetime_blocks), true],
-        ['Saturation', formatPercent(metrics.saturation_percent), true]
+        { label: 'Active stake', value: formatAda(metrics.active_stake_lovelace, 0), variant: 'wide' },
+        { label: 'Delegators', value: formatNumber(metrics.delegators), variant: 'compact' },
+        { label: 'Blocks this epoch', value: formatNumber(metrics.blocks_epoch), variant: 'compact' },
+        { label: 'Total blocks', value: formatNumber(metrics.total_blocks ?? metrics.lifetime_blocks), variant: 'compact' },
+        { label: 'Saturation', value: formatPercent(metrics.saturation_percent), variant: 'compact' }
       ]
     : [
-        ['Latest block', formatNumber(metrics.latest_block_no)],
-        ['Active pools', formatNumber(metrics.active_pools)],
-        ['Avg full 1h', formatPercent(metrics.avg_block_fullness_1h)]
+        { label: 'Latest block', value: formatNumber(metrics.latest_block_no) },
+        { label: 'Active pools', value: formatNumber(metrics.active_pools) },
+        { label: 'Avg full 1h', value: formatPercent(metrics.avg_block_fullness_1h) }
       ];
 
   return (
     <div className="metrics-grid">
       <EpochProgressCard epoch={epochMetrics} />
-      {type === 'pool' && <FeesMarginCard metrics={metrics} />}
-      {items.map(([label, value, compact]) => (
-        <Card key={label} className={`metric-card${compact ? ' metric-card-compact' : ''}`} size="small">
+      {items.map(({ label, value, variant }) => (
+        <Card key={label} className={`metric-card${variant ? ` metric-card-${variant}` : ''}`} size="small">
           <Statistic title={label} value={value || '-'} />
         </Card>
       ))}
+      {type === 'pool' && <FeesMarginCard metrics={metrics} />}
     </div>
   );
 };
