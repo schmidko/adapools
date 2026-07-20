@@ -6,7 +6,7 @@ const PoolIdentity = ({ pool = {}, poolId }) => {
   const initials = label.slice(0, 2).toUpperCase();
 
   const retiringEpoch = Number(pool.retiring_epoch);
-  const isRetiring = Number.isFinite(retiringEpoch);
+  const isRetiring = pool.retiring_epoch != null && Number.isFinite(retiringEpoch);
   const saturationPercent = Number(pool.saturation_percent);
   const isOversaturated = Number.isFinite(saturationPercent) && saturationPercent > 100;
 

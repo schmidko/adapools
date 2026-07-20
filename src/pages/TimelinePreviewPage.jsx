@@ -19,6 +19,10 @@ const TimelinePreviewPage = () => (
       pool={{ ticker: 'SATU', name: 'Oversaturated Pool', saturation_percent: 142 }}
       poolId="pool1previewoversaturated"
     />
+    <PoolIdentity
+      pool={{ ticker: 'NORM', name: 'Normal Pool', retiring_epoch: null, saturation_percent: 45 }}
+      poolId="pool1previewnormal"
+    />
     <MetricsBar metrics={previewCardanoMetrics} type="cardano" />
     <MetricsBar metrics={previewPoolMetrics} type="pool" epoch={previewCardanoMetrics} />
     <BlockTicker blocks={previewGridBlocks} tileProps={{ clickable: true }} />
