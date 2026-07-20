@@ -6,7 +6,10 @@ const PoolIdentity = ({ pool = {}, poolId }) => {
   const initials = label.slice(0, 2).toUpperCase();
 
   const retiringEpoch = Number(pool.retiring_epoch);
-  const isRetiring = pool.retiring_epoch != null && Number.isFinite(retiringEpoch);
+  const hasRetirement = pool.retiring_epoch != null && Number.isFinite(retiringEpoch);
+  const currentEpoch = Number(pool.current_epoch);
+  const isRetired = hasRetirement && Number.isFinite(currentEpoch) && currentEpoch >= retiringEpoch;
+  const isRetiring = hasRetirement && !isRetired;
   const saturationPercent = Number(pool.saturation_percent);
   const isOversaturated = Number.isFinite(saturationPercent) && saturationPercent > 100;
 
@@ -23,6 +26,11 @@ const PoolIdentity = ({ pool = {}, poolId }) => {
           {isRetiring && (
             <Tooltip title={`This pool is retiring at epoch ${retiringEpoch}`}>
               <Tag color="error">Retiring</Tag>
+            </Tooltip>
+          )}
+          {isRetired && (
+            <Tooltip title={`This pool retired at epoch ${retiringEpoch}`}>
+              <Tag color="default">Retired</Tag>
             </Tooltip>
           )}
           {isOversaturated && (

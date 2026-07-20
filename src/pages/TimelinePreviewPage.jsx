@@ -12,8 +12,12 @@ import {
 const TimelinePreviewPage = () => (
   <section className="page-stack">
     <PoolIdentity
-      pool={{ ticker: 'RETI', name: 'Retiring Pool', retiring_epoch: 650, saturation_percent: 45 }}
+      pool={{ ticker: 'RETI', name: 'Retiring Pool', retiring_epoch: 650, current_epoch: 644, saturation_percent: 45 }}
       poolId="pool1previewretiring"
+    />
+    <PoolIdentity
+      pool={{ ticker: 'DONE', name: 'Retired Pool', retiring_epoch: 620, current_epoch: 644, saturation_percent: 45 }}
+      poolId="pool1previewretired"
     />
     <PoolIdentity
       pool={{ ticker: 'SATU', name: 'Oversaturated Pool', saturation_percent: 142 }}
