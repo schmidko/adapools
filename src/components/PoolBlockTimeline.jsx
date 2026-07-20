@@ -5,7 +5,7 @@ import {
   StopOutlined,
   SwapOutlined
 } from '@ant-design/icons';
-import { Empty, Spin, Tooltip } from 'antd';
+import { Empty, Spin, Tooltip, Typography } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../api/client.js';
 import BlockTile from './BlockTile.jsx';
@@ -32,14 +32,20 @@ const poolLabel = (pool) => pool?.ticker || pool?.name || compactPoolId(pool?.be
 const StakeAddressLink = ({ stakeAddress }) => {
   if (!stakeAddress) return null;
   return (
-    <a
-      className="timeline-event-meta"
-      href={`https://adablox.com/stake/${stakeAddress}`}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {compactPoolId(stakeAddress)}
-    </a>
+    <span className="timeline-event-address">
+      <a
+        className="timeline-event-meta"
+        href={`https://adablox.com/stake/${stakeAddress}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        {compactPoolId(stakeAddress)}
+      </a>
+      <Typography.Text
+        className="timeline-event-copy"
+        copyable={{ text: stakeAddress, tooltips: ['Copy address', 'Copied'] }}
+      />
+    </span>
   );
 };
 

@@ -31,8 +31,15 @@ const PoolIdentity = ({ pool = {}, poolId }) => {
             </Tooltip>
           )}
         </Space>
-        <Typography.Text type="secondary">
-          {pool.name && pool.ticker ? pool.name : compactPoolId(poolId)}
+        {pool.name && pool.ticker && (
+          <Typography.Text type="secondary">{pool.name}</Typography.Text>
+        )}
+        <Typography.Text
+          type="secondary"
+          className="pool-id-text"
+          copyable={{ text: poolId, tooltips: ['Copy pool ID', 'Copied'] }}
+        >
+          {compactPoolId(poolId)}
         </Typography.Text>
       </Space>
     </div>

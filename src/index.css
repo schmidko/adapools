@@ -453,6 +453,11 @@ body {
   gap: 14px;
 }
 
+.pool-id-text {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
 .center-state {
   display: grid;
   min-height: 260px;
@@ -671,6 +676,23 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-decoration: none;
+}
+
+.timeline-event-address {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.timeline-event-address .timeline-event-meta {
+  min-width: 0;
+}
+
+.timeline-event-copy {
+  flex-shrink: 0;
+  color: var(--tile-muted);
+  font-size: 12px;
 }
 
 a.timeline-event-meta:hover {
