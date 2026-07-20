@@ -183,8 +183,9 @@ const PoolLifecycleItem = ({ item, now }) => {
   );
 };
 
-const PoolBlockTimeline = ({ poolId, previewItems }) => {
+const PoolBlockTimeline = ({ poolId, previewItems, showAdaEvents = true, layout = 'history' }) => {
   const hasPreviewItems = Array.isArray(previewItems);
+  const isGridLayout = layout === 'grid';
   const [items, setItems] = useState(() => previewItems || []);
   const [loading, setLoading] = useState(!hasPreviewItems);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -255,27 +256,35 @@ const PoolBlockTimeline = ({ poolId, previewItems }) => {
     return () => observer.disconnect();
   }, [hasPreviewItems, items, hasMore, loadBlocks, loading, loadingMore]);
 
-  const groups = useMemo(() => groupByEpoch(items), [items]);
+  const visibleItems = useMemo(
+    () => (showAdaEvents ? items : items.filter((item) => item.kind !== 'wallet_ada_flow')),
+    [items, showAdaEvents]
+  );
+  const groups = useMemo(() => groupByEpoch(visibleItems), [visibleItems]);
 
   if (loading && items.length === 0) {
     return <div className="center-state"><Spin /></div>;
   }
 
-  if (items.length === 0) {
-    return <Empty description="No timeline history yet" />;
+  if (visibleItems.length === 0) {
+    return <Empty description={items.length === 0 ? 'No timeline history yet' : 'No events match this filter'} />;
   }
 
   return (
-    <div className="pool-block-timeline">
+    <div className={`pool-block-timeline pool-block-timeline-${layout}`}>
       {groups.map((group) => (
-        <section className="epoch-block-group" key={group.epoch}>
-          <div className="epoch-number">Epoch {group.epoch}</div>
+        <section className={`epoch-block-group epoch-block-group-${layout}`} key={group.epoch}>
+          {isGridLayout ? (
+            <h4 className="pool-grid-epoch-heading">Epoch {group.epoch}</h4>
+          ) : (
+            <div className="epoch-number">Epoch {group.epoch}</div>
+          )}
           <div className="timeline-blocks">
             {group.items.map((item) => {
               if (item.kind === 'block') {
                 return (
                   <div className="timeline-block-tile" key={`block-${item.block_no}`}>
-                    <BlockTile block={item} showPool={false} prominentAda now={now} />
+                    <BlockTile block={item} showPool={isGridLayout} prominentAda={!isGridLayout} now={now} />
                   </div>
                 );
               }

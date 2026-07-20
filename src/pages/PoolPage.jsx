@@ -1,26 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
-import { Segmented, Typography } from 'antd';
+import { Segmented, Switch, Typography } from 'antd';
 import { api } from '../api/client.js';
-import BlockTicker from '../components/BlockTicker.jsx';
 import MetricsBar from '../components/MetricsBar.jsx';
 import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
 import PoolIdentity from '../components/PoolIdentity.jsx';
-
-const groupBlocksByEpoch = (blocks) => {
-  const groups = [];
-  for (const block of blocks) {
-    const epoch = block.epoch_no ?? 'Unknown';
-    const current = groups[groups.length - 1];
-    if (current?.epoch === epoch) {
-      current.blocks.push(block);
-    } else {
-      groups.push({ epoch, blocks: [block] });
-    }
-  }
-  return groups;
-};
 
 const PoolPage = () => {
   const { poolId } = useParams();
@@ -28,6 +13,7 @@ const PoolPage = () => {
   const [cardanoMetrics, setCardanoMetrics] = useState({});
   const [recentBlocks, setRecentBlocks] = useState(null);
   const [blockView, setBlockView] = useState('history');
+  const [showAdaEvents, setShowAdaEvents] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -58,9 +44,6 @@ const PoolPage = () => {
   }, [poolId]);
 
   const pool = metrics || recentBlocks?.pool || {};
-  const blocks = recentBlocks?.blocks || [];
-  const poolBlocks = blocks.map((block) => ({ ...block, pool: { ...pool, bech32_pool_id: poolId } }));
-  const blockEpochGroups = groupBlocksByEpoch(poolBlocks);
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -82,30 +65,30 @@ const PoolPage = () => {
           <Typography.Title level={3}>
             {blockView === 'grid' ? 'Recent pool blocks' : 'Pool block history'}
           </Typography.Title>
-          <Segmented
-            value={blockView}
-            onChange={setBlockView}
-            options={[
-              { label: 'Grid', value: 'grid', icon: <AppstoreOutlined /> },
-              { label: 'History', value: 'history', icon: <BarsOutlined /> }
-            ]}
-          />
+          <div className="section-toolbar-actions">
+            <label className="ada-events-filter">
+              <span>ADA events</span>
+              <Switch
+                size="small"
+                checked={showAdaEvents}
+                onChange={setShowAdaEvents}
+                aria-label="Show ADA events"
+              />
+            </label>
+            <Segmented
+              value={blockView}
+              onChange={setBlockView}
+              options={[
+                { label: 'Grid', value: 'grid', icon: <AppstoreOutlined /> },
+                { label: 'History', value: 'history', icon: <BarsOutlined /> }
+              ]}
+            />
+          </div>
         </div>
         {blockView === 'grid' ? (
-          blockEpochGroups.length === 0 ? (
-            <BlockTicker blocks={poolBlocks} loading={loading} />
-          ) : (
-            <div className="pool-grid-epochs">
-              {blockEpochGroups.map((group) => (
-                <section className="pool-grid-epoch" key={group.epoch}>
-                  <h4 className="pool-grid-epoch-heading">Epoch {group.epoch}</h4>
-                  <BlockTicker blocks={group.blocks} />
-                </section>
-              ))}
-            </div>
-          )
+          <PoolBlockTimeline poolId={poolId} layout="grid" showAdaEvents={showAdaEvents} />
         ) : (
-          <PoolBlockTimeline poolId={poolId} />
+          <PoolBlockTimeline poolId={poolId} showAdaEvents={showAdaEvents} />
         )}
       </div>
     </section>
