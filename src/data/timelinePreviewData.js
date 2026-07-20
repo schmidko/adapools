@@ -21,6 +21,63 @@ export const previewPoolMetrics = {
   saturation_percent: 63.1
 };
 
+export const previewGridBlocks = [
+  {
+    block_no: 13700432,
+    time: minutesAgo(1),
+    total_output_lovelace: '256400000000',
+    total_fees_lovelace: '3980000',
+    tx_count: 21,
+    fullness_percent: 62.4,
+    pool: { ticker: 'BLOX', bech32_pool_id: 'pool1previewblox8q7ylx2n39x' }
+  },
+  {
+    block_no: 13700427,
+    time: minutesAgo(7),
+    total_output_lovelace: '183000000000',
+    total_fees_lovelace: '2740000',
+    tx_count: 16,
+    fullness_percent: 44.8,
+    pool: { ticker: 'HAM', bech32_pool_id: 'pool1previewham8q7ylx2n39x' }
+  },
+  {
+    block_no: 13700421,
+    time: minutesAgo(13),
+    total_output_lovelace: '94200000000',
+    total_fees_lovelace: '1880000',
+    tx_count: 9,
+    fullness_percent: 26.2,
+    pool: { ticker: 'LACE', bech32_pool_id: 'pool1previewlace8q7ylx2n39x' }
+  },
+  {
+    block_no: 13700416,
+    time: minutesAgo(19),
+    total_output_lovelace: '318600000000',
+    total_fees_lovelace: '4760000',
+    tx_count: 28,
+    fullness_percent: 78.1,
+    pool: { ticker: 'NOVA', bech32_pool_id: 'pool1previewnova8q7ylx2n39x' }
+  },
+  {
+    block_no: 13700412,
+    time: minutesAgo(24),
+    total_output_lovelace: '126700000000',
+    total_fees_lovelace: '2190000',
+    tx_count: 12,
+    fullness_percent: 35.6,
+    pool: { ticker: 'WAVE', bech32_pool_id: 'pool1previewwave8q7ylx2n39x' }
+  },
+  {
+    block_no: 13700406,
+    time: minutesAgo(31),
+    total_output_lovelace: '289500000000',
+    total_fees_lovelace: '4310000',
+    tx_count: 24,
+    fullness_percent: 69.3,
+    pool: { ticker: 'MINT', bech32_pool_id: 'pool1previewmint8q7ylx2n39x' }
+  }
+];
+
 export const timelinePreviewItems = [
   {
     event_id: 'preview-lifecycle-retired',

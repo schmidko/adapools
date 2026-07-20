@@ -8,6 +8,20 @@ import MetricsBar from '../components/MetricsBar.jsx';
 import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
 import PoolIdentity from '../components/PoolIdentity.jsx';
 
+const groupBlocksByEpoch = (blocks) => {
+  const groups = [];
+  for (const block of blocks) {
+    const epoch = block.epoch_no ?? 'Unknown';
+    const current = groups[groups.length - 1];
+    if (current?.epoch === epoch) {
+      current.blocks.push(block);
+    } else {
+      groups.push({ epoch, blocks: [block] });
+    }
+  }
+  return groups;
+};
+
 const PoolPage = () => {
   const { poolId } = useParams();
   const [metrics, setMetrics] = useState(null);
@@ -45,6 +59,8 @@ const PoolPage = () => {
 
   const pool = metrics || recentBlocks?.pool || {};
   const blocks = recentBlocks?.blocks || [];
+  const poolBlocks = blocks.map((block) => ({ ...block, pool: { ...pool, bech32_pool_id: poolId } }));
+  const blockEpochGroups = groupBlocksByEpoch(poolBlocks);
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -76,11 +92,18 @@ const PoolPage = () => {
           />
         </div>
         {blockView === 'grid' ? (
-          <BlockTicker
-            blocks={blocks.map((block) => ({ ...block, pool: { ...pool, bech32_pool_id: poolId } }))}
-            loading={loading}
-            tileProps={{ showPool: false, prominentAda: true }}
-          />
+          blockEpochGroups.length === 0 ? (
+            <BlockTicker blocks={poolBlocks} loading={loading} />
+          ) : (
+            <div className="pool-grid-epochs">
+              {blockEpochGroups.map((group) => (
+                <section className="pool-grid-epoch" key={group.epoch}>
+                  <h4 className="pool-grid-epoch-heading">Epoch {group.epoch}</h4>
+                  <BlockTicker blocks={group.blocks} />
+                </section>
+              ))}
+            </div>
+          )
         ) : (
           <PoolBlockTimeline poolId={poolId} />
         )}
