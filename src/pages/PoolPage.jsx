@@ -46,6 +46,17 @@ const PoolPage = () => {
   const pool = metrics || recentBlocks?.pool || {};
   const blocks = recentBlocks?.blocks || [];
 
+  useEffect(() => {
+    const previousTitle = document.title;
+    const label = pool.ticker || pool.name || poolId;
+    if (label) {
+      document.title = `${label} | adapools.xyz`;
+    }
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [pool.ticker, pool.name, poolId]);
+
   return (
     <section className="page-stack">
       <PoolIdentity pool={pool} poolId={poolId} />
