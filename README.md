@@ -678,13 +678,14 @@ eingeschaltet:
 ```env
 POOL_ADS_ENABLED=true
 POOL_ADS_PAYMENT_ADDRESS=addr1...
-POOL_ADS_BLOCKFROST_PROJECT_ID=mainnet...
+ADAPOOLS_DATABASE_URL=postgresql://...
 ```
 
-`POOL_ADS_PAYMENT_ADDRESS` und `POOL_ADS_BLOCKFROST_PROJECT_ID` bleiben nur auf
-dem Server. Ohne beide Werte sind Buchung und Zahlungspruefung gesperrt, auch
-wenn der Feature-Flag aktiv ist. Die Zahlungspruefung kontrolliert Empfaenger,
-exakten Lovelace-Betrag und Buchungsreferenz in den Transaktions-Metadaten.
+`POOL_ADS_PAYMENT_ADDRESS` und `ADAPOOLS_DATABASE_URL` bleiben nur auf dem
+Server. Ohne beide Werte sind Buchung und Zahlungspruefung gesperrt, auch wenn
+der Feature-Flag aktiv ist. Die Zahlungspruefung fragt die eigene db-sync-
+Postgres-Datenbank ab und kontrolliert Empfaenger, exakten Lovelace-Betrag und
+Buchungsreferenz in den Transaktions-Metadaten.
 `adapools_pool_ad_bookings` speichert Buchungen; `adapools_pool_ad_slot_locks`
 verhindert parallele Buchungen. Abgelaufene Slots werden bei API-Aufrufen und
 durch einen minuetlichen Job wieder freigegeben.

@@ -12,4 +12,5 @@ ADAPOOLS_WS_POLL_INTERVAL_MS=3000
 POOL_ADS_ENABLED=false
 # Required only when POOL_ADS_ENABLED=true. Never expose these values to the browser.
 POOL_ADS_PAYMENT_ADDRESS=
-POOL_ADS_BLOCKFROST_PROJECT_ID=
+# Internal db-sync connection for server-side payment verification.
+ADAPOOLS_DATABASE_URL=

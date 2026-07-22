@@ -7,14 +7,11 @@ const MIN_DAYS = 1;
 const MAX_DAYS = 30;
 const QUOTE_LIFETIME_MS = 15 * 60 * 1000;
 const METADATA_LABEL = 674;
-const MAINNET_BLOCKFROST_URL = 'https://cardano-mainnet.blockfrost.io/api/v0';
 const quoteRequests = new Map();
 const verificationRequests = new Map();
 
 const isEnabled = () => process.env.POOL_ADS_ENABLED === 'true';
 const paymentAddress = () => String(process.env.POOL_ADS_PAYMENT_ADDRESS || '').trim();
-const blockfrostProjectId = () => String(process.env.POOL_ADS_BLOCKFROST_PROJECT_ID || '').trim();
-const isConfigured = () => Boolean(paymentAddress() && blockfrostProjectId());
 const getNow = () => new Date();
 const toIso = (value) => value instanceof Date ? value.toISOString() : value;
 
@@ -87,37 +84,34 @@ const buildPoolSearchQuery = (query) => {
   };
 };
 
-const fetchBlockfrost = async (path) => {
-  const response = await fetch(`${MAINNET_BLOCKFROST_URL}${path}`, {
-    headers: { project_id: blockfrostProjectId() }
-  });
-  if (!response.ok) {
-    const error = new Error(`Blockfrost request failed: ${response.status}`);
-    error.status = response.status;
-    throw error;
-  }
-  return response.json();
+const verifyPayment = async ({ postgres, booking, txHash }) => {
+  const result = await postgres.query(
+    `SELECT
+      EXISTS (
+        SELECT 1
+        FROM tx
+        JOIN tx_out ON tx_out.tx_id = tx.id
+        WHERE encode(tx.hash, 'hex') = $1
+          AND tx_out.address = $2
+          AND tx_out.value = $3::bigint
+      ) AS has_expected_output,
+      EXISTS (
+        SELECT 1
+        FROM tx
+        JOIN tx_metadata ON tx_metadata.tx_id = tx.id
+        WHERE encode(tx.hash, 'hex') = $1
+          AND tx_metadata.key = $4::bigint
+          AND CAST(tx_metadata.json AS text) LIKE '%' || $5 || '%'
+      ) AS has_payment_reference`,
+    [txHash, paymentAddress(), String(booking.amount_lovelace), METADATA_LABEL, booking.payment_reference]
+  );
+  const row = result.rows[0] || {};
+  return Boolean(row.has_expected_output && row.has_payment_reference);
 };
 
-const verifyPayment = async (booking, txHash) => {
-  const [utxos, metadata] = await Promise.all([
-    fetchBlockfrost(`/txs/${encodeURIComponent(txHash)}/utxos`),
-    fetchBlockfrost(`/txs/${encodeURIComponent(txHash)}/metadata`)
-  ]);
-  const hasExpectedOutput = (utxos.outputs || []).some((output) => {
-    const lovelace = (output.amount || []).find((asset) => asset.unit === 'lovelace');
-    return output.address === paymentAddress() && lovelace?.quantity === String(booking.amount_lovelace);
-  });
-  const hasReference = (metadata || []).some((entry) => (
-    String(entry.label) === String(METADATA_LABEL) &&
-    JSON.stringify(entry.json_metadata || {}).includes(booking.payment_reference)
-  ));
-  return hasExpectedOutput && hasReference;
-};
-
-const requireEnabled = (req, res, next) => {
+const requireEnabled = (postgres) => (req, res, next) => {
   if (!isEnabled()) return res.status(404).json({ error: 'pool_ads_disabled' });
-  if (!isConfigured()) return res.status(503).json({ error: 'pool_ads_not_configured' });
+  if (!paymentAddress() || !postgres.isConfigured) return res.status(503).json({ error: 'pool_ads_not_configured' });
   return next();
 };
 
@@ -131,7 +125,9 @@ const createRateLimit = (store, limit, windowMs) => (req, res, next) => {
   return next();
 };
 
-export const registerPoolAdRoutes = ({ app, collections }) => {
+export const registerPoolAdRoutes = ({ app, collections, postgres }) => {
+  const isConfigured = () => Boolean(paymentAddress() && postgres.isConfigured);
+  const requireConfigured = requireEnabled(postgres);
   const expire = () => releaseExpiredBookings(collections).catch((error) => {
     console.error('[adapools] Failed to expire pool ads:', error);
   });
@@ -170,7 +166,7 @@ export const registerPoolAdRoutes = ({ app, collections }) => {
     }
   });
 
-  app.get('/api/pool-ads/pools', requireEnabled, async (req, res) => {
+  app.get('/api/pool-ads/pools', requireConfigured, async (req, res) => {
     try {
       const documents = await collections.poolCache
         .find(buildPoolSearchQuery(req.query.query), {
@@ -192,7 +188,7 @@ export const registerPoolAdRoutes = ({ app, collections }) => {
     }
   });
 
-  app.post('/api/pool-ads/quotes', requireEnabled, createRateLimit(quoteRequests, 10, 15 * 60 * 1000), async (req, res) => {
+  app.post('/api/pool-ads/quotes', requireConfigured, createRateLimit(quoteRequests, 10, 15 * 60 * 1000), async (req, res) => {
     try {
       const poolId = String(req.body?.pool_id || '');
       const slotId = String(req.body?.slot_id || '');
@@ -244,7 +240,7 @@ export const registerPoolAdRoutes = ({ app, collections }) => {
     }
   });
 
-  app.post('/api/pool-ads/verify', requireEnabled, createRateLimit(verificationRequests, 30, 15 * 60 * 1000), async (req, res) => {
+  app.post('/api/pool-ads/verify', requireConfigured, createRateLimit(verificationRequests, 30, 15 * 60 * 1000), async (req, res) => {
     try {
       const bookingId = String(req.body?.booking_id || '');
       const txHash = String(req.body?.tx_hash || '').toLowerCase();
@@ -255,7 +251,7 @@ export const registerPoolAdRoutes = ({ app, collections }) => {
       if (booking.status === 'active') return res.json({ booking: serializeBooking(booking) });
       if (booking.status !== 'awaiting_payment') return res.status(409).json({ error: 'pool_ad_booking_not_payable' });
 
-      const validPayment = await verifyPayment(booking, txHash);
+      const validPayment = await verifyPayment({ postgres, booking, txHash });
       if (!validPayment) return res.status(422).json({ error: 'pool_ad_payment_not_verified' });
 
       const now = getNow();
