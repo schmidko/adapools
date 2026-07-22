@@ -105,6 +105,26 @@ body {
   width: min(560px, 48vw);
 }
 
+.discover-pools-link {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--tile-border);
+  border-radius: 8px;
+  color: var(--app-text);
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.discover-pools-link:hover {
+  border-color: var(--event-positive);
+  color: var(--app-text);
+}
+
 .pool-search-input {
   height: 56px;
   border-radius: 8px;
@@ -145,6 +165,234 @@ body {
   flex: 1 0 auto;
   margin: 0 auto;
   padding: 28px 0 48px;
+}
+
+.page-heading-with-ads,
+.pool-identity-with-aside {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.pool-ads-inline {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-self: end;
+  width: 100%;
+  gap: 8px;
+}
+
+.pool-ad-tile {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 68px;
+  gap: 10px;
+  border: 1px solid var(--tile-border);
+  border-radius: 8px;
+  background: var(--tile-bg);
+  color: var(--app-text);
+  padding: 10px;
+  text-align: left;
+  text-decoration: none;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+button.pool-ad-tile {
+  width: 100%;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pool-ad-tile:hover,
+.pool-ad-tile:focus-visible {
+  border-color: var(--event-positive);
+  color: var(--app-text);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.pool-ad-tile-promo {
+  background: var(--tile-bg);
+}
+
+.pool-ad-logo,
+.pool-ad-promo-icon {
+  flex: 0 0 auto;
+  width: 48px !important;
+  height: 48px !important;
+  border: 1px solid var(--tile-border);
+  background: var(--app-surface);
+}
+
+.pool-ad-promo-icon {
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--event-block);
+  font-size: 22px;
+}
+
+.pool-ad-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.pool-ad-copy strong {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pool-ad-sponsored,
+.pool-ad-description {
+  overflow: hidden;
+  color: var(--tile-muted);
+  font-size: 11px;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pool-ad-sponsored {
+  color: var(--tile-muted);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0;
+  opacity: 0.55;
+}
+
+.pool-ad-arrow {
+  color: var(--tile-muted);
+  font-size: 16px;
+}
+
+.pool-ad-config-alert {
+  grid-column: 1 / -1;
+}
+
+.pool-ad-booking-form {
+  display: grid;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.pool-ad-booking-form label {
+  color: var(--tile-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pool-ad-booking-form .ant-input-number {
+  width: 100%;
+}
+
+.pool-ad-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-top: 1px solid var(--tile-border);
+  padding-top: 14px;
+}
+
+.pool-ad-price span {
+  color: var(--tile-muted);
+}
+
+.pool-ad-price strong {
+  font-size: 20px;
+}
+
+.pool-ad-preview-section {
+  display: grid;
+  gap: 8px;
+}
+
+.pool-ad-preview-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--tile-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pool-ad-preview-heading .anticon {
+  color: var(--event-positive);
+}
+
+.pool-ad-preview-grid {
+  width: 100%;
+}
+
+.discovery-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.discovery-heading .ant-typography {
+  margin-bottom: 0 !important;
+}
+
+.discovery-controls,
+.discovery-filters {
+  display: grid;
+  gap: 10px;
+}
+
+.discovery-controls {
+  grid-template-columns: minmax(260px, 1fr) 150px auto;
+}
+
+.discovery-filters {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--tile-border);
+  padding-top: 12px;
+}
+
+.discovery-filters .ant-input-number {
+  width: 100%;
+}
+
+.pool-discovery-table .ant-table-wrapper,
+.pool-discovery-table .ant-spin-nested-loading {
+  min-width: 0;
+}
+
+.discovery-pool {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  color: var(--app-text);
+  text-decoration: none;
+}
+
+.discovery-pool:hover {
+  color: var(--event-positive);
+}
+
+.discovery-pool > span {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.discovery-pool strong,
+.discovery-pool small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.discovery-pool small {
+  color: var(--tile-muted);
 }
 
 .app-footer {
@@ -451,6 +699,18 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+
+.pool-identity-main {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 14px;
+}
+
+.pool-identity-aside {
+  justify-self: end;
+  width: 100%;
 }
 
 .pool-id-text {
@@ -761,13 +1021,24 @@ a.timeline-event-meta:hover {
   }
 
   .header-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     width: 100%;
     order: 2;
     gap: 10px;
   }
 
   .pool-search {
-    width: 100%;
+    width: auto;
+  }
+
+  .discover-pools-link {
+    min-height: 40px;
+    padding: 0 10px;
+  }
+
+  .discover-pools-link span {
+    display: none;
   }
 
   .pool-search-input {
@@ -785,6 +1056,47 @@ a.timeline-event-meta:hover {
   .app-main {
     width: min(100% - 20px, 1440px);
     padding-top: 18px;
+  }
+
+  .page-heading-with-ads,
+  .pool-identity-with-aside {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .pool-ads-inline {
+    justify-self: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .pool-ad-tile {
+    min-height: 78px;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .pool-ad-logo,
+  .pool-ad-promo-icon {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .pool-ad-promo-icon {
+    font-size: 20px;
+  }
+
+  .discovery-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .discovery-controls {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .discovery-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .footer-inner {

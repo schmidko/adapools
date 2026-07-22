@@ -5,6 +5,7 @@ import AppHeader from './components/AppHeader.jsx';
 import AppFooter from './components/AppFooter.jsx';
 import HomePage from './pages/HomePage.jsx';
 import PoolPage from './pages/PoolPage.jsx';
+import PoolDiscoveryPage from './pages/PoolDiscoveryPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import TimelinePreviewPage from './pages/TimelinePreviewPage.jsx';
 
@@ -28,6 +29,7 @@ const ThemedApp = () => {
         <main className="app-main">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/discover" element={<PoolDiscoveryPage />} />
             <Route path="/pool/:poolId" element={<PoolPage />} />
             {import.meta.env.DEV && <Route path="/__timeline-preview" element={<TimelinePreviewPage />} />}
             <Route path="*" element={<NotFoundPage />} />

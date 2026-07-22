@@ -6,6 +6,21 @@ const fetchJson = async (url) => {
   return response.json();
 };
 
+const sendJson = async (url, method, body) => {
+  const response = await fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(payload.error || `Request failed: ${response.status}`);
+    error.code = payload.error;
+    throw error;
+  }
+  return payload;
+};
+
 export const api = {
   getCardanoMetrics: () => fetchJson('/api/cardano/metrics'),
   getLatestBlocks: (limit = 120) => fetchJson(`/api/blocks/latest?limit=${limit}`),
@@ -22,5 +37,11 @@ export const api = {
   },
   getPoolRecentBlocks: (poolId) => fetchJson(`/api/pools/${encodeURIComponent(poolId)}/recent-blocks`),
   getPoolSearchIndex: () => fetchJson('/api/pools/search-index'),
-  getSyncStatus: () => fetchJson('/api/sync/status')
+  getPoolDiscovery: (params) => fetchJson(`/api/pools/discover?${new URLSearchParams(params).toString()}`),
+  getSyncStatus: () => fetchJson('/api/sync/status'),
+  getPoolAdsStatus: () => fetchJson('/api/pool-ads/status'),
+  getPoolAdSlots: () => fetchJson('/api/pool-ads/slots'),
+  searchPoolAds: (query = '') => fetchJson(`/api/pool-ads/pools?query=${encodeURIComponent(query)}`),
+  createPoolAdQuote: (details) => sendJson('/api/pool-ads/quotes', 'POST', details),
+  verifyPoolAdPayment: (details) => sendJson('/api/pool-ads/verify', 'POST', details)
 };

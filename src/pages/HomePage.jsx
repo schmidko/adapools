@@ -5,6 +5,7 @@ import BlockTicker from '../components/BlockTicker.jsx';
 import MetricsBar from '../components/MetricsBar.jsx';
 import Seo from '../components/Seo.jsx';
 import SyncStatus from '../components/SyncStatus.jsx';
+import PoolAdsBanner from '../components/PoolAdsBanner.jsx';
 
 const mergeBlock = (blocks, nextBlock) => {
   if (!nextBlock?.block_no) return blocks;
@@ -99,9 +100,12 @@ const HomePage = () => {
           description: 'Real-time Cardano stake pool explorer with a live block ticker and pool metrics.'
         }}
       />
-      <div>
-        <Typography.Title level={1}>Latest blocks</Typography.Title>
-        <Typography.Text type="secondary">Live Cardano pool blocks</Typography.Text>
+      <div className="page-heading-with-ads">
+        <div>
+          <Typography.Title level={1}>Latest blocks</Typography.Title>
+          <Typography.Text type="secondary">Live Cardano pool blocks</Typography.Text>
+        </div>
+        <PoolAdsBanner />
       </div>
       <MetricsBar metrics={metrics} />
       <SyncStatus states={syncStates} />

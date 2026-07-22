@@ -2,6 +2,7 @@ import BlockTicker from '../components/BlockTicker.jsx';
 import MetricsBar from '../components/MetricsBar.jsx';
 import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
 import PoolIdentity from '../components/PoolIdentity.jsx';
+import { PoolAdsPreview } from '../components/PoolAdsBanner.jsx';
 import {
   previewCardanoMetrics,
   previewGridBlocks,
@@ -11,6 +12,7 @@ import {
 
 const TimelinePreviewPage = () => (
   <section className="page-stack">
+    <PoolAdsPreview />
     <PoolIdentity
       pool={{ ticker: 'RETI', name: 'Retiring Pool', retiring_epoch: 650, current_epoch: 644, saturation_percent: 45 }}
       poolId="pool1previewretiring"

@@ -7,6 +7,7 @@ import MetricsBar from '../components/MetricsBar.jsx';
 import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
 import PoolIdentity from '../components/PoolIdentity.jsx';
 import Seo from '../components/Seo.jsx';
+import PoolAdsBanner from '../components/PoolAdsBanner.jsx';
 
 const BLOCK_VIEW_STORAGE_KEY = 'adapools-pool-block-view';
 
@@ -81,7 +82,7 @@ const PoolPage = () => {
           }
         }}
       />
-      <PoolIdentity pool={pool} poolId={poolId} />
+      <PoolIdentity pool={pool} poolId={poolId} aside={<PoolAdsBanner />} />
       <MetricsBar metrics={metrics || {}} type="pool" epoch={cardanoMetrics} />
       <div className="block-view-section">
         <div className="section-toolbar">

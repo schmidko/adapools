@@ -665,6 +665,42 @@ Erwartete Server-Dateien:
 Die Env-Datei sollte mindestens Mongo-Verbindung und CORS enthalten. Wenn Mongo
 auf dem Docker-Host laeuft, ist `MONGO_HOST=host.docker.internal` vorgesehen.
 
+## Pool-Header-Anzeigen
+
+Die optionalen Pool-Anzeigen bestehen aus zwei Header-Slots. Freie Slots zeigen
+die Eigenwerbung, gebuchte Slots werden ausschliesslich aus Pool-Ticker, Name,
+Beschreibung und Logo generiert. Ein Slot kostet 1 ADA pro Tag und wird nach
+einer bestaetigten Zahlung fuer die gebuchte Dauer aktiviert.
+
+Die Funktion ist standardmaessig deaktiviert und wird nur in der Server-Env
+eingeschaltet:
+
+```env
+POOL_ADS_ENABLED=true
+POOL_ADS_PAYMENT_ADDRESS=addr1...
+POOL_ADS_BLOCKFROST_PROJECT_ID=mainnet...
+```
+
+`POOL_ADS_PAYMENT_ADDRESS` und `POOL_ADS_BLOCKFROST_PROJECT_ID` bleiben nur auf
+dem Server. Ohne beide Werte sind Buchung und Zahlungspruefung gesperrt, auch
+wenn der Feature-Flag aktiv ist. Die Zahlungspruefung kontrolliert Empfaenger,
+exakten Lovelace-Betrag und Buchungsreferenz in den Transaktions-Metadaten.
+`adapools_pool_ad_bookings` speichert Buchungen; `adapools_pool_ad_slot_locks`
+verhindert parallele Buchungen. Abgelaufene Slots werden bei API-Aufrufen und
+durch einen minuetlichen Job wieder freigegeben.
+
+Lokal zeigt `http://localhost:5173/__timeline-preview` beide Banner-Varianten.
+Die Route ist nur im Vite-Entwicklungsmodus verfuegbar.
+
+## Pool Discovery
+
+`/discover` ist die eigenstaendige Poolliste von adapools. Die Seite liest
+ausschliesslich aus Mongo `pool_cache`, paginiert serverseitig und kann nach
+Pool, Status, Stake, Delegators, Blocks, Sattigung, Margin, Fixkosten, Pledge
+und erster Registrierungszeit filtern und sortieren. Der Pool-Worker schreibt
+`registered_on` als erste On-Chain-Poolregistrierung, nicht als Zeitpunkt der
+letzten Pool-Aktualisierung.
+
 ## Offene Entscheidungen
 
 - Soll `adapools` dieselbe Mongo-Datenbank `adablox` nutzen oder eine eigene
