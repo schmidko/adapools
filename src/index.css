@@ -164,7 +164,7 @@ body {
   width: min(1440px, calc(100% - 32px));
   flex: 1 0 auto;
   margin: 0 auto;
-  padding: 28px 0 48px;
+  padding: 20px 0 48px;
 }
 
 .page-heading-with-ads,
@@ -334,7 +334,7 @@ button.pool-ad-tile {
 }
 
 .page-heading-with-ads.discovery-heading {
-  align-items: start;
+  align-items: end;
 }
 
 .discovery-controls,
@@ -353,7 +353,7 @@ button.pool-ad-tile {
   padding-top: 12px;
 }
 
-.discovery-filters > * {
+.discovery-filters>* {
   min-width: 0;
 }
 
@@ -377,7 +377,7 @@ button.pool-ad-tile {
   min-width: 0;
 }
 
-.pool-discovery-table .ant-table-thead > tr > th {
+.pool-discovery-table .ant-table-thead>tr>th {
   white-space: nowrap;
 }
 
@@ -394,7 +394,7 @@ button.pool-ad-tile {
   color: var(--event-positive);
 }
 
-.discovery-pool > span {
+.discovery-pool>span {
   display: grid;
   min-width: 0;
   gap: 2px;
