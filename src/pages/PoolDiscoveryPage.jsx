@@ -74,7 +74,7 @@ const PoolDiscoveryPage = () => {
     {
       title: 'Pool',
       key: 'pool',
-      width: 260,
+      width: 220,
       sorter: true,
       sortOrder: params.sortBy === 'pool' ? sortOrder : null,
       render: (_, pool) => {
@@ -93,7 +93,7 @@ const PoolDiscoveryPage = () => {
     {
       title: 'Status',
       dataIndex: 'status',
-      width: 104,
+      width: 90,
       render: (status) => <Tag color={status === 'Active' ? 'success' : status === 'Retiring' ? 'warning' : 'default'}>{status}</Tag>
     },
     {
@@ -101,7 +101,7 @@ const PoolDiscoveryPage = () => {
       dataIndex: 'active_stake_lovelace',
       key: 'active_stake',
       align: 'right',
-      width: 150,
+      width: 130,
       sorter: true,
       sortOrder: params.sortBy === 'active_stake' ? sortOrder : null,
       render: (value) => formatAda(value, 0)
@@ -111,7 +111,7 @@ const PoolDiscoveryPage = () => {
       dataIndex: 'delegators',
       key: 'delegators',
       align: 'right',
-      width: 120,
+      width: 108,
       sorter: true,
       sortOrder: params.sortBy === 'delegators' ? sortOrder : null,
       render: formatNumber
@@ -121,7 +121,7 @@ const PoolDiscoveryPage = () => {
       dataIndex: 'lifetime_blocks',
       key: 'blocks',
       align: 'right',
-      width: 105,
+      width: 88,
       sorter: true,
       sortOrder: params.sortBy === 'blocks' ? sortOrder : null,
       render: formatNumber
@@ -131,7 +131,7 @@ const PoolDiscoveryPage = () => {
       dataIndex: 'saturation_percent',
       key: 'saturation',
       align: 'right',
-      width: 120,
+      width: 108,
       sorter: true,
       sortOrder: params.sortBy === 'saturation' ? sortOrder : null,
       render: formatPercent
@@ -141,7 +141,7 @@ const PoolDiscoveryPage = () => {
       dataIndex: 'margin_percent',
       key: 'margin',
       align: 'right',
-      width: 100,
+      width: 88,
       sorter: true,
       sortOrder: params.sortBy === 'margin' ? sortOrder : null,
       render: formatPercent
@@ -151,7 +151,7 @@ const PoolDiscoveryPage = () => {
       dataIndex: 'fixed_cost_lovelace',
       key: 'fixed_cost',
       align: 'right',
-      width: 125,
+      width: 112,
       sorter: true,
       sortOrder: params.sortBy === 'fixed_cost' ? sortOrder : null,
       render: (value) => formatAda(value, 0)
@@ -161,7 +161,7 @@ const PoolDiscoveryPage = () => {
       dataIndex: 'pledge_lovelace',
       key: 'pledge',
       align: 'right',
-      width: 135,
+      width: 112,
       sorter: true,
       sortOrder: params.sortBy === 'pledge' ? sortOrder : null,
       render: (value) => formatAda(value, 0)
@@ -170,7 +170,7 @@ const PoolDiscoveryPage = () => {
       title: 'Registered',
       dataIndex: 'registered_on',
       key: 'registered',
-      width: 128,
+      width: 110,
       sorter: true,
       sortOrder: params.sortBy === 'registered' ? sortOrder : null,
       render: (value) => value ? new Date(value).toLocaleDateString() : '-'
@@ -178,9 +178,9 @@ const PoolDiscoveryPage = () => {
     {
       title: 'Website',
       dataIndex: 'homepage',
-      width: 190,
+      width: 150,
       ellipsis: true,
-      render: (value) => value ? <a href={value} target="_blank" rel="noreferrer">{value.replace(/^https?:\/\//, '')}</a> : '-'
+      render: (value) => value ? <a className="discovery-website" href={value} target="_blank" rel="noreferrer">{value.replace(/^https?:\/\//, '')}</a> : '-'
     }
   ];
 
@@ -262,7 +262,7 @@ const PoolDiscoveryPage = () => {
         dataSource={result.pools}
         loading={loading}
         rowKey="pool_id"
-        scroll={{ x: 1530 }}
+        scroll={{ x: 1280 }}
         onChange={handleTableChange}
         pagination={{
           current: Number(params.page),

@@ -107,7 +107,7 @@ body {
 
 .discover-pools-link {
   display: inline-flex;
-  min-height: 40px;
+  height: 56px;
   align-items: center;
   gap: 8px;
   border: 1px solid var(--tile-border);
@@ -134,7 +134,7 @@ body {
 .theme-toggle {
   width: 54px;
   min-width: 54px;
-  height: 54px;
+  height: 56px;
   padding: 0;
   font-size: 20px;
 }
@@ -351,18 +351,31 @@ button.pool-ad-tile {
 }
 
 .discovery-filters {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   border-top: 1px solid var(--tile-border);
   padding-top: 12px;
+}
+
+.discovery-filters > * {
+  min-width: 0;
 }
 
 .discovery-filters .ant-input-number {
   width: 100%;
 }
 
+.pool-discovery-table {
+  max-width: 100%;
+  overflow: hidden;
+}
+
 .pool-discovery-table .ant-table-wrapper,
 .pool-discovery-table .ant-spin-nested-loading {
   min-width: 0;
+}
+
+.pool-discovery-table .ant-table-thead > tr > th {
+  white-space: nowrap;
 }
 
 .discovery-pool {
@@ -393,6 +406,16 @@ button.pool-ad-tile {
 
 .discovery-pool small {
   color: var(--tile-muted);
+}
+
+.discovery-website {
+  color: var(--app-text);
+  text-decoration: none;
+}
+
+.discovery-website:hover {
+  color: var(--app-text);
+  text-decoration: underline;
 }
 
 .app-footer {
@@ -1033,7 +1056,7 @@ a.timeline-event-meta:hover {
   }
 
   .discover-pools-link {
-    min-height: 40px;
+    height: 42px;
     padding: 0 10px;
   }
 
@@ -1048,7 +1071,7 @@ a.timeline-event-meta:hover {
   .theme-toggle {
     width: 40px;
     min-width: 40px;
-    height: 40px;
+    height: 42px;
     padding: 0;
     font-size: 16px;
   }
