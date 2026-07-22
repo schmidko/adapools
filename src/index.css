@@ -168,7 +168,7 @@ body {
 }
 
 .page-heading-with-ads,
-.pool-identity-with-aside {
+.pool-identity.pool-identity-with-aside {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
@@ -1082,7 +1082,7 @@ a.timeline-event-meta:hover {
   }
 
   .page-heading-with-ads,
-  .pool-identity-with-aside {
+  .pool-identity.pool-identity-with-aside {
     grid-template-columns: 1fr;
     gap: 10px;
   }
