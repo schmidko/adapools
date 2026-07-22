@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { Avatar, Button, Input, InputNumber, Select, Table, Tag, Typography } from 'antd';
 import { api } from '../api/client.js';
+import PoolAdsBanner from '../components/PoolAdsBanner.jsx';
 import Seo from '../components/Seo.jsx';
 import { compactPoolId, formatAda, formatNumber, formatPercent } from '../utils/format.js';
 
@@ -207,12 +208,12 @@ const PoolDiscoveryPage = () => {
         description="Find Cardano stake pools by stake, delegators, saturation, margin, pledge, blocks and registration date."
         path="/discover"
       />
-      <div className="discovery-heading">
+      <div className="page-heading-with-ads discovery-heading">
         <div>
           <Typography.Title level={1}>Discover new pools</Typography.Title>
           <Typography.Text type="secondary">Search and compare Cardano stake pools</Typography.Text>
         </div>
-        <Typography.Text type="secondary">{formatNumber(result.total)} pools</Typography.Text>
+        <PoolAdsBanner />
       </div>
       <div className="discovery-controls">
         <Input.Search
@@ -255,6 +256,11 @@ const PoolDiscoveryPage = () => {
         <InputNumber addonBefore="Pledge max" addonAfter="ADA" min={0} value={params.maxPledge || null} onChange={(value) => updateParams({ maxPledge: value })} />
         <Input addonBefore="Registered after" type="date" value={params.registeredAfter || ''} onChange={(event) => updateParams({ registeredAfter: event.target.value })} aria-label="Registered after" />
         <Input addonBefore="Registered before" type="date" value={params.registeredBefore || ''} onChange={(event) => updateParams({ registeredBefore: event.target.value })} aria-label="Registered before" />
+      </div>
+      <div className="discovery-result-summary" aria-live="polite">
+        <Typography.Text type="secondary">
+          {loading ? 'Loading pools...' : `${formatNumber(result.total)} matching pools`}
+        </Typography.Text>
       </div>
       <Table
         className="pool-discovery-table"
