@@ -333,6 +333,10 @@ button.pool-ad-tile {
   margin-bottom: 0 !important;
 }
 
+.page-heading-with-ads.discovery-heading {
+  align-items: start;
+}
+
 .discovery-controls,
 .discovery-filters {
   display: grid;
