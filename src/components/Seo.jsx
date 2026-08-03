@@ -49,7 +49,7 @@ const Seo = ({
   title,
   description,
   path = '/',
-  image = '/icon-512.png',
+  image = '/social-card.png',
   type = 'website',
   jsonLd
 }) => {
@@ -66,6 +66,10 @@ const Seo = ({
     upsertMeta({ attr: 'property', key: 'og:type', content: type });
     upsertMeta({ attr: 'property', key: 'og:url', content: canonicalUrl });
     upsertMeta({ attr: 'property', key: 'og:image', content: imageUrl });
+    upsertMeta({ attr: 'property', key: 'og:image:secure_url', content: imageUrl });
+    upsertMeta({ attr: 'property', key: 'og:image:type', content: 'image/png' });
+    upsertMeta({ attr: 'property', key: 'og:image:width', content: '1200' });
+    upsertMeta({ attr: 'property', key: 'og:image:height', content: '630' });
 
     upsertMeta({ attr: 'name', key: 'twitter:card', content: 'summary_large_image' });
     upsertMeta({ attr: 'name', key: 'twitter:title', content: title });
