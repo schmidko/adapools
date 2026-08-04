@@ -287,9 +287,9 @@ const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout =
       {groups.map((group) => (
         <section className={`epoch-block-group epoch-block-group-${layout}`} key={group.epoch}>
           {isGridLayout ? (
-            <h4 className="pool-grid-epoch-heading">Epoch {group.epoch}</h4>
-          ) : (
             <div className="epoch-number">Epoch {group.epoch}</div>
+          ) : (
+            <h4 className="epoch-line-heading">Epoch {group.epoch}</h4>
           )}
           <div className="timeline-blocks">
             {group.items.map((item) => {

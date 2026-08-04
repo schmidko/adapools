@@ -587,7 +587,7 @@ button.pool-ad-tile {
   gap: 10px;
 }
 
-.pool-grid-epoch-heading {
+.epoch-line-heading {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -598,7 +598,7 @@ button.pool-ad-tile {
   line-height: 1.2;
 }
 
-.pool-grid-epoch-heading::after {
+.epoch-line-heading::after {
   height: 1px;
   flex: 1;
   background: var(--tile-border);
@@ -787,19 +787,19 @@ button.pool-ad-tile {
 
 .epoch-block-group {
   position: relative;
-  overflow: hidden;
-  border: 1px solid var(--tile-border);
-  border-radius: 8px;
-  background: var(--epoch-bg);
-  padding: 10px 0 18px;
-}
-
-.epoch-block-group-grid {
   overflow: visible;
   border: 0;
   border-radius: 0;
   background: transparent;
   padding: 0;
+}
+
+.epoch-block-group-grid {
+  overflow: hidden;
+  border: 1px solid var(--tile-border);
+  border-radius: 8px;
+  background: var(--epoch-bg);
+  padding: 10px 0 18px;
 }
 
 .epoch-block-group-grid .timeline-blocks {
@@ -1166,11 +1166,11 @@ a.timeline-event-meta:hover {
   }
 
   .epoch-block-group {
-    padding: 8px 0 14px;
+    padding: 0;
   }
 
   .epoch-block-group-grid {
-    padding: 0;
+    padding: 8px 0 14px;
   }
 
   .epoch-number {
