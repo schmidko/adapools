@@ -286,11 +286,7 @@ const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout =
     <div className={`pool-block-timeline pool-block-timeline-${layout}`}>
       {groups.map((group) => (
         <section className={`epoch-block-group epoch-block-group-${layout}`} key={group.epoch}>
-          {isGridLayout ? (
-            <div className="epoch-number">Epoch {group.epoch}</div>
-          ) : (
-            <h4 className="epoch-line-heading">Epoch {group.epoch}</h4>
-          )}
+          <h4 className="epoch-line-heading">Epoch {group.epoch}</h4>
           <div className="timeline-blocks">
             {group.items.map((item) => {
               if (item.kind === 'block') {
