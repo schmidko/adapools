@@ -1,76 +1,75 @@
 # adapools
 
-`adapools` ist ein neues Cardano-Pool-Explorer-Projekt in der Blox-Projektfamilie.
-Es orientiert sich funktional an `pool.pm`, wird aber in der bestehenden Blox-
-Architektur umgesetzt: modernes JavaScript, React/Vite im Frontend, Node.js/
-Express im Backend, MongoDB als einzige Datenquelle fuer das Web-Backend und
-Postgres/db-sync nur in den Aggregationsdiensten.
+`adapools` is a new Cardano pool explorer project in the Blox project family.
+Functionally, it is inspired by `pool.pm`, but it is implemented within the
+existing Blox architecture: modern JavaScript, React/Vite in the frontend,
+Node.js/Express in the backend, MongoDB as the only data source for the web
+backend, and Postgres/db-sync only in aggregation services.
 
-## Zielbild
+## Target State
 
-- Startseite zeigt oben aktuelle Cardano-Netzwerkmetriken.
-- Darunter laeuft ein Block-Ticker mit den zuletzt gefundenen Bloecken als
-  quadratische Kacheln.
-- Jede Block-Kachel zeigt:
-  - Blocknummer
-  - Pool-Ticker bzw. Pool-Identitaet
-  - ADA-Volumen
-  - Anzahl Transaktionen
-  - Fees
-  - Blockfuellstand in Prozent
-- Pool-Detailseiten zeigen oben immer Pool-Metriken.
-- Darunter nutzen Pool-Detailseiten dieselbe Block-Kachel-Darstellung, aber
-  gefiltert auf die letzten Bloecke dieses Pools.
-- Startseite erhaelt neue Bloecke per WebSocket mit maximal 15 Sekunden
-  Zielverzoegerung.
-- Pool-Detailseiten duerfen bis zu 60 Sekunden verzoegert sein.
+- The home page shows current Cardano network metrics at the top.
+- Below that, a block ticker displays recently found blocks as square tiles.
+- Each block tile shows:
+  - block number
+  - pool ticker or pool identity
+  - ADA volume
+  - transaction count
+  - fees
+  - block fullness percentage
+- Pool detail pages always show pool metrics at the top.
+- Below that, pool detail pages use the same block tile representation, filtered
+  to the latest blocks for that pool.
+- The home page receives new blocks through WebSocket with a target delay of no
+  more than 15 seconds.
+- Pool detail pages may be delayed by up to 60 seconds.
 
-## Repositories Und Verantwortlichkeiten
+## Repositories And Responsibilities
 
 ### `adapools`
 
-Enthaelt die Web-App:
+Contains the web app:
 
-- durchgehend React-basiertes Vite-Frontend
-- Node.js/Express Backend
-- WebSocket-Server fuer neue Startseiten-Bloecke
-- ausschliesslicher Lesezugriff auf MongoDB
-- kein direkter Zugriff auf die chain-synchronisierte Postgres-Datenbank
+- fully React-based Vite frontend
+- Node.js/Express backend
+- WebSocket server for new home-page blocks
+- read-only access to MongoDB
+- no direct access to the chain-synced Postgres database
 
 ### `adablox-workers`
 
-Erweitern um eventgetriebene Jobs aus Postgres/db-sync nach MongoDB:
+Extended with event-driven jobs from Postgres/db-sync to MongoDB:
 
-- Cardano-Netzwerkmetriken aktualisieren
-- Pool-Metriken aktualisieren
-- vom Indexer gemeldete neue Bloecke anreichern und normalisierte
-  Blockdokumente in Mongo schreiben
-- nach jedem neuen Block den zugehoerigen Pool gezielt aktualisieren
-- bestehende Pool-Metadaten aus `pool_cache` wiederverwenden
-- Status- und Lag-Metadaten pflegen
+- update Cardano network metrics
+- update pool metrics
+- enrich new blocks reported by the indexer and write normalized block documents
+  to MongoDB
+- after each new block, update the corresponding pool specifically
+- reuse existing pool metadata from `pool_cache`
+- maintain status and lag metadata
 
 ### `adablox-indexer`
 
-Der Indexer ist der schnelle Trigger fuer neue Bloecke. Sobald er einen neuen
-Block sieht, legt er ein kleines `adapools`-Blockevent bzw. einen Queue-Job an.
-Der Job enthaelt mindestens Blocknummer, Slot, Hash, Zeit und Pool-ID. Danach
-uebernimmt `adablox-workers` die Anreicherung aus db-sync/Postgres und den
-Mongo-Write.
+The indexer is the fast trigger for new blocks. As soon as it sees a new block,
+it creates a small `adapools` block event or a queue job. The job contains at
+least the block number, slot, hash, time, and pool ID. After that,
+`adablox-workers` handles enrichment from db-sync/Postgres and writes the result
+to MongoDB.
 
-## Technischer Stack
+## Technical Stack
 
-- Sprache: JavaScript ES6+, kein TypeScript
+- Language: JavaScript ES6+, no TypeScript
 - Frontend: React, Vite, React Router
-- UI: Ant Design in der neuesten stabilen Major-Version, `@ant-design/icons`,
-  TailwindCSS fuer Layout-Utilities und gezielte Ergaenzungen
-- Theme: heller und dunkler Modus, per Toggle-Button im Header umschaltbar
+- UI: Ant Design in the latest stable major version, `@ant-design/icons`,
+  TailwindCSS for layout utilities and targeted additions
+- Theme: light and dark mode, switchable with a toggle button in the header
 - Backend: Node.js, Express
-- Realtime: `ws` oder `socket.io`; bevorzugt `ws`, wenn nur Server-Push fuer
-  neue Bloecke benoetigt wird
-- Datenbank Web: MongoDB
-- Datenquelle Aggregation: Postgres/db-sync `cexplorer`
+- Realtime: `ws` or `socket.io`; prefer `ws` if only server-push for new blocks
+  is needed
+- Web database: MongoDB
+- Aggregation data source: Postgres/db-sync `cexplorer`
 
-## Vorgeschlagene Projektstruktur
+## Proposed Project Structure
 
 ```text
 adapools/
@@ -116,18 +115,18 @@ adapools/
 
 ## MongoDB Collections
 
-Alle Zahlen, die Lovelace- oder grosse Chain-Werte darstellen, werden als
-String gespeichert und im Frontend kontrolliert formatiert.
+All numbers representing Lovelace or large chain values are stored as strings
+and formatted carefully in the frontend.
 
-Wichtig: Bereits vorhandene Pooldaten aus `adablox` werden genutzt. Besonders
-Offchain-Metadaten, Ticker, Namen, Homepages, Logos und Logo-Scrape-Ergebnisse
-werden nicht fuer `adapools` neu gescraped. `adapools` liest diese Informationen
-aus der bestehenden `pool_cache`-Collection und speichert in eigenen Collections
-nur die fuer schnelle Block- und Detailseiten benoetigten Snapshots.
+Important: Existing pool data from `adablox` is reused. In particular, off-chain
+metadata, tickers, names, homepages, logos, and logo scrape results are not
+scraped again for `adapools`. `adapools` reads this information from the existing
+`pool_cache` collection and only stores the snapshots required for fast block
+and detail pages in its own collections.
 
 ### `adapools_blocks`
 
-Ein Dokument pro Block.
+One document per block.
 
 ```js
 {
@@ -156,7 +155,7 @@ Ein Dokument pro Block.
 }
 ```
 
-Indexe:
+Indexes:
 
 - `{ block_no: -1 }` unique
 - `{ time: -1 }`
@@ -165,10 +164,10 @@ Indexe:
 
 ### `adapools_pool_recent_blocks`
 
-Ein optimiertes Dokument pro Pool fuer die Pool-Detailseite. Dieses Dokument
-wird vom Block-Worker bei jedem neuen Block des Pools aktualisiert und
-enthaelt nur die letzten N Bloecke, z.B. 240. Dadurch kann die Detailseite mit
-einem einzigen Mongo-Lookup geladen werden.
+One optimized document per pool for the pool detail page. This document is
+updated by the block worker whenever the pool finds a new block and contains
+only the latest N blocks, for example 240. This allows the detail page to load
+with a single MongoDB lookup.
 
 ```js
 {
@@ -201,7 +200,7 @@ einem einzigen Mongo-Lookup geladen werden.
 }
 ```
 
-Indexe:
+Indexes:
 
 - `{ bech32_pool_id: 1 }` unique
 - `{ latest_block_no: -1 }`
@@ -209,7 +208,7 @@ Indexe:
 
 ### `adapools_cardano_metrics`
 
-Ein Snapshot-Dokument mit `_id: "current"`.
+A snapshot document with `_id: "current"`.
 
 ```js
 {
@@ -234,7 +233,7 @@ Index:
 
 ### `adapools_pool_metrics`
 
-Ein Dokument pro Pool.
+One document per pool.
 
 ```js
 {
@@ -261,21 +260,21 @@ Ein Dokument pro Pool.
 }
 ```
 
-Die Felder `ticker`, `name`, `description`, `homepage` und `logo` kommen aus
-der bestehenden `pool_cache`-Collection. Der Pool-Metriken-Worker berechnet
-nur die fuer `adapools` benoetigten Zahlen neu bzw. schreibt einen optimierten
-Snapshot. Er startet keinen eigenen Logo- oder Metadaten-Scraper.
+The fields `ticker`, `name`, `description`, `homepage`, and `logo` come from the
+existing `pool_cache` collection. The pool metrics worker only calculates the
+numbers needed by `adapools` or writes an optimized snapshot. It does not start
+its own logo or metadata scraper.
 
-Indexe:
+Indexes:
 
 - `{ bech32_pool_id: 1 }` unique
 - `{ ticker: 1 }`
-- `{ active_stake_lovelace_numeric: -1 }` optional fuer Sortierung
+- `{ active_stake_lovelace_numeric: -1 }` optional for sorting
 - `{ updated_at: -1 }`
 
 ### `adapools_sync_state`
 
-Status fuer Aggregatoren und API-Diagnose.
+Status for aggregators and API diagnostics.
 
 ```js
 {
@@ -290,93 +289,91 @@ Status fuer Aggregatoren und API-Diagnose.
 
 ## Postgres/db-sync Aggregation
 
-Die Aggregation wird in `adablox-workers` implementiert, damit das Web-Backend
-keinen Postgres-Zugriff braucht.
+Aggregation is implemented in `adablox-workers` so the web backend does not need
+Postgres access.
 
-### Neuer-Block-Ablauf
+### New Block Flow
 
-Der bevorzugte Ablauf ist eventgetrieben:
+The preferred flow is event-driven:
 
-1. `adablox-indexer` erkennt per ChainSync einen neuen Block.
-2. Der Indexer schreibt ein kleines Event in Mongo, z.B.
-   `adapools_block_events`, oder legt einen Worker-Queue-Job an.
-3. `adablox-workers` startet fuer dieses Event einen Block-Worker.
-4. Der Worker liest die fehlenden Detaildaten aus Postgres/db-sync.
-5. Der Worker mischt Pool-Metadaten aus `pool_cache` dazu.
-6. Der Worker schreibt den Block in `adapools_blocks`.
-7. Der Worker aktualisiert `adapools_pool_recent_blocks` fuer genau diesen Pool.
-8. Der Worker aktualisiert `adapools_pool_metrics` fuer genau diesen Pool.
-9. Das `adapools` Backend erkennt den neuen Mongo-Block per Change Stream oder
-   leichtem Fallback-Polling und pusht ihn per WebSocket an verbundene
-   Frontend-Clients.
+1. `adablox-indexer` detects a new block through ChainSync.
+2. The indexer writes a small event to MongoDB, for example
+   `adapools_block_events`, or creates a worker queue job.
+3. `adablox-workers` starts a block worker for this event.
+4. The worker reads the missing detail data from Postgres/db-sync.
+5. The worker merges pool metadata from `pool_cache`.
+6. The worker writes the block to `adapools_blocks`.
+7. The worker updates `adapools_pool_recent_blocks` for exactly this pool.
+8. The worker updates `adapools_pool_metrics` for exactly this pool.
+9. The `adapools` backend detects the new MongoDB block through a Change Stream
+   or lightweight fallback polling and pushes it to connected frontend clients
+   through WebSocket.
 
-Damit wird der gefundene Block sofort im Frontend sichtbar, waehrend die
-Pool-Detaildaten zeitnah und gezielt nachgezogen werden.
+This makes the found block visible in the frontend immediately, while pool
+detail data is refreshed shortly afterward and only for the affected pool.
 
-### Block-Worker
+### Block Worker
 
-Trigger: ein neuer Block vom Indexer. Fallback: kurzer Polling-Job, falls ein
-Event verloren geht oder der Indexer-Trigger temporaer deaktiviert ist.
+Trigger: a new block from the indexer. Fallback: a short polling job if an event
+is lost or the indexer trigger is temporarily disabled.
 
-Aufgabe:
+Tasks:
 
-1. Blockevent vom Indexer lesen.
-2. In Postgres den Block per `block_no`, `hash` oder `slot_no` laden.
-3. Je Block Transaktionsanzahl, Output-Summe, Fee-Summe, Blockgroesse,
-   Slot-Leader und Pool-ID joinen.
-4. `max_block_size` aus aktuellen Protocol-Parametern bestimmen.
-5. `fullness_percent = size / max_block_size * 100` berechnen.
-6. Pool-Metadaten aus der bestehenden Mongo-Collection `pool_cache` dazumischen.
-7. Dokumente per `bulkWrite(..., { upsert: true })` in `adapools_blocks`
-   schreiben.
-8. Fuer jeden betroffenen Pool `adapools_pool_recent_blocks` mit `$push`,
-   `$each`, `$position: 0` und `$slice` aktualisieren, damit pro Pool nur die
-   letzten N Bloecke im optimalen Detailseitenformat gespeichert werden.
-9. Einen gezielten Pool-Metriken-Refresh fuer den betroffenen Pool starten.
-10. Sync-State aktualisieren.
+1. Read the block event from the indexer.
+2. Load the block from Postgres by `block_no`, `hash`, or `slot_no`.
+3. For each block, join transaction count, output sum, fee sum, block size, slot
+   leader, and pool ID.
+4. Determine `max_block_size` from the current protocol parameters.
+5. Calculate `fullness_percent = size / max_block_size * 100`.
+6. Merge pool metadata from the existing MongoDB collection `pool_cache`.
+7. Write documents to `adapools_blocks` with `bulkWrite(..., { upsert: true })`.
+8. For every affected pool, update `adapools_pool_recent_blocks` with `$push`,
+   `$each`, `$position: 0`, and `$slice` so only the latest N blocks per pool are
+   stored in the optimized detail-page format.
+9. Start a targeted pool metrics refresh for the affected pool.
+10. Update sync state.
 
-Ziel: Ein neuer Block ist spaetestens 15 Sekunden nach Erkennung durch den
-Indexer im Frontend sichtbar. Die Pool-Metriken duerfen nachgelagert aktualisiert
-werden, sollen aber fuer Detailseiten innerhalb von 60 Sekunden frisch sein.
+Target: A new block is visible in the frontend no later than 15 seconds after
+detection by the indexer. Pool metrics may be updated afterward, but should be
+fresh for detail pages within 60 seconds.
 
-### Cardano-Metriken-Aggregator
+### Cardano Metrics Aggregator
 
-Laufintervall: alle 30 Sekunden.
+Run interval: every 30 seconds.
 
-Aufgabe:
+Tasks:
 
-- aktuellste Blocknummer und Blockzeit
-- aktuelle Epoche
-- aktive Pools
-- Total Stake
-- 24h Transaktionen
-- 24h Fees
-- durchschnittlicher Blockfuellstand der letzten Stunde
+- latest block number and block time
+- current epoch
+- active pools
+- total stake
+- 24h transactions
+- 24h fees
+- average block fullness over the last hour
 
-Ergebnis wird als `_id: "current"` in `adapools_cardano_metrics` ersetzt.
+The result is replaced as `_id: "current"` in `adapools_cardano_metrics`.
 
-### Pool-Metriken-Worker
+### Pool Metrics Worker
 
-Trigger: gezielt nach einem neuen Block fuer den betroffenen Pool. Fallback:
-periodischer Voll- oder Teilrefresh, z.B. alle 60 Sekunden fuer Pools mit neuen
-Bloecken oder veralteten Metriken.
+Trigger: specifically after a new block for the affected pool. Fallback:
+periodic full or partial refresh, for example every 60 seconds for pools with new
+blocks or stale metrics.
 
-Aufgabe:
+Tasks:
 
-- Pool-Stammdaten und Offchain-Metadaten aus bestehendem `pool_cache` uebernehmen
-- Stake, Delegatoren, Pledge, Margin, Fixed Cost berechnen
-- Lifetime-, 24h- und Epoch-Blockzaehler berechnen
-- Saturation berechnen
-- Retiring-Status setzen
+- reuse pool master data and off-chain metadata from the existing `pool_cache`
+- calculate stake, delegators, pledge, margin, and fixed cost
+- calculate lifetime, 24h, and epoch block counters
+- calculate saturation
+- set retiring status
 
-Bestehende Logik aus `adablox-workers/src/poolModule.js` sollte wiederverwendet
-oder in gemeinsam nutzbare Helper extrahiert werden, damit Pool-Definitionen
-und Metadaten konsistent bleiben. `adapools` darf dabei keine Metadaten neu
-scrapen, sondern konsumiert den vorhandenen Cache.
+Existing logic from `adablox-workers/src/poolModule.js` should be reused or
+extracted into shared helpers so pool definitions and metadata remain consistent.
+`adapools` must not scrape metadata again; it consumes the existing cache.
 
-### Blockevent-Collection Oder Queue
+### Block Event Collection Or Queue
 
-Falls Mongo als einfache Queue genutzt wird:
+If MongoDB is used as a simple queue:
 
 ```js
 {
@@ -395,14 +392,14 @@ Falls Mongo als einfache Queue genutzt wird:
 }
 ```
 
-Indexe:
+Indexes:
 
 - `{ status: 1, created_at: 1 }`
 - `{ block_no: 1 }` unique
 
 ## Backend API
 
-Das `adapools` Backend liest nur MongoDB.
+The `adapools` backend only reads from MongoDB.
 
 ### REST
 
@@ -418,81 +415,81 @@ GET /api/sync/status
 
 Details:
 
-- `poolId` akzeptiert mindestens `pool1...`; optional spaeter Ticker-Suche oder
-  Hex-ID.
-- `limit` hart begrenzen, z.B. maximal 240 Bloecke.
-- Responses liefern bereits normalisierte Feldnamen fuer das Frontend.
-- Keine Postgres-Fallbacks im Backend einbauen.
-- `GET /api/pools/:poolId/recent-blocks` liest bevorzugt
-  `adapools_pool_recent_blocks`, damit Detailseiten ohne teure Blockqueries
-  geladen werden.
+- `poolId` accepts at least `pool1...`; ticker search or hex ID may be added
+  later.
+- Enforce a hard `limit`, for example a maximum of 240 blocks.
+- Responses already provide normalized field names for the frontend.
+- Do not add Postgres fallbacks to the backend.
+- `GET /api/pools/:poolId/recent-blocks` preferably reads
+  `adapools_pool_recent_blocks`, so detail pages can load without expensive
+  block queries.
 
 ### WebSocket
 
-Pfad: `/ws/blocks`
+Path: `/ws/blocks`
 
-Serververhalten:
+Server behavior:
 
-- Client verbindet sich auf der Startseite.
-- Server sendet initial optional die letzten N Bloecke oder nur einen
-  `connected`/`snapshot`-Status.
-- Server nutzt bevorzugt MongoDB Change Streams auf `adapools_blocks`, falls
-  Mongo als Replica Set laeuft.
-- Fallback: Server prueft alle 3 bis 5 Sekunden `adapools_blocks` auf neue
-  `block_no`.
-- Neue Bloecke werden als Event gesendet:
+- The client connects from the home page.
+- The server initially sends either the latest N blocks or just a
+  `connected`/`snapshot` status.
+- The server preferably uses MongoDB Change Streams on `adapools_blocks` if
+  MongoDB runs as a replica set.
+- Fallback: every 3 to 5 seconds, the server checks `adapools_blocks` for new
+  `block_no` values.
+- New blocks are sent as events:
 
 ```js
 {
   type: "block.created",
-  block: { /* normalisiertes Blockdokument */ }
+  block: { /* normalized block document */ }
 }
 ```
 
-MongoDB Change Streams sind der bevorzugte Push-Mechanismus zwischen Mongo und
-Backend. Das Polling bleibt als robuste Fallbackvariante, falls Change Streams
-in der jeweiligen Mongo-Umgebung nicht verfuegbar sind.
+MongoDB Change Streams are the preferred push mechanism between MongoDB and the
+backend. Polling remains as a robust fallback if Change Streams are unavailable
+in the current MongoDB environment.
 
 ## Frontend
 
-Das gesamte Frontend wird als React-Anwendung umgesetzt. Es werden ausschliesslich
-Functional Components und Hooks verwendet. Ant Design ist das primaere
-UI-Framework; neue Komponenten sollen zuerst mit Ant-Design-Bausteinen umgesetzt
-werden und nur dort TailwindCSS/Vanilla CSS verwenden, wo Layout, Ticker oder
-Block-Kacheln projektspezifische Feinkontrolle brauchen.
+The entire frontend is implemented as a React application. Only functional
+components and hooks are used. Ant Design is the primary UI framework; new
+components should first be implemented with Ant Design building blocks and only
+use TailwindCSS/vanilla CSS where layout, ticker behavior, or block tiles need
+project-specific fine control.
 
-### Theme-System
+### Theme System
 
-- Ant Design wird ueber `ConfigProvider` zentral konfiguriert.
-- Der aktuelle Modus wird in einem `ThemeContext` gehalten.
-- `ThemeToggle` sitzt im `AppHeader` und schaltet zwischen hellem und dunklem
-  Modus um.
-- Der Modus wird in `localStorage` gespeichert.
-- Ohne gespeicherte Einstellung wird `prefers-color-scheme` des Browsers als
-  Startwert verwendet.
-- Ant-Design-Tokens werden fuer beide Modi gepflegt, damit Kacheln, Tabellen,
-  Buttons, Tooltips und Header konsistent wirken.
-- CSS-Variablen fuer projektspezifische Flaechen wie Block-Kacheln werden aus
-  dem aktiven Theme abgeleitet.
+- Ant Design is configured centrally through `ConfigProvider`.
+- The current mode is stored in a `ThemeContext`.
+- `ThemeToggle` is placed in `AppHeader` and switches between light and dark
+  mode.
+- The mode is saved in `localStorage`.
+- If no saved setting exists, the browser's `prefers-color-scheme` is used as
+  the initial value.
+- Ant Design tokens are maintained for both modes so tiles, tables, buttons,
+  tooltips, and the header feel consistent.
+- CSS variables for project-specific surfaces such as block tiles are derived
+  from the active theme.
 
-### Startseite
+### Home Page
 
-Komponenten:
+Components:
 
-- `MetricsBar`: kompakte Cardano-Metriken ganz oben
-- `BlockTicker`: horizontales, responsives Raster/Tickerband
-- `BlockTile`: quadratische Kachel fuer einen Block
-- `SyncStatus`: dezenter Status bei veralteten Daten
+- `MetricsBar`: compact Cardano metrics at the very top
+- `BlockTicker`: horizontal, responsive grid/ticker band
+- `BlockTile`: square tile for one block
+- `SyncStatus`: subtle status indicator for stale data
 
-Verhalten:
+Behavior:
 
-- Initiale Daten per `GET /api/cardano/metrics` und
+- Initial data is loaded through `GET /api/cardano/metrics` and
   `GET /api/blocks/latest`.
-- WebSocket ergaenzt neue Bloecke vorne in der Liste.
-- Bei WebSocket-Abbruch automatischer Reconnect mit Backoff.
-- Fallback-Polling alle 15 Sekunden, falls WebSocket nicht verfuegbar ist.
+- WebSocket prepends new blocks to the list.
+- If the WebSocket disconnects, reconnect automatically with backoff.
+- Fallback polling every 15 seconds if WebSocket is unavailable.
 
-### Pool-Detailseite
+### Pool Detail Page
 
 Route:
 
@@ -500,30 +497,30 @@ Route:
 /pool/:poolId
 ```
 
-Komponenten:
+Components:
 
-- `MetricsBar` mit Pool-Metriken
-- `PoolIdentity` fuer Name, Ticker, Logo, Pool-ID
-- `BlockTicker` mit Pool-Bloecken
+- `MetricsBar` with pool metrics
+- `PoolIdentity` for name, ticker, logo, and pool ID
+- `BlockTicker` with pool blocks
 
-Verhalten:
+Behavior:
 
-- Daten per REST laden.
-- Refresh alle 60 Sekunden.
-- Kein WebSocket erforderlich.
-- Pagination oder "Mehr laden" ueber `beforeBlockNo` vorbereiten.
+- Load data through REST.
+- Refresh every 60 seconds.
+- No WebSocket required.
+- Prepare pagination or "load more" through `beforeBlockNo`.
 
-### Gestaltung
+### Design
 
-- Block-Kacheln sind echte Quadrate mit stabiler `aspect-ratio: 1 / 1`.
-- Farbe darf Pool, Fuellstand oder Alter signalisieren, aber nicht allein
-  Information tragen.
-- Die wichtigsten Zahlen muessen auf Mobile lesbar bleiben:
-  Blocknummer, Ticker, TX-Anzahl, Fees, Fuellstand.
-- Lange Poolnamen werden gekuerzt; Ticker und Pool-ID bekommen Tooltips.
-- Startseite ist direkt die Anwendung, keine Landingpage.
+- Block tiles are true squares with stable `aspect-ratio: 1 / 1`.
+- Color may signal pool, fullness, or age, but must not be the only carrier of
+  information.
+- The most important numbers must remain readable on mobile: block number,
+  ticker, transaction count, fees, and fullness.
+- Long pool names are shortened; ticker and pool ID get tooltips.
+- The home page is the application itself, not a landing page.
 
-## Block-Kachel-Datenformat Im Frontend
+## Block Tile Data Format In The Frontend
 
 ```js
 {
@@ -539,103 +536,101 @@ Verhalten:
 }
 ```
 
-## Fehler- Und Lag-Behandlung
+## Error And Lag Handling
 
-- Wenn `adapools_sync_state.lag_seconds > 60`, zeigt die Startseite einen
-  dezenten Hinweis auf verzoegerte Daten.
-- API liefert bei leerer MongoDB leere Listen plus `sync`-Status, nicht 500.
-- Aggregator schreibt idempotent per `block_no`-Upsert.
-- Backend validiert Limits und Pool-IDs.
-- Worker-Logs enthalten pro Lauf Anzahl gelesener und geschriebener Bloecke.
+- If `adapools_sync_state.lag_seconds > 60`, the home page shows a subtle notice
+  that data is delayed.
+- If MongoDB is empty, the API returns empty lists plus `sync` status, not 500.
+- The aggregator writes idempotently through `block_no` upserts.
+- The backend validates limits and pool IDs.
+- Worker logs include the number of blocks read and written for each run.
 
-## Umsetzung In Phasen
+## Implementation Phases
 
-### Phase 1: Projekt-Skeleton
+### Phase 1: Project Skeleton
 
-- Status: implementiert.
-- `package.json`, Vite, React, Express und Mongo-Anbindung anlegen.
-- neueste stabile Ant-Design-Version und `@ant-design/icons` installieren.
-- `config/env-example` definieren.
-- globalen Ant-Design-`ConfigProvider` und `ThemeContext` einrichten.
-- Header mit Hell/Dunkel-`ThemeToggle` anlegen.
-- Gemeinsame Format-Helper fuer ADA, Prozent, Datum und kompakte Zahlen bauen.
-- Basis-Routen und leere Seiten anlegen.
+- Status: implemented.
+- Create `package.json`, Vite, React, Express, and MongoDB connection.
+- Install the latest stable Ant Design version and `@ant-design/icons`.
+- Define `config/env-example`.
+- Set up the global Ant Design `ConfigProvider` and `ThemeContext`.
+- Add a header with light/dark `ThemeToggle`.
+- Build shared formatting helpers for ADA, percentages, dates, and compact
+  numbers.
+- Add base routes and empty pages.
 
-### Phase 2: Mongo-Schema Und Indexe
+### Phase 2: Mongo Schema And Indexes
 
-- Status: implementiert im Worker-Collector; Beispiel-Daten offen.
-- Mongo-Collection-Namen finalisieren.
-- bestehende `pool_cache`-Felder fuer Pool-Metadaten als Quelle definieren.
-- Index-Erstellung im Worker oder separatem Deploy-Script implementieren.
-- Beispiel-Dokumente lokal einspielen.
-- Backend-REST gegen Beispiel-Daten bauen.
+- Status: implemented in the worker collector; sample data still open.
+- Finalize MongoDB collection names.
+- Define existing `pool_cache` fields as the source for pool metadata.
+- Implement index creation in the worker or a separate deploy script.
+- Load sample documents locally.
+- Build backend REST against sample data.
 
-### Phase 3: Indexer-Trigger Und Worker
+### Phase 3: Indexer Trigger And Worker
 
-- Status: implementiert als additive Worker/Indexer-Erweiterung hinter
-  Feature-Flags.
-- `adablox-indexer` um minimales `adapools`-Blockevent erweitern.
-- `adablox-workers` um `adapools`-Module erweitern.
-- Block-Worker fuer Indexer-Events implementieren.
-- Block-Worker mit `pool_cache`-Join fuer Pool-Metadaten implementieren.
-- `adapools_pool_recent_blocks` als optimierten Pro-Pool-Blockcache pflegen.
-- Cardano-Metriken-Aggregator mit 30s Intervall implementieren.
-- Pool-Metriken-Worker nach jedem neuen Block fuer den betroffenen Pool starten.
-- Fallback-Scanner fuer verlorene Blockevents oder veraltete Pools ergaenzen.
-- Sync-State und Lag-Messung einbauen.
+- Status: implemented as additive worker/indexer extension behind feature flags.
+- Extend `adablox-indexer` with a minimal `adapools` block event.
+- Extend `adablox-workers` with `adapools` modules.
+- Implement a block worker for indexer events.
+- Implement the block worker with a `pool_cache` join for pool metadata.
+- Maintain `adapools_pool_recent_blocks` as an optimized per-pool block cache.
+- Implement the Cardano metrics aggregator with a 30s interval.
+- Start the pool metrics worker after every new block for the affected pool.
+- Add a fallback scanner for lost block events or stale pools.
+- Add sync state and lag measurement.
 
 ### Phase 4: Backend
 
-- Status: implementiert.
-- Express-Server nur mit Mongo-Verbindung implementieren.
-- REST-Endpunkte fuer Metriken und Blocklisten bauen.
-- WebSocket `/ws/blocks` mit Mongo Change Stream und Polling-Fallback
-  implementieren.
-- Health- und Sync-Endpunkte bereitstellen.
+- Status: implemented.
+- Implement the Express server with only a MongoDB connection.
+- Build REST endpoints for metrics and block lists.
+- Implement WebSocket `/ws/blocks` with MongoDB Change Stream and polling
+  fallback.
+- Provide health and sync endpoints.
 
 ### Phase 5: Frontend
 
-- Status: implementiert.
-- Startseite mit Cardano-Metriken und Block-Ticker bauen.
-- WebSocket-Integration inklusive Reconnect und Polling-Fallback.
-- Pool-Detailseite mit Pool-Metriken und Pool-Blockliste bauen.
-- Hell- und Dunkelmodus fuer alle Views, Kacheln, Header und Ladezustaende
-  pruefen.
-- Responsive Styling und stabile Kachelgroessen pruefen.
+- Status: implemented.
+- Build the home page with Cardano metrics and block ticker.
+- Integrate WebSocket including reconnect and polling fallback.
+- Build the pool detail page with pool metrics and pool block list.
+- Verify light and dark mode for all views, tiles, header, and loading states.
+- Verify responsive styling and stable tile sizes.
 
-### Phase 6: Verifikation
+### Phase 6: Verification
 
-- Lokale Mongo-Beispieldaten pruefen.
-- Worker gegen lokale db-sync-Sample-Postgres-Daten laufen lassen.
-- API-Responses fuer leere, normale und verzoegerte Daten testen.
-- pruefen, dass keine neuen Pool-Metadaten- oder Logo-Scrapes fuer `adapools`
-  gestartet werden.
-- WebSocket-Latenz messen: Ziel kleiner als 15 Sekunden ab Indexer-Erkennung.
-- Pool-Detailseiten-Refresh messen: Ziel kleiner als 60 Sekunden.
-- Frontend per Desktop- und Mobile-Viewport visuell pruefen.
+- Test local MongoDB sample data.
+- Run workers against local db-sync sample Postgres data.
+- Test API responses for empty, normal, and delayed data.
+- Verify that no new pool metadata or logo scrapes are started for `adapools`.
+- Measure WebSocket latency: target below 15 seconds from indexer detection.
+- Measure pool detail page refresh: target below 60 seconds.
+- Visually test the frontend in desktop and mobile viewports.
 
 ### Phase 7: Deployment
 
-- Status: implementiert mit Docker Compose und Makefile analog `adablox`.
-- Systemd- oder bestehendes Deploy-Muster analog `adablox` festlegen.
-- `.env` fuer Mongo, Port, CORS und WebSocket-Origin dokumentieren.
-- Reverse-Proxy fuer REST und WebSocket konfigurieren.
-- Monitoring fuer Aggregator-Lag und Backend-Health ergaenzen.
+- Status: implemented with Docker Compose and Makefile analogous to `adablox`.
+- Define systemd or an existing deploy pattern analogous to `adablox`.
+- Document `.env` for MongoDB, port, CORS, and WebSocket origin.
+- Configure the reverse proxy for REST and WebSocket.
+- Add monitoring for aggregator lag and backend health.
 
 ## Deployment
 
-`adapools` laeuft im Docker-Setup analog zu `adablox`: `node:22`, bind mount
-nach `/app`, `npm ci`, `npm run build` und danach `node server/index.js`.
-Der Node/Express-Server liefert im Container sowohl die REST/WebSocket-API als
-auch das gebaute Vite-Frontend aus `dist/` aus.
+`adapools` runs in a Docker setup analogous to `adablox`: `node:22`, bind mount
+to `/app`, `npm ci`, `npm run build`, and then `node server/index.js`. The
+Node/Express server serves both the REST/WebSocket API and the built Vite
+frontend from `dist/` inside the container.
 
-Lokale Compose-Pruefung:
+Local Compose check:
 
 ```bash
 docker compose config
 ```
 
-Server vorbereiten:
+Prepare the server:
 
 ```bash
 make bootstrap
@@ -647,33 +642,32 @@ Deploy:
 make deploy
 ```
 
-Status und Logs:
+Status and logs:
 
 ```bash
 make status
 make logs
 ```
 
-Erwartete Server-Dateien:
+Expected server files:
 
 - Repository: `/var/www/adapools`
-- Env-Datei: `/home/mog/env/adapools/.env`
-- Deploy kopiert Env nach: `/var/www/adapools/config/.env`
+- Env file: `/home/mog/env/adapools/.env`
+- Deploy copies env to: `/var/www/adapools/config/.env`
 - Container: `adapools`
 - Port: `5056`
 
-Die Env-Datei sollte mindestens Mongo-Verbindung und CORS enthalten. Wenn Mongo
-auf dem Docker-Host laeuft, ist `MONGO_HOST=host.docker.internal` vorgesehen.
+The env file should contain at least the MongoDB connection and CORS. If MongoDB
+runs on the Docker host, `MONGO_HOST=host.docker.internal` is expected.
 
-## Pool-Header-Anzeigen
+## Pool Header Ads
 
-Die optionalen Pool-Anzeigen bestehen aus zwei Header-Slots. Freie Slots zeigen
-die Eigenwerbung, gebuchte Slots werden ausschliesslich aus Pool-Ticker, Name,
-Beschreibung und Logo generiert. Ein Slot kostet 1 ADA pro Tag und wird nach
-einer bestaetigten Zahlung fuer die gebuchte Dauer aktiviert.
+The optional pool ads consist of two header slots. Free slots show self-promotion;
+booked slots are generated exclusively from pool ticker, name, description, and
+logo. One slot costs 1 ADA per day and is activated for the booked duration
+after a confirmed payment.
 
-Die Funktion ist standardmaessig deaktiviert und wird nur in der Server-Env
-eingeschaltet:
+The feature is disabled by default and is only enabled through the server env:
 
 ```env
 POOL_ADS_ENABLED=true
@@ -681,37 +675,35 @@ POOL_ADS_PAYMENT_ADDRESS=addr1...
 ADAPOOLS_DATABASE_URL=postgresql://...
 ```
 
-`POOL_ADS_PAYMENT_ADDRESS` und `ADAPOOLS_DATABASE_URL` bleiben nur auf dem
-Server. Ohne beide Werte sind Buchung und Zahlungspruefung gesperrt, auch wenn
-der Feature-Flag aktiv ist. Die Zahlungspruefung fragt die eigene db-sync-
-Postgres-Datenbank ab und kontrolliert Empfaenger, exakten Lovelace-Betrag und
-Buchungsreferenz in den Transaktions-Metadaten.
-`adapools_pool_ad_bookings` speichert Buchungen; `adapools_pool_ad_slot_locks`
-verhindert parallele Buchungen. Abgelaufene Slots werden bei API-Aufrufen und
-durch einen minuetlichen Job wieder freigegeben.
+`POOL_ADS_PAYMENT_ADDRESS` and `ADAPOOLS_DATABASE_URL` remain server-only. Without
+both values, booking and payment verification are disabled even if the feature
+flag is active. Payment verification queries the local db-sync Postgres database
+and checks the recipient, the exact Lovelace amount, and the booking reference
+in transaction metadata. `adapools_pool_ad_bookings` stores bookings;
+`adapools_pool_ad_slot_locks` prevents parallel bookings. Expired slots are
+released again during API calls and by a minutely job.
 
-Lokal zeigt `http://localhost:5173/__timeline-preview` beide Banner-Varianten.
-Die Route ist nur im Vite-Entwicklungsmodus verfuegbar.
+Locally, `http://localhost:5173/__timeline-preview` shows both banner variants.
+The route is only available in Vite development mode.
 
 ## Pool Discovery
 
-`/discover` ist die eigenstaendige Poolliste von adapools. Die Seite liest
-ausschliesslich aus Mongo `pool_cache`, paginiert serverseitig und kann nach
-Pool, Status, Stake, Delegators, Blocks, Sattigung, Margin, Fixkosten, Pledge
-und erster Registrierungszeit filtern und sortieren. Der Pool-Worker schreibt
-`registered_on` als erste On-Chain-Poolregistrierung, nicht als Zeitpunkt der
-letzten Pool-Aktualisierung.
+`/discover` is the standalone pool list for adapools. The page reads only from
+MongoDB `pool_cache`, paginates server-side, and can filter and sort by pool,
+status, stake, delegators, blocks, saturation, margin, fixed cost, pledge, and
+first registration time. The pool worker writes `registered_on` as the first
+on-chain pool registration, not as the time of the latest pool update.
 
-## Offene Entscheidungen
+## Open Decisions
 
-- Soll `adapools` dieselbe Mongo-Datenbank `adablox` nutzen oder eine eigene
-  Datenbank `adapools` bekommen? Empfehlung: gleiche Mongo-Instanz, eigene
-  Collections mit Prefix `adapools_`.
-- Soll WebSocket mit `ws` oder `socket.io` umgesetzt werden? Empfehlung: `ws`,
-  solange nur neue Blockevents gesendet werden.
-- Soll die Pool-Route nur `pool1...` akzeptieren oder auch Ticker/Name?
-  Empfehlung: zuerst `pool1...`, spaeter Suchroute ergaenzen.
-- Soll `max_block_size` pro Block aus historischen Protocol-Parametern oder
-  nur aus dem aktuellen Parameter gesetzt werden? Empfehlung: fuer neue
-  Bloecke den zum Blockzeitpunkt gueltigen Parameter verwenden; fuer die erste
-  Version ist aktueller Parameter als kontrollierte Naeherung akzeptabel.
+- Should `adapools` use the same MongoDB database `adablox` or get its own
+  database `adapools`? Recommendation: same MongoDB instance, own collections
+  with the `adapools_` prefix.
+- Should WebSocket be implemented with `ws` or `socket.io`? Recommendation:
+  `ws`, as long as only new block events are sent.
+- Should the pool route only accept `pool1...`, or also ticker/name?
+  Recommendation: start with `pool1...`, add a search route later.
+- Should `max_block_size` be set per block from historical protocol parameters
+  or only from the current parameter? Recommendation: use the parameter valid at
+  the block time for new blocks; for the first version, the current parameter is
+  acceptable as a controlled approximation.
