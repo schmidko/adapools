@@ -11,6 +11,7 @@ import { registerBlockRoutes } from './blockModule.js';
 import { registerMetricsRoutes } from './metricsModule.js';
 import { registerPoolRoutes } from './poolModule.js';
 import { registerPoolAdRoutes } from './poolAdsModule.js';
+import { registerSeoRoutes } from './seoModule.js';
 import { attachBlockWebSocket } from './websocketModule.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,6 +24,12 @@ const corsOrigin = process.env.CORS_ORIGIN || true;
 
 app.use(cors({ origin: corsOrigin }));
 app.use(express.json());
+app.use((req, res, next) => {
+  if (String(req.hostname || '').toLowerCase() === 'www.adapools.xyz') {
+    return res.redirect(301, `https://adapools.xyz${req.originalUrl}`);
+  }
+  return next();
+});
 
 const mongo = await createMongo();
 const postgres = createPostgres();
@@ -38,9 +45,10 @@ registerPoolAdRoutes({ app, collections: mongo.collections, postgres });
 
 const distDir = path.resolve(__dirname, '../dist');
 if (existsSync(distDir)) {
+  const sendNotFoundPage = await registerSeoRoutes({ app, collections: mongo.collections, distDir });
   app.use(express.static(distDir));
   app.get(/^\/(?!api\/).*/, (req, res) => {
-    res.sendFile(path.join(distDir, 'index.html'));
+    sendNotFoundPage(req, res);
   });
 }
 
