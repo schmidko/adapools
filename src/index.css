@@ -656,6 +656,10 @@ button.pool-ad-tile {
   gap: 8px;
 }
 
+.home-block-tile {
+  aspect-ratio: 1.12 / 1;
+}
+
 .home-block-summary {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 44px;
@@ -697,8 +701,12 @@ button.pool-ad-tile {
 
 .home-block-stats > :first-child {
   color: var(--app-text);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 800;
+}
+
+.home-block-tile .block-pool {
+  font-size: 20px;
 }
 
 .home-block-age {
