@@ -31,7 +31,7 @@ const TimelinePreviewPage = () => (
     />
     <MetricsBar metrics={previewCardanoMetrics} type="cardano" />
     <MetricsBar metrics={previewPoolMetrics} type="pool" epoch={previewCardanoMetrics} />
-    <BlockTicker blocks={previewGridBlocks} tileProps={{ clickable: true }} />
+    <BlockTicker blocks={previewGridBlocks} tileProps={{ clickable: true, homeLayout: true }} />
     <PoolBlockTimeline previewItems={timelinePreviewItems} layout="grid" />
     <PoolBlockTimeline previewItems={timelinePreviewItems} />
   </section>

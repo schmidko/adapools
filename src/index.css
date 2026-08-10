@@ -651,6 +651,66 @@ button.pool-ad-tile {
   padding: 12px;
 }
 
+.home-block-tile .block-tile-content {
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.home-block-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.home-block-copy {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 7px;
+}
+
+.home-block-pool-logo {
+  width: 44px !important;
+  height: 44px !important;
+  border: 1px solid var(--tile-border);
+  border-radius: 7px !important;
+  background: var(--app-surface);
+}
+
+.home-block-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 8px;
+}
+
+.home-block-stats {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+  color: var(--tile-muted);
+  font-size: 12px;
+}
+
+.home-block-stats > :first-child {
+  color: var(--app-text);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.home-block-age {
+  color: var(--tile-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.home-block-info {
+  cursor: help;
+}
+
 .timeline-block-card .block-tile-content {
   grid-template-rows: auto minmax(23px, auto) minmax(0, 1fr);
   gap: 8px;
