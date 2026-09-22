@@ -8,8 +8,33 @@ import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
 import PoolIdentity from '../components/PoolIdentity.jsx';
 import Seo from '../components/Seo.jsx';
 import PoolAdsBanner from '../components/PoolAdsBanner.jsx';
+import { formatAda, formatNumber, formatPercent } from '../utils/format.js';
 
 const BLOCK_VIEW_STORAGE_KEY = 'adapools-pool-block-view';
+
+const getServerPoolSummary = (poolId) => {
+  const summary = window.__ADAPOOLS_POOL_SEO__;
+  return summary?.poolId === poolId ? summary : null;
+};
+
+const PoolSeoSummary = ({ pool, poolId }) => {
+  const label = pool.ticker || pool.name || poolId;
+  const status = pool.status || 'Active';
+  const activeStake = pool.active_stake_lovelace ?? pool.active_stake;
+  const totalBlocks = pool.total_blocks ?? pool.lifetime_blocks ?? pool.blocks_numeric ?? pool.blocks;
+  return <section className="pool-seo-summary" aria-labelledby="pool-seo-summary-title">
+    <Typography.Title level={3} id="pool-seo-summary-title">{label} pool overview</Typography.Title>
+    <Typography.Paragraph>{pool.description || `${label} is an ${status.toLowerCase()} Cardano stake pool. The public metrics below are maintained by adapools.xyz.`}</Typography.Paragraph>
+    <dl className="pool-seo-summary-metrics">
+      <div><dt>Status</dt><dd>{status}</dd></div>
+      <div><dt>Active stake</dt><dd>{formatAda(activeStake, 0)}</dd></div>
+      <div><dt>Delegators</dt><dd>{formatNumber(pool.delegators)}</dd></div>
+      <div><dt>Saturation</dt><dd>{formatPercent(pool.saturation_percent)}</dd></div>
+      <div><dt>Total blocks</dt><dd>{formatNumber(totalBlocks)}</dd></div>
+    </dl>
+    <Typography.Paragraph className="pool-seo-summary-id">Pool ID: <code>{poolId}</code></Typography.Paragraph>
+  </section>;
+};
 
 const getInitialBlockView = () => {
   const stored = localStorage.getItem(BLOCK_VIEW_STORAGE_KEY);
@@ -24,6 +49,7 @@ const PoolPage = () => {
   const [blockView, setBlockView] = useState(getInitialBlockView);
   const [eventFilter, setEventFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [serverSummary] = useState(() => getServerPoolSummary(poolId));
 
   useEffect(() => {
     localStorage.setItem(BLOCK_VIEW_STORAGE_KEY, blockView);
@@ -56,7 +82,7 @@ const PoolPage = () => {
     };
   }, [poolId]);
 
-  const pool = metrics || recentBlocks?.pool || {};
+  const pool = { ...(serverSummary || {}), ...(recentBlocks?.pool || {}), ...(metrics || {}) };
   const poolDisplayName = pool.ticker || pool.name || poolId;
   const poolSeoTitle = `${poolDisplayName} | adapools.xyz`;
   const poolSeoDescription = metrics
@@ -84,6 +110,7 @@ const PoolPage = () => {
       />
       <PoolIdentity pool={pool} poolId={poolId} aside={<PoolAdsBanner />} />
       <MetricsBar metrics={metrics || {}} type="pool" epoch={cardanoMetrics} />
+      <PoolSeoSummary pool={pool} poolId={poolId} />
       <div className="block-view-section">
         <div className="section-toolbar">
           <Typography.Title level={3}>

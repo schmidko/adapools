@@ -17,6 +17,21 @@ const trimDescription = (value, fallback) => {
   return text.length > 160 ? `${text.slice(0, 157).trimEnd()}...` : text;
 };
 
+const asNumber = (value) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+};
+
+const formatNumber = (value) => new Intl.NumberFormat('en-US').format(asNumber(value));
+const formatAda = (lovelace) => `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(asNumber(lovelace) / 1_000_000)} ADA`;
+const formatPercent = (value) => `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(asNumber(value))}%`;
+
+const poolStatus = (pool) => {
+  const retiringEpoch = Number(pool.retiring_epoch);
+  if (!Number.isFinite(retiringEpoch)) return 'Active';
+  return retiringEpoch <= Number(pool.current_epoch || 0) ? 'Retired' : 'Retiring';
+};
+
 const isoDate = (value) => {
   const date = new Date(value);
   return Number.isFinite(date.getTime()) ? date.toISOString() : null;
@@ -32,7 +47,7 @@ const replaceMeta = (html, attribute, key, content) => {
   return expression.test(html) ? html.replace(expression, tag) : html.replace('</head>', `  ${tag}\n</head>`);
 };
 
-const renderHtml = (template, { title, description, path: pagePath, image = '/social-card.png', jsonLd, noIndex = false }) => {
+const renderHtml = (template, { title, description, path: pagePath, image = '/social-card.png', jsonLd, noIndex = false, bodyHtml = '' }) => {
   const canonical = new URL(pagePath, SITE_URL).toString();
   const imageUrl = new URL(image, SITE_URL).toString();
   let html = template.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(title)}</title>`);
@@ -57,7 +72,45 @@ const renderHtml = (template, { title, description, path: pagePath, image = '/so
     const json = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
     html = html.replace('</head>', `  <script id="page-json-ld" type="application/ld+json">${json}</script>\n</head>`);
   }
+  if (bodyHtml) html = html.replace('<div id="root"></div>', `<div id="root"></div>\n${bodyHtml}`);
   return html;
+};
+
+const poolSummaryData = (pool) => {
+  const poolId = pool.bech32_pool_id;
+  const label = pool.ticker || pool.name || poolId;
+  return {
+    poolId,
+    ticker: pool.ticker || null,
+    name: pool.name || null,
+    description: pool.description || null,
+    status: poolStatus(pool),
+    active_stake_lovelace: pool.active_stake || pool.active_stake_lovelace || '0',
+    delegators: asNumber(pool.delegators_numeric ?? pool.delegators),
+    saturation_percent: asNumber(pool.pool_interest_numeric ?? pool.saturation_percent),
+    total_blocks: asNumber(pool.blocks_numeric ?? pool.lifetime_blocks ?? pool.blocks),
+    label
+  };
+};
+
+const renderPoolSummary = (pool) => {
+  const summary = poolSummaryData(pool);
+  const snapshot = JSON.stringify(summary).replace(/</g, '\\u003c');
+  return `<section class="pool-server-summary" data-pool-server-summary aria-labelledby="pool-server-summary-title">
+  <div class="pool-server-summary-inner">
+    <h1 id="pool-server-summary-title">${escapeHtml(summary.label)} Cardano Stake Pool</h1>
+    <p>${escapeHtml(summary.description || `${summary.label} is an ${summary.status.toLowerCase()} Cardano stake pool.`)}</p>
+    <dl class="pool-server-summary-metrics">
+      <div><dt>Status</dt><dd>${escapeHtml(summary.status)}</dd></div>
+      <div><dt>Active stake</dt><dd>${formatAda(summary.active_stake_lovelace)}</dd></div>
+      <div><dt>Delegators</dt><dd>${formatNumber(summary.delegators)}</dd></div>
+      <div><dt>Saturation</dt><dd>${formatPercent(summary.saturation_percent)}</dd></div>
+      <div><dt>Total blocks</dt><dd>${formatNumber(summary.total_blocks)}</dd></div>
+    </dl>
+    <p class="pool-server-summary-id">Pool ID: <code>${escapeHtml(summary.poolId)}</code></p>
+  </div>
+</section>
+<script>window.__ADAPOOLS_POOL_SEO__=${snapshot};</script>`;
 };
 
 const poolPageData = (pool) => {
@@ -73,6 +126,7 @@ const poolPageData = (pool) => {
     description,
     path: `/pool/${encodeURIComponent(poolId)}`,
     image: pool.logo || '/social-card.png',
+    bodyHtml: renderPoolSummary(pool),
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
@@ -166,7 +220,14 @@ export const registerSeoRoutes = async ({ app, collections, distDir }) => {
     try {
       const pool = await collections.poolCache.findOne(
         { bech32_pool_id: req.params.poolId },
-        { projection: { _id: 0, bech32_pool_id: 1, ticker: 1, name: 1, description: 1, logo: 1 } }
+        {
+          projection: {
+            _id: 0, bech32_pool_id: 1, ticker: 1, name: 1, description: 1, logo: 1,
+            active_stake: 1, active_stake_lovelace: 1, delegators: 1, delegators_numeric: 1,
+            pool_interest_numeric: 1, saturation_percent: 1, blocks_numeric: 1,
+            lifetime_blocks: 1, blocks: 1, retiring_epoch: 1, current_epoch: 1
+          }
+        }
       );
       if (!pool) {
         sendPage(res, {
