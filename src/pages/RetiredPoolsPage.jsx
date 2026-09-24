@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeftOutlined, ClockCircleOutlined, GlobalOutlined } from '@ant-design/icons';
-import { Alert, Avatar, Card, Empty, Spin, Tag, Typography } from 'antd';
+import { Alert, Avatar, Card, Empty, Spin, Table, Tag, Typography } from 'antd';
 import { api } from '../api/client.js';
 import Seo from '../components/Seo.jsx';
 import { compactPoolId, formatAda, formatAgeAgo } from '../utils/format.js';
@@ -57,6 +57,63 @@ const RetiredPoolsPage = () => {
     }
   }), [result.retirements]);
 
+  const columns = [
+    {
+      title: 'Pool',
+      key: 'pool',
+      width: 360,
+      render: (_, pool) => {
+        const label = pool.ticker || pool.name || compactPoolId(pool.pool_id);
+        return (
+          <div className="retired-pool-cell">
+            <Avatar shape="square" size={44} src={pool.logo || undefined}>{label.slice(0, 2).toUpperCase()}</Avatar>
+            <div className="retired-pool-identity">
+              <Link to={`/pool/${encodeURIComponent(pool.pool_id)}`}>{label}</Link>
+              <span title={pool.pool_id}>{pool.name || compactPoolId(pool.pool_id)}</span>
+            </div>
+          </div>
+        );
+      }
+    },
+    {
+      title: 'Filed',
+      key: 'filed',
+      align: 'right',
+      width: 190,
+      render: (_, pool) => (
+        <div className="retired-metric-cell">
+          <strong>Epoch {pool.announced_epoch ?? '—'}</strong>
+          <small title={formatTimestamp(pool.announced_time)}>{formatAgeAgo(pool.announced_time)}</small>
+        </div>
+      )
+    },
+    {
+      title: 'Effective',
+      key: 'effective',
+      align: 'right',
+      width: 150,
+      render: (_, pool) => <strong>Epoch {pool.retiring_epoch ?? '—'}</strong>
+    },
+    {
+      title: 'Remaining stake',
+      key: 'stake',
+      align: 'right',
+      width: 190,
+      render: (_, pool) => <strong>{formatAda(pool.active_stake, 0)}</strong>
+    },
+    {
+      title: '',
+      key: 'website',
+      align: 'right',
+      width: 56,
+      render: (_, pool) => pool.website && (
+        <a className="retired-pool-website" href={pool.website} target="_blank" rel="noreferrer" aria-label={`Open ${pool.ticker || pool.name || 'pool'} website`}>
+          <GlobalOutlined />
+        </a>
+      )
+    }
+  ];
+
   return (
     <div className="page-stack retired-pools-page">
       <Seo title={PAGE_TITLE} description={PAGE_DESCRIPTION} path="/pools/retired" jsonLd={jsonLd} />
@@ -81,38 +138,16 @@ const RetiredPoolsPage = () => {
           extra={<Tag>{result.retirements?.length || 0} pools</Tag>}
         >
           {result.retirements?.length ? (
-            <div className="retired-pools-list">
-              {result.retirements.map((pool) => {
-                const label = pool.ticker || pool.name || compactPoolId(pool.pool_id);
-                return (
-                  <article className="retired-pool-row" key={pool.pool_id}>
-                    <Avatar shape="square" size={48} src={pool.logo || undefined}>{label.slice(0, 2).toUpperCase()}</Avatar>
-                    <div className="retired-pool-identity">
-                      <Link to={`/pool/${encodeURIComponent(pool.pool_id)}`}>{label}</Link>
-                      <span title={pool.pool_id}>{pool.name || compactPoolId(pool.pool_id)}</span>
-                    </div>
-                    <div className="retired-pool-metric">
-                      <span>Filed</span>
-                      <strong>Epoch {pool.announced_epoch ?? '—'}</strong>
-                      <small title={formatTimestamp(pool.announced_time)}>{formatAgeAgo(pool.announced_time)}</small>
-                    </div>
-                    <div className="retired-pool-metric">
-                      <span>Effective</span>
-                      <strong>Epoch {pool.retiring_epoch ?? '—'}</strong>
-                    </div>
-                    <div className="retired-pool-metric retired-pool-stake">
-                      <span>Remaining stake</span>
-                      <strong>{formatAda(pool.active_stake, 0)}</strong>
-                    </div>
-                    {pool.website && (
-                      <a className="retired-pool-website" href={pool.website} target="_blank" rel="noreferrer" aria-label={`Open ${label} website`}>
-                        <GlobalOutlined />
-                      </a>
-                    )}
-                  </article>
-                );
-              })}
-            </div>
+            <Table
+              className="retired-pools-table"
+              columns={columns}
+              dataSource={result.retirements}
+              pagination={false}
+              rowKey="pool_id"
+              size="middle"
+              tableLayout="fixed"
+              scroll={{ x: 900 }}
+            />
           ) : <Empty description="No recent retirement filings found." />}
         </Card>
       )}

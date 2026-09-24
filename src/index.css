@@ -573,20 +573,35 @@ button.pool-ad-tile {
   gap: 8px;
 }
 
-.retired-pools-list {
-  display: grid;
-  gap: 10px;
+.retired-pools-card .ant-card-body {
+  padding: 0;
 }
 
-.retired-pool-row {
-  display: grid;
-  grid-template-columns: auto minmax(220px, 1fr) minmax(140px, 0.6fr) minmax(140px, 0.6fr) minmax(190px, 0.8fr) auto;
-  align-items: start;
-  gap: 20px;
-  padding: 16px 20px;
-  border: 1px solid var(--tile-border);
-  border-radius: 8px;
-  background: var(--tile-bg);
+.retired-pools-table .ant-table,
+.retired-pools-table .ant-table-container {
+  background: transparent;
+}
+
+.retired-pools-table .ant-table-thead > tr > th {
+  color: var(--tile-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.retired-pools-table .ant-table-tbody > tr > td {
+  padding: 14px 16px;
+  vertical-align: middle;
+}
+
+.retired-pools-table .ant-table-tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+.retired-pool-cell {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 12px;
 }
 
 .retired-pool-identity {
@@ -610,8 +625,7 @@ button.pool-ad-tile {
 }
 
 .retired-pool-identity span,
-.retired-pool-metric span,
-.retired-pool-metric small {
+.retired-metric-cell small {
   overflow: hidden;
   color: var(--tile-muted);
   font-size: 12px;
@@ -619,13 +633,16 @@ button.pool-ad-tile {
   white-space: nowrap;
 }
 
-.retired-pool-metric {
+.retired-metric-cell {
   display: grid;
   min-width: 0;
   gap: 3px;
+  justify-items: end;
+  text-align: right;
 }
 
-.retired-pool-metric strong {
+.retired-metric-cell strong,
+.retired-pools-table .ant-table-tbody > tr > td > strong {
   overflow: hidden;
   color: var(--app-text);
   font-size: 14px;
@@ -1451,35 +1468,8 @@ a.timeline-event-meta:hover {
     flex-direction: column;
   }
 
-  .retired-pool-row {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: 10px;
-  }
-
-  .retired-pool-identity {
-    grid-column: 2;
-  }
-
-  .retired-pool-website {
-    grid-column: 3;
-    grid-row: 1;
-  }
-
-  .retired-pool-metric {
-    grid-row: 2;
-  }
-
-  .retired-pool-metric:nth-of-type(2) {
-    grid-column: 1 / span 2;
-  }
-
-  .retired-pool-metric:nth-of-type(3) {
-    grid-column: 3;
-  }
-
-  .retired-pool-stake {
-    grid-column: 1 / -1 !important;
-    grid-row: 3;
+  .retired-pools-table .ant-table-tbody > tr > td {
+    padding: 12px 14px;
   }
 
   .metrics-grid {
