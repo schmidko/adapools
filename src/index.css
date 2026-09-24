@@ -580,10 +580,10 @@ button.pool-ad-tile {
 
 .retired-pool-row {
   display: grid;
-  grid-template-columns: auto minmax(180px, 1fr) minmax(108px, auto) minmax(108px, auto) minmax(145px, auto) auto;
-  align-items: center;
-  gap: 14px;
-  padding: 12px;
+  grid-template-columns: auto minmax(220px, 1fr) minmax(140px, 0.6fr) minmax(140px, 0.6fr) minmax(190px, 0.8fr) auto;
+  align-items: start;
+  gap: 20px;
+  padding: 16px 20px;
   border: 1px solid var(--tile-border);
   border-radius: 8px;
   background: var(--tile-bg);
