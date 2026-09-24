@@ -94,7 +94,74 @@ const buildDiscoveryQuery = (query) => {
   return filters.length === 1 ? filters[0] : { $and: filters };
 };
 
-export const registerPoolRoutes = ({ app, collections }) => {
+export const registerPoolRoutes = ({ app, collections, postgres }) => {
+  app.get('/api/pools/:poolId/delegators', async (req, res) => {
+    const page = parsePage(req.query.page, 1, 10_000);
+    const limit = Math.min(parsePage(req.query.limit, 50, 100), 100);
+    const offset = (page - 1) * limit;
+
+    if (!postgres?.isConfigured) {
+      res.status(503).json({ error: 'delegator_data_unavailable' });
+      return;
+    }
+
+    try {
+      const result = await postgres.query(
+        `
+          WITH latest_epoch AS (
+            SELECT COALESCE(MAX(epoch_no), 0) AS epoch_no FROM epoch_stake
+          ),
+          delegators AS (
+            SELECT
+              es.addr_id,
+              sa.view AS stake_address,
+              es.amount::text AS stake_lovelace,
+              SUM(es.amount) OVER ()::text AS pool_stake_lovelace,
+              ((es.amount::numeric / NULLIF(SUM(es.amount) OVER (), 0)) * 100)::text AS pool_share_percent,
+              COUNT(*) OVER ()::integer AS total,
+              ROW_NUMBER() OVER (ORDER BY es.amount DESC, sa.view ASC)::integer AS rank
+            FROM epoch_stake es
+            JOIN latest_epoch le ON le.epoch_no = es.epoch_no
+            JOIN pool_hash ph ON ph.id = es.pool_id
+            JOIN stake_address sa ON sa.id = es.addr_id
+            WHERE ph.view = $1
+          )
+          SELECT
+            delegators.*,
+            last_delegation.active_epoch_no AS active_since_epoch,
+            last_delegation.delegated_at,
+            encode(last_delegation.tx_hash, 'hex') AS delegation_tx_hash
+          FROM delegators
+          LEFT JOIN LATERAL (
+            SELECT d.active_epoch_no, b.time AS delegated_at, t.hash AS tx_hash
+            FROM delegation d
+            JOIN tx t ON t.id = d.tx_id
+            JOIN block b ON b.id = t.block_id
+            WHERE d.addr_id = delegators.addr_id
+              AND d.pool_hash_id = (SELECT id FROM pool_hash WHERE view = $1 LIMIT 1)
+            ORDER BY b.block_no DESC NULLS LAST, t.id DESC, d.cert_index DESC
+            LIMIT 1
+          ) last_delegation ON true
+          ORDER BY delegators.rank
+          LIMIT $2 OFFSET $3;
+        `,
+        [req.params.poolId, limit, offset]
+      );
+
+      const rows = result.rows || [];
+      const total = rows.length ? Number(rows[0].total) : 0;
+      res.json({
+        delegators: rows.map(({ total: ignored, addr_id: ignoredAddressId, ...delegator }) => delegator),
+        total,
+        page,
+        limit
+      });
+    } catch (error) {
+      console.error('[adapools] Failed to load pool delegators:', error);
+      res.status(500).json({ error: 'failed_to_load_pool_delegators' });
+    }
+  });
+
   app.get('/api/pools/discover', async (req, res) => {
     try {
       const page = parsePage(req.query.page);

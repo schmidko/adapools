@@ -36,6 +36,9 @@ export const api = {
     return fetchJson(`/api/pools/${encodeURIComponent(poolId)}/timeline?${params.toString()}`);
   },
   getPoolRecentBlocks: (poolId) => fetchJson(`/api/pools/${encodeURIComponent(poolId)}/recent-blocks`),
+  getPoolDelegators: (poolId, { page = 1, limit = 50 } = {}) => fetchJson(
+    `/api/pools/${encodeURIComponent(poolId)}/delegators?${new URLSearchParams({ page: String(page), limit: String(limit) }).toString()}`
+  ),
   getPoolSearchIndex: () => fetchJson('/api/pools/search-index'),
   getPoolDiscovery: (params) => fetchJson(`/api/pools/discover?${new URLSearchParams(params).toString()}`),
   getSyncStatus: () => fetchJson('/api/sync/status'),

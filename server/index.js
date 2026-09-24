@@ -40,7 +40,7 @@ app.get('/api/health', (req, res) => {
 
 registerBlockRoutes({ app, collections: mongo.collections });
 registerMetricsRoutes({ app, collections: mongo.collections });
-registerPoolRoutes({ app, collections: mongo.collections });
+registerPoolRoutes({ app, collections: mongo.collections, postgres });
 registerPoolAdRoutes({ app, collections: mongo.collections, postgres });
 
 const distDir = path.resolve(__dirname, '../dist');

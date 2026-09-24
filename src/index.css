@@ -522,6 +522,68 @@ button.pool-ad-tile {
   gap: 20px;
 }
 
+.delegators-preview-card,
+.delegators-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid var(--tile-border);
+  border-radius: 8px;
+  background: var(--tile-bg);
+  padding: 18px 20px;
+}
+
+.delegators-preview-card .ant-typography {
+  margin: 0 0 4px !important;
+}
+
+.delegators-preview-list {
+  margin-top: 10px;
+}
+
+.delegators-preview-list .ant-list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block: 5px;
+  color: var(--tile-muted);
+  font-size: 13px;
+}
+
+.delegators-preview-list strong {
+  color: var(--app-text);
+}
+
+.delegators-preview-link,
+.back-link {
+  color: var(--event-block);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.delegators-preview-link:hover,
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.delegators-page-heading {
+  display: block;
+}
+
+.delegators-page-heading .ant-typography {
+  margin: 12px 0 4px !important;
+}
+
+.pool-delegators-table .ant-table-cell {
+  white-space: nowrap;
+}
+
+.stake-address {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
