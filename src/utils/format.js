@@ -30,7 +30,9 @@ export const formatAgeAgo = (value, now = Date.now()) => {
   if (diffSeconds < 86400) return `${Math.floor(diffSeconds / 3600)}h ago`;
   if (diffSeconds < 30 * 86400) {
     const days = Math.floor(diffSeconds / 86400);
-    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+    const hours = Math.floor((diffSeconds % 86400) / 3600);
+    const dayLabel = `${days} ${days === 1 ? 'day' : 'days'}`;
+    return hours ? `${dayLabel} ${hours}h ago` : `${dayLabel} ago`;
   }
   if (diffSeconds < 365 * 86400) {
     const months = Math.floor(diffSeconds / (30 * 86400));

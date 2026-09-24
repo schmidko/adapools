@@ -4,6 +4,55 @@ const normalizePoolEntry = (document) => ({
   name: document.name || null
 });
 
+const RETIRED_POOLS_SOURCE_URL = process.env.RETIRED_POOLS_SOURCE_URL || 'https://adablox.com/api/pools/retired-recent';
+const RETIRED_POOLS_CACHE_MS = 60 * 60 * 1000;
+let retiredPoolsCache = null;
+let retiredPoolsRequest = null;
+
+const normalizeRetirement = (pool) => ({
+  pool_id: pool?.pool_id || null,
+  ticker: pool?.ticker || null,
+  name: pool?.name || null,
+  logo: pool?.logo || null,
+  website: pool?.website || null,
+  announced_epoch: Number.isFinite(Number(pool?.announced_epoch)) ? Number(pool.announced_epoch) : null,
+  announced_time: pool?.announced_time || null,
+  retiring_epoch: Number.isFinite(Number(pool?.retiring_epoch)) ? Number(pool.retiring_epoch) : null,
+  active_stake: String(pool?.active_stake || '0')
+});
+
+const fetchRetiredPools = async () => {
+  const now = Date.now();
+  if (retiredPoolsCache?.expiresAt > now) return retiredPoolsCache.value;
+  if (retiredPoolsRequest) return retiredPoolsRequest;
+
+  retiredPoolsRequest = (async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10_000);
+    try {
+      const response = await fetch(RETIRED_POOLS_SOURCE_URL, { signal: controller.signal });
+      if (!response.ok) throw new Error(`retired_pools_source_${response.status}`);
+      const payload = await response.json();
+      const retirements = Array.isArray(payload?.retirements)
+        ? payload.retirements.map(normalizeRetirement).filter((pool) => pool.pool_id).slice(0, 15)
+        : [];
+      const value = { retirements, cached_at: new Date().toISOString() };
+      retiredPoolsCache = { value, expiresAt: Date.now() + RETIRED_POOLS_CACHE_MS };
+      return value;
+    } finally {
+      clearTimeout(timeout);
+      retiredPoolsRequest = null;
+    }
+  })();
+
+  try {
+    return await retiredPoolsRequest;
+  } catch (error) {
+    if (retiredPoolsCache?.value) return { ...retiredPoolsCache.value, stale: true };
+    throw error;
+  }
+};
+
 const DISCOVERY_SORTS = {
   pool: 'ticker',
   active_stake: 'active_stake_numeric',
@@ -95,6 +144,15 @@ const buildDiscoveryQuery = (query) => {
 };
 
 export const registerPoolRoutes = ({ app, collections, postgres }) => {
+  app.get('/api/pools/retired', async (req, res) => {
+    try {
+      res.json(await fetchRetiredPools());
+    } catch (error) {
+      console.error('[adapools] Failed to load retired pools:', error);
+      res.status(502).json({ error: 'retired_pools_unavailable' });
+    }
+  });
+
   app.get('/api/pools/:poolId/delegators', async (req, res) => {
     const page = parsePage(req.query.page, 1, 10_000);
     const limit = Math.min(parsePage(req.query.limit, 50, 100), 100);

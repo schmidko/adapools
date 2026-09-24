@@ -39,6 +39,7 @@ export const api = {
   getPoolDelegators: (poolId, { page = 1, limit = 50 } = {}) => fetchJson(
     `/api/pools/${encodeURIComponent(poolId)}/delegators?${new URLSearchParams({ page: String(page), limit: String(limit) }).toString()}`
   ),
+  getRetiredPools: () => fetchJson('/api/pools/retired'),
   getPoolSearchIndex: () => fetchJson('/api/pools/search-index'),
   getPoolDiscovery: (params) => fetchJson(`/api/pools/discover?${new URLSearchParams(params).toString()}`),
   getSyncStatus: () => fetchJson('/api/sync/status'),

@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage.jsx';
 import PoolPage from './pages/PoolPage.jsx';
 import PoolDiscoveryPage from './pages/PoolDiscoveryPage.jsx';
 import PoolDelegatorsPage from './pages/PoolDelegatorsPage.jsx';
+import RetiredPoolsPage from './pages/RetiredPoolsPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import TimelinePreviewPage from './pages/TimelinePreviewPage.jsx';
 
@@ -31,6 +32,7 @@ const ThemedApp = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/discover" element={<PoolDiscoveryPage />} />
+            <Route path="/pools/retired" element={<RetiredPoolsPage />} />
             <Route path="/pool/:poolId" element={<PoolPage />} />
             <Route path="/pool/:poolId/delegators" element={<PoolDelegatorsPage />} />
             {import.meta.env.DEV && <Route path="/__timeline-preview" element={<TimelinePreviewPage />} />}

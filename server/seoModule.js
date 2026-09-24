@@ -176,6 +176,7 @@ export const registerSeoRoutes = async ({ app, collections, distDir }) => {
         const entries = [
           sitemapUrl(`${SITE_URL}/`),
           sitemapUrl(`${SITE_URL}/discover`),
+          sitemapUrl(`${SITE_URL}/pools/retired`),
           ...pools.map((pool) => sitemapUrl(
             `${SITE_URL}/pool/${encodeURIComponent(pool.bech32_pool_id)}`,
             isoDate(pool.synced_at || pool.updated_at)
@@ -213,6 +214,21 @@ export const registerSeoRoutes = async ({ app, collections, distDir }) => {
       title: 'Discover Cardano Pools | adapools.xyz',
       description: 'Find Cardano stake pools by stake, delegators, saturation, margin, pledge, blocks and registration date.',
       path: '/discover'
+    });
+  });
+
+  app.get('/pools/retired', (req, res) => {
+    sendPage(res, {
+      title: 'Recently Retired Cardano Pools | adapools.xyz',
+      description: 'Monitor recent Cardano stake pool retirement filings, their effective epochs, and the active stake remaining at retirement.',
+      path: '/pools/retired',
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Recently Retired Cardano Pools',
+        url: `${SITE_URL}/pools/retired`,
+        description: 'Recent Cardano stake pool retirement filings with effective epochs and remaining active stake.'
+      }
     });
   });
 

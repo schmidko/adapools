@@ -541,6 +541,113 @@ button.pool-ad-tile {
   font-size: 12px;
 }
 
+.retired-pools-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.retired-pools-heading .ant-typography {
+  margin: 0;
+}
+
+.retired-pools-heading .ant-typography + .ant-typography {
+  margin-top: 8px;
+  max-width: 660px;
+}
+
+.retired-pools-loading {
+  display: grid;
+  min-height: 280px;
+  place-items: center;
+}
+
+.retired-pools-card .ant-card-head-title {
+  min-width: 0;
+}
+
+.retired-pools-card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.retired-pools-list {
+  display: grid;
+  gap: 10px;
+}
+
+.retired-pool-row {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr) minmax(108px, auto) minmax(108px, auto) minmax(145px, auto) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid var(--tile-border);
+  border-radius: 8px;
+  background: var(--tile-bg);
+}
+
+.retired-pool-identity {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.retired-pool-identity a {
+  overflow: hidden;
+  color: var(--app-text);
+  font-weight: 700;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retired-pool-identity a:hover {
+  color: var(--event-block);
+  text-decoration: underline;
+}
+
+.retired-pool-identity span,
+.retired-pool-metric span,
+.retired-pool-metric small {
+  overflow: hidden;
+  color: var(--tile-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retired-pool-metric {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.retired-pool-metric strong {
+  overflow: hidden;
+  color: var(--app-text);
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.retired-pool-website {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--tile-border);
+  border-radius: 8px;
+  color: var(--tile-muted);
+}
+
+.retired-pool-website:hover {
+  border-color: var(--event-block);
+  color: var(--event-block);
+}
+
 .page-stack {
   display: grid;
   gap: 20px;
@@ -1258,7 +1365,7 @@ a.timeline-event-meta:hover {
 
   .header-actions {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
     width: 100%;
     order: 2;
     gap: 10px;
@@ -1337,6 +1444,42 @@ a.timeline-event-meta:hover {
 
   .footer-bottom {
     width: min(100% - 20px, 1440px);
+  }
+
+  .retired-pools-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .retired-pool-row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .retired-pool-identity {
+    grid-column: 2;
+  }
+
+  .retired-pool-website {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .retired-pool-metric {
+    grid-row: 2;
+  }
+
+  .retired-pool-metric:nth-of-type(2) {
+    grid-column: 1 / span 2;
+  }
+
+  .retired-pool-metric:nth-of-type(3) {
+    grid-column: 3;
+  }
+
+  .retired-pool-stake {
+    grid-column: 1 / -1 !important;
+    grid-row: 3;
   }
 
   .metrics-grid {
