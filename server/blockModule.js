@@ -6,13 +6,17 @@ const limitTimeline = (items, { limit, maxEpochs }) => {
 
   for (const item of items) {
     const epoch = item.epoch_no ?? 'unknown';
-    if (!epochs.has(epoch) && epochs.size >= maxEpochs) break;
+    if (!epochs.has(epoch) && epochs.size >= maxEpochs) {
+      return { items: timeline, hasMore: true };
+    }
     epochs.add(epoch);
     timeline.push(item);
-    if (timeline.length >= limit) break;
+    if (timeline.length >= limit) {
+      return { items: timeline, hasMore: timeline.length < items.length };
+    }
   }
 
-  return timeline;
+  return { items: timeline, hasMore: false };
 };
 
 export const registerBlockRoutes = ({ app, collections }) => {
@@ -106,11 +110,11 @@ export const registerBlockRoutes = ({ app, collections }) => {
           if (timeDiff !== 0) return timeDiff;
           return Number(b.block_no || 0) - Number(a.block_no || 0);
         });
-      const timeline = limitTimeline(sortedTimeline, { limit, maxEpochs });
+      const timelinePage = limitTimeline(sortedTimeline, { limit, maxEpochs });
 
       res.json({
-        items: timeline,
-        has_more: blocks.length === limit || events.length === limit
+        items: timelinePage.items,
+        has_more: timelinePage.hasMore || blocks.length === limit || events.length === limit
       });
     } catch (error) {
       console.error('[adapools] Failed to load pool timeline:', error);
