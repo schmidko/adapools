@@ -602,8 +602,11 @@ button.pool-ad-tile {
   text-decoration: none;
 }
 
-.metric-card-link .metric-card {
+.metric-card-slot .metric-card {
   height: 100%;
+}
+
+.metric-card-link .metric-card {
   transition: border-color 160ms ease, transform 160ms ease;
 }
 
