@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
-import { List, Segmented, Select, Typography } from 'antd';
-import { Link } from 'react-router-dom';
-import { compactPoolId, formatAda } from '../utils/format.js';
+import { Link, useParams } from 'react-router-dom';
+import { AppstoreOutlined, BarsOutlined, TeamOutlined } from '@ant-design/icons';
+import { Segmented, Select, Typography } from 'antd';
 import { api } from '../api/client.js';
 import MetricsBar from '../components/MetricsBar.jsx';
 import PoolBlockTimeline from '../components/PoolBlockTimeline.jsx';
@@ -28,7 +26,6 @@ const PoolPage = () => {
   const [metrics, setMetrics] = useState(null);
   const [cardanoMetrics, setCardanoMetrics] = useState({});
   const [recentBlocks, setRecentBlocks] = useState(null);
-  const [delegatorPreview, setDelegatorPreview] = useState([]);
   const [blockView, setBlockView] = useState(getInitialBlockView);
   const [eventFilter, setEventFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -43,17 +40,15 @@ const PoolPage = () => {
 
     const load = async () => {
       try {
-        const [metricsResult, blocksResult, cardanoMetricsResult, delegatorsResult] = await Promise.all([
+        const [metricsResult, blocksResult, cardanoMetricsResult] = await Promise.all([
           api.getPoolMetrics(poolId),
           api.getPoolRecentBlocks(poolId),
-          api.getCardanoMetrics(),
-          api.getPoolDelegators(poolId, { limit: 5 }).catch(() => ({ delegators: [] }))
+          api.getCardanoMetrics()
         ]);
         if (!mounted) return;
         setMetrics(metricsResult);
         setRecentBlocks(blocksResult);
         setCardanoMetrics(cardanoMetricsResult || {});
-        setDelegatorPreview(delegatorsResult.delegators || []);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -95,36 +90,15 @@ const PoolPage = () => {
       />
       <PoolIdentity pool={pool} poolId={poolId} aside={<PoolAdsBanner />} />
       <MetricsBar metrics={metrics || {}} type="pool" epoch={cardanoMetrics} />
-      <div className="delegators-preview-card">
-        <div>
-          <Typography.Title level={3}>Delegators</Typography.Title>
-          <Typography.Text type="secondary">
-            {delegatorPreview.length ? 'Largest delegations in the current epoch snapshot.' : 'Explore the current epoch snapshot, ranked by delegated stake.'}
-          </Typography.Text>
-          {delegatorPreview.length > 0 && (
-            <List
-              className="delegators-preview-list"
-              size="small"
-              dataSource={delegatorPreview}
-              renderItem={(delegator) => (
-                <List.Item>
-                  <span>#{delegator.rank} · {compactPoolId(delegator.stake_address)}</span>
-                  <strong>{formatAda(delegator.stake_lovelace)}</strong>
-                </List.Item>
-              )}
-            />
-          )}
-        </div>
-        <Link className="delegators-preview-link" to={`/pool/${encodeURIComponent(poolId)}/delegators`}>
-          View all delegators
-        </Link>
-      </div>
       <div className="block-view-section">
         <div className="section-toolbar">
           <Typography.Title level={3}>
             {blockView === 'grid' ? 'Recent pool blocks' : 'Pool block history'}
           </Typography.Title>
           <div className="section-toolbar-actions">
+            <Link className="delegators-toolbar-link" to={`/pool/${encodeURIComponent(poolId)}/delegators`}>
+              <TeamOutlined /> Delegators
+            </Link>
             <Select
               value={eventFilter}
               onChange={setEventFilter}

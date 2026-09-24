@@ -5,8 +5,8 @@ import {
   StopOutlined,
   SwapOutlined
 } from '@ant-design/icons';
-import { Empty, Spin, Tooltip, Typography } from 'antd';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Button, Empty, Spin, Tooltip, Typography } from 'antd';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../api/client.js';
 import BlockTile from './BlockTile.jsx';
 import { compactPoolId, formatAda, formatAgeAgo } from '../utils/format.js';
@@ -203,7 +203,6 @@ const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout =
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [now, setNow] = useState(Date.now());
-  const sentinelRef = useRef(null);
 
   const loadBlocks = useCallback(async ({ reset = false, beforeTime } = {}) => {
     if (hasPreviewItems) return;
@@ -253,21 +252,6 @@ const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout =
     return () => window.clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (hasPreviewItems) return undefined;
-    const sentinel = sentinelRef.current;
-    if (!sentinel || !hasMore || loading || loadingMore) return undefined;
-
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) {
-        loadBlocks({ beforeTime: items[items.length - 1]?.time });
-      }
-    }, { rootMargin: '600px 0px' });
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [hasPreviewItems, items, hasMore, loadBlocks, loading, loadingMore]);
-
   const visibleItems = useMemo(() => {
     const kind = EVENT_FILTER_KINDS[eventFilter];
     return kind ? items.filter((item) => item.kind === kind) : items;
@@ -310,8 +294,12 @@ const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout =
           </div>
         </section>
       ))}
-      <div ref={sentinelRef} className="timeline-sentinel">
-        {loadingMore ? <Spin size="small" /> : hasMore ? null : 'Full history loaded'}
+      <div className="timeline-sentinel">
+        {loadingMore ? <Spin size="small" /> : hasMore ? (
+          <Button onClick={() => loadBlocks({ beforeTime: items[items.length - 1]?.time })}>
+            Load older events
+          </Button>
+        ) : 'Full history loaded'}
       </div>
     </div>
   );
