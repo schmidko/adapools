@@ -1,5 +1,6 @@
 import { Layout, Typography } from 'antd';
 import { Link } from 'react-router-dom';
+import logo from '../assets/adapools-logo-128-wide.png';
 
 const AppFooter = () => {
   const year = new Date().getFullYear();
@@ -8,6 +9,9 @@ const AppFooter = () => {
     <Layout.Footer className="app-footer">
       <div className="footer-inner">
         <div className="footer-column">
+          <Link to="/" className="footer-brand-logo-link" aria-label="adapools.xyz home">
+            <img className="footer-brand-logo" src={logo} alt="adapools.xyz" />
+          </Link>
           <Typography.Text strong className="footer-heading">adapools.xyz</Typography.Text>
           <Typography.Text type="secondary" className="footer-text">
             Real-time Cardano stake pool explorer: live block ticker, epoch progress and

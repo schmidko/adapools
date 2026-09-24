@@ -97,16 +97,21 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
+  min-height: 78px;
+  height: auto;
+  line-height: normal;
+  padding: 0;
+  background: var(--app-surface);
+  border-bottom: 1px solid var(--tile-border);
+}
+
+.app-header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  min-height: 78px;
-  height: auto;
-  line-height: normal;
-  padding: 8px 24px 8px 8px;
-  background: var(--app-surface);
-  border-bottom: 1px solid var(--tile-border);
+  width: min(1440px, calc(100% - 32px));
+  margin: 0 auto;
 }
 
 .brand {
@@ -122,11 +127,9 @@ body {
 
 .brand-logo {
   display: block;
-  width: 250px;
-  height: auto;
-  border: 1px solid #27313d;
-  border-radius: 6px;
-  background: #ffffff;
+  width: auto;
+  height: 100px;
+  object-fit: contain;
 }
 
 .header-actions {
@@ -476,6 +479,17 @@ button.pool-ad-tile {
   display: grid;
   gap: 8px;
   align-content: start;
+}
+
+.footer-brand-logo-link {
+  display: inline-flex;
+  width: fit-content;
+}
+
+.footer-brand-logo {
+  display: block;
+  width: auto;
+  height: 42px;
 }
 
 .footer-heading {
@@ -1227,15 +1241,19 @@ a.timeline-event-meta:hover {
 
 @media (max-width: 760px) {
   .app-header {
+    min-height: 70px;
+    padding: 12px 0;
+  }
+
+  .app-header-inner {
     flex-wrap: wrap;
     gap: 12px;
-    min-height: 70px;
-    padding: 12px 14px;
+    width: min(100% - 20px, 1440px);
   }
 
   .brand-logo {
-    width: auto;
-    height: 32px;
+    width: 150px;
+    height: auto;
   }
 
   .header-actions {
