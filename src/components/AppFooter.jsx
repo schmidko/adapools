@@ -17,15 +17,25 @@ const AppFooter = () => {
         <div className="footer-column">
           <Typography.Text strong className="footer-heading">Links</Typography.Text>
           <nav className="footer-links">
-            <Link to="/">adapools.xyz</Link>
-            <a href="https://adablox.com" target="_blank" rel="noreferrer">adablox.com</a>
+            <div className="footer-project-link">
+              <Link to="/">adapools.xyz</Link>
+              <span>Cardano stake pool explorer</span>
+            </div>
+            <div className="footer-project-link">
+              <a href="https://adablox.com" target="_blank" rel="noreferrer">adablox.com</a>
+              <span>Cardano network explorer</span>
+            </div>
+            <div className="footer-project-link">
+              <a href="https://midnightblox.com" target="_blank" rel="noreferrer">midnightblox.com</a>
+              <span>Midnight network explorer</span>
+            </div>
           </nav>
         </div>
         <div className="footer-column">
           <Typography.Text strong className="footer-heading">About</Typography.Text>
           <Typography.Text type="secondary" className="footer-text">
             Powered by BLOX Pool, built as part of the Blox Cardano tooling family alongside
-            the adablox block explorer.
+            the adablox and midnightblox block explorers.
           </Typography.Text>
         </div>
       </div>

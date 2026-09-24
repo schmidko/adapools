@@ -1,5 +1,20 @@
 import { parseLimit, serializeBlock, serializeDocument } from './serializers.js';
 
+const limitTimeline = (items, { limit, maxEpochs }) => {
+  const epochs = new Set();
+  const timeline = [];
+
+  for (const item of items) {
+    const epoch = item.epoch_no ?? 'unknown';
+    if (!epochs.has(epoch) && epochs.size >= maxEpochs) break;
+    epochs.add(epoch);
+    timeline.push(item);
+    if (timeline.length >= limit) break;
+  }
+
+  return timeline;
+};
+
 export const registerBlockRoutes = ({ app, collections }) => {
   app.get('/api/blocks/latest', async (req, res) => {
     try {
@@ -54,7 +69,8 @@ export const registerBlockRoutes = ({ app, collections }) => {
 
   app.get('/api/pools/:poolId/timeline', async (req, res) => {
     try {
-      const limit = parseLimit(req.query.limit, 20, 60);
+      const limit = parseLimit(req.query.limit, 50, 50);
+      const maxEpochs = 5;
       const beforeTime = req.query.beforeTime ? new Date(req.query.beforeTime) : null;
       const timeQuery = beforeTime && Number.isFinite(beforeTime.getTime())
         ? { time: { $lt: beforeTime } }
@@ -81,7 +97,7 @@ export const registerBlockRoutes = ({ app, collections }) => {
           .toArray()
       ]);
 
-      const timeline = [
+      const sortedTimeline = [
         ...blocks.map((block) => ({ kind: 'block', ...serializeBlock(block) })),
         ...events.map((event) => ({ kind: event.type, ...serializeDocument(event) }))
       ]
@@ -89,10 +105,13 @@ export const registerBlockRoutes = ({ app, collections }) => {
           const timeDiff = new Date(b.time).getTime() - new Date(a.time).getTime();
           if (timeDiff !== 0) return timeDiff;
           return Number(b.block_no || 0) - Number(a.block_no || 0);
-        })
-        .slice(0, limit);
+        });
+      const timeline = limitTimeline(sortedTimeline, { limit, maxEpochs });
 
-      res.json(timeline);
+      res.json({
+        items: timeline,
+        has_more: blocks.length === limit || events.length === limit
+      });
     } catch (error) {
       console.error('[adapools] Failed to load pool timeline:', error);
       res.status(500).json({ error: 'failed_to_load_pool_timeline' });

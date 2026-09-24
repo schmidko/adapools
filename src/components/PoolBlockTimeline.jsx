@@ -11,7 +11,7 @@ import { api } from '../api/client.js';
 import BlockTile from './BlockTile.jsx';
 import { compactPoolId, formatAda, formatAgeAgo } from '../utils/format.js';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 50;
 
 const groupByEpoch = (items) => {
   const groups = [];
@@ -215,10 +215,11 @@ const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout =
     }
 
     try {
-      const nextItems = await api.getPoolTimeline(poolId, {
+      const nextPage = await api.getPoolTimeline(poolId, {
         limit: PAGE_SIZE,
         beforeTime
       });
+      const nextItems = nextPage.items;
       setItems((current) => {
         const base = reset ? [] : current;
         const known = new Set(base.map((item) => item.event_id || `block:${item.block_no}`));
@@ -228,7 +229,7 @@ const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout =
         ];
         return merged.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
       });
-      setHasMore(nextItems.length === PAGE_SIZE);
+      setHasMore(nextPage.has_more);
     } finally {
       setLoading(false);
       setLoadingMore(false);

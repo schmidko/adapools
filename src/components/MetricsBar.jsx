@@ -1,4 +1,6 @@
-import {Card, Progress, Statistic, Typography} from 'antd';
+import { LinkOutlined } from '@ant-design/icons';
+import { Card, Progress, Statistic, Typography } from 'antd';
+import { Link } from 'react-router-dom';
 import {formatAda, formatNumber, formatPercent} from '../utils/format.js';
 
 const EpochProgressCard = ({epoch = {}}) => {
@@ -16,13 +18,18 @@ const EpochProgressCard = ({epoch = {}}) => {
   );
 };
 
-const MetricsBar = ({metrics = {}, type = 'cardano', epoch}) => {
+const MetricsBar = ({metrics = {}, type = 'cardano', epoch, poolId}) => {
   const epochMetrics = type === 'pool' ? epoch : metrics;
 
   const items = type === 'pool'
     ? [
       {label: 'Active stake', value: formatAda(metrics.active_stake_lovelace, 0), variant: 'big'},
-      {label: 'Delegators', value: formatNumber(metrics.delegators), variant: 'compact'},
+      {
+        label: 'Delegators',
+        value: formatNumber(metrics.delegators),
+        variant: 'compact',
+        href: poolId ? `/pool/${encodeURIComponent(poolId)}/delegators` : null
+      },
       {label: 'Epoch blocks', value: formatNumber(metrics.blocks_epoch), variant: 'compact'},
       {label: 'Total blocks', value: formatNumber(metrics.total_blocks ?? metrics.lifetime_blocks), variant: 'compact'},
       {label: 'Saturation', value: formatPercent(metrics.saturation_percent), variant: 'compact'},
@@ -38,11 +45,20 @@ const MetricsBar = ({metrics = {}, type = 'cardano', epoch}) => {
   return (
     <div className={`metrics-grid${type === 'pool' ? ' metrics-grid-pool' : ''}`}>
       <EpochProgressCard epoch={epochMetrics} />
-      {items.map(({label, value, variant}) => (
-        <Card key={label} className={`metric-card${variant ? ` metric-card-${variant}` : ''}`} size="small">
-          <Statistic title={label} value={value || '-'} />
-        </Card>
-      ))}
+      {items.map(({label, value, variant, href}) => {
+        const slotClassName = `metric-card-slot${variant ? ` metric-card-${variant}` : ''}`;
+        const card = (
+          <Card className={`metric-card${variant ? ` metric-card-${variant}` : ''}`} size="small">
+            <Statistic
+              title={href ? <>{label} <LinkOutlined className="metric-card-link-icon" /></> : label}
+              value={value || '-'}
+            />
+          </Card>
+        );
+        return href
+          ? <Link key={label} className={`metric-card-link ${slotClassName}`} to={href}>{card}</Link>
+          : <span key={label} className={slotClassName}>{card}</span>;
+      })}
     </div>
   );
 };

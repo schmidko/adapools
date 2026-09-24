@@ -89,7 +89,7 @@ const PoolPage = () => {
         }}
       />
       <PoolIdentity pool={pool} poolId={poolId} aside={<PoolAdsBanner />} />
-      <MetricsBar metrics={metrics || {}} type="pool" epoch={cardanoMetrics} />
+      <MetricsBar metrics={metrics || {}} type="pool" epoch={cardanoMetrics} poolId={poolId} />
       <div className="block-view-section">
         <div className="section-toolbar">
           <Typography.Title level={3}>
@@ -97,7 +97,7 @@ const PoolPage = () => {
           </Typography.Title>
           <div className="section-toolbar-actions">
             <Link className="delegators-toolbar-link" to={`/pool/${encodeURIComponent(poolId)}/delegators`}>
-              <TeamOutlined /> Delegators
+              <TeamOutlined /> Pool delegators
             </Link>
             <Select
               value={eventFilter}
