@@ -85,19 +85,19 @@ export const timelinePreviewItems = [
     event_id: 'preview-lifecycle-retired',
     kind: 'pool_lifecycle',
     epoch_no: 644,
-    time: minutesAgo(60 * 24 * 12),
+    time: minutesAgo((60 * 24 * 12) + (60 * 5)),
     tx_hash: 'previewretirementtransaction8q7ylx2n39x',
     lifecycle: {
       stage: 'retired',
       retiring_epoch: 644,
-      announced_time: minutesAgo(60 * 24 * 18)
+      announced_time: minutesAgo((60 * 24 * 18) + (60 * 3))
     }
   },
   {
     event_id: 'preview-delegation-in',
     kind: 'delegation_change',
     epoch_no: 644,
-    time: minutesAgo(1),
+    time: minutesAgo((60 * 4) + 20),
     stake_address: 'stake1u9previewnewdelegation9n39x8qr8q7ylx2',
     delegation: {
       direction: 'in',
@@ -110,15 +110,18 @@ export const timelinePreviewItems = [
     event_id: 'preview-ada-in',
     kind: 'wallet_ada_flow',
     epoch_no: 644,
-    time: minutesAgo(42),
+    time: minutesAgo((60 * 24 * 2) + (60 * 5)),
     stake_address: 'stake1u9previewaddedada9n39x8qr8q7ylx2',
-    ada_flow: { direction: 'in', amount_lovelace: '1250000000000' }
+    ada_flow: {
+      direction: 'in',
+      amount_lovelace: '1250000000000'
+    }
   },
   {
     event_id: 'preview-delegation-out',
     kind: 'delegation_change',
     epoch_no: 643,
-    time: minutesAgo(60 * 24 * 2),
+    time: minutesAgo((60 * 24 * 2) + (60 * 7)),
     stake_address: 'stake1u9previewremoveddelegation9n39x8q',
     delegation: {
       direction: 'out',
@@ -131,15 +134,18 @@ export const timelinePreviewItems = [
     event_id: 'preview-ada-out',
     kind: 'wallet_ada_flow',
     epoch_no: 643,
-    time: minutesAgo(60 * 24 * 35),
+    time: minutesAgo((60 * 24 * 35) + (60 * 6)),
     stake_address: 'stake1u9previewremovedada9n39x8qr8q7yl',
-    ada_flow: { direction: 'out', amount_lovelace: '75000000000' }
+    ada_flow: {
+      direction: 'out',
+      amount_lovelace: '75000000000'
+    }
   },
   {
     event_id: 'preview-lifecycle-registered',
     kind: 'pool_lifecycle',
     epoch_no: 580,
-    time: minutesAgo(60 * 24 * 360),
+    time: minutesAgo((60 * 24 * 360) + (60 * 9)),
     tx_hash: 'previewregistrationtransaction8q7ylx2n39x',
     lifecycle: { stage: 'registered' }
   },
@@ -147,7 +153,7 @@ export const timelinePreviewItems = [
     kind: 'block',
     block_no: 13697514,
     epoch_no: 643,
-    time: minutesAgo(60 * 24 * 90),
+    time: minutesAgo((60 * 24 * 90) + (60 * 4)),
     total_output_lovelace: '127569763000',
     fees_lovelace: '4330000',
     tx_count: 9,

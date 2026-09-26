@@ -114,7 +114,6 @@ const HomePage = () => {
         loading={loading}
         now={now}
         className="home-block-grid"
-        tileProps={{ clickable: true, homeLayout: true }}
       />
     </section>
   );

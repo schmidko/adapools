@@ -32,14 +32,22 @@ export const formatAgeAgo = (value, now = Date.now()) => {
     const days = Math.floor(diffSeconds / 86400);
     const hours = Math.floor((diffSeconds % 86400) / 3600);
     const dayLabel = `${days} ${days === 1 ? 'day' : 'days'}`;
-    return hours ? `${dayLabel} ${hours}h ago` : `${dayLabel} ago`;
+    return `${dayLabel} ${hours}h ago`;
   }
   if (diffSeconds < 365 * 86400) {
     const months = Math.floor(diffSeconds / (30 * 86400));
-    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+    const remainderSeconds = diffSeconds % (30 * 86400);
+    const days = Math.floor(remainderSeconds / 86400);
+    const hours = Math.floor((remainderSeconds % 86400) / 3600);
+    const dayLabel = days ? ` ${days}d` : '';
+    return `${months} ${months === 1 ? 'month' : 'months'}${dayLabel} ${hours}h ago`;
   }
   const years = Math.floor(diffSeconds / (365 * 86400));
-  return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+  const remainderSeconds = diffSeconds % (365 * 86400);
+  const months = Math.floor(remainderSeconds / (30 * 86400));
+  const hours = Math.floor((remainderSeconds % (30 * 86400)) / 3600);
+  const monthLabel = months ? ` ${months}mo` : '';
+  return `${years} ${years === 1 ? 'year' : 'years'}${monthLabel} ${hours}h ago`;
 };
 
 export const compactPoolId = (poolId = '') => {

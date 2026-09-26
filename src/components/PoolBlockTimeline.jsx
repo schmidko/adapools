@@ -8,7 +8,7 @@ import {
 import { Button, Empty, Spin, Tooltip, Typography } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../api/client.js';
-import BlockTile from './BlockTile.jsx';
+import TimelineBlockEvent from './TimelineBlockEvent.jsx';
 import { compactPoolId, formatAda, formatAgeAgo } from '../utils/format.js';
 
 const PAGE_SIZE = 50;
@@ -76,7 +76,7 @@ const DelegationChangeItem = ({ item, now }) => {
   const isIn = direction === 'in';
   const oldPool = item.delegation?.old_pool;
   const newPool = item.delegation?.new_pool;
-  const title = isIn ? 'New delegation' : 'Removed delegation';
+  const title = isIn ? 'New delegation' : 'Delegation removed';
   const stakeAmount = item.delegation?.stake_lovelace
     ? formatAda(item.delegation.stake_lovelace, 0)
     : null;
@@ -86,9 +86,6 @@ const DelegationChangeItem = ({ item, now }) => {
       <div className="timeline-event-header">
         <div className="timeline-event-icon"><SwapOutlined /></div>
         <div className="timeline-event-header-copy">
-          <div className="timeline-event-topline">
-            <EventAge time={eventTime(item)} now={now} />
-          </div>
           <div className={`timeline-event-title${titleFitClass(title)}`}>
             {title}
           </div>
@@ -110,6 +107,9 @@ const DelegationChangeItem = ({ item, now }) => {
         </div>
         <StakeAddressLink stakeAddress={item.stake_address} />
       </div>
+      <div className="timeline-event-footer">
+        <EventAge time={eventTime(item)} now={now} />
+      </div>
     </article>
   );
 };
@@ -120,6 +120,7 @@ const AdaFlowItem = ({ item, now }) => {
   const amount = formatAda(item.ada_flow?.amount_lovelace, 0);
   const title = isIn ? 'ADA added' : 'ADA removed';
   const signedAmount = `${isIn ? '+' : '-'}${amount}`;
+  const walletLabel = compactPoolId(item.stake_address || '');
 
   return (
     <article className={`timeline-event ada-flow-event ${isIn ? 'event-positive' : 'event-negative'}`}>
@@ -128,9 +129,6 @@ const AdaFlowItem = ({ item, now }) => {
           {isIn ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
         </div>
         <div className="timeline-event-header-copy">
-          <div className="timeline-event-topline">
-            <EventAge time={eventTime(item)} now={now} />
-          </div>
           <div className={`timeline-event-title${titleFitClass(title)}`}>
             {title}
           </div>
@@ -138,7 +136,18 @@ const AdaFlowItem = ({ item, now }) => {
       </div>
       <div className={`timeline-event-amount${fitClass(signedAmount)}`}>{signedAmount}</div>
       <div className="timeline-event-body">
+        <div className="timeline-pool-switch">
+          <Tooltip title={isIn ? 'The external source is not derived for ADA-flow events.' : item.stake_address}>
+            <span>from: {isIn ? 'External transaction' : walletLabel}</span>
+          </Tooltip>
+          <Tooltip title={isIn ? item.stake_address : 'The external destination is not derived for ADA-flow events.'}>
+            <span>to: {isIn ? walletLabel : 'External transaction'}</span>
+          </Tooltip>
+        </div>
         <StakeAddressLink stakeAddress={item.stake_address} />
+      </div>
+      <div className="timeline-event-footer">
+        <EventAge time={eventTime(item)} now={now} />
       </div>
     </article>
   );
@@ -158,9 +167,6 @@ const PoolLifecycleItem = ({ item, now }) => {
           {isRetired ? <StopOutlined /> : <FlagOutlined />}
         </div>
         <div className="timeline-event-header-copy">
-          <div className="timeline-event-topline">
-            <EventAge time={eventTime(item)} now={now} />
-          </div>
           <div className={`timeline-event-title${titleFitClass(title)}`}>
             {title}
           </div>
@@ -185,6 +191,9 @@ const PoolLifecycleItem = ({ item, now }) => {
           </a>
         )}
       </div>
+      <div className="timeline-event-footer">
+        <EventAge time={eventTime(item)} now={now} />
+      </div>
     </article>
   );
 };
@@ -197,7 +206,6 @@ const EVENT_FILTER_KINDS = {
 
 const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout = 'history' }) => {
   const hasPreviewItems = Array.isArray(previewItems);
-  const isGridLayout = layout === 'grid';
   const [items, setItems] = useState(() => previewItems || []);
   const [loading, setLoading] = useState(!hasPreviewItems);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -277,7 +285,7 @@ const PoolBlockTimeline = ({ poolId, previewItems, eventFilter = 'all', layout =
               if (item.kind === 'block') {
                 return (
                   <div className="timeline-block-tile" key={`block-${item.block_no}`}>
-                    <BlockTile block={item} showPool={isGridLayout} prominentAda={!isGridLayout} now={now} />
+                    <TimelineBlockEvent block={item} layout={layout} now={now} />
                   </div>
                 );
               }
