@@ -16,7 +16,7 @@ const PoolIdentity = ({ pool = {}, poolId, aside }) => {
   return (
     <div className={`pool-identity${aside ? ' pool-identity-with-aside' : ''}`}>
       <div className="pool-identity-main">
-        <Avatar size={80} shape="square" src={pool.logo || undefined}>
+        <Avatar className="pool-fallback-avatar pool-identity-avatar" size={80} shape="square" src={pool.logo || undefined}>
           {initials}
         </Avatar>
         <Space direction="vertical" size={0}>

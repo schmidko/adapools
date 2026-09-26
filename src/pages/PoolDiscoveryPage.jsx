@@ -82,7 +82,7 @@ const PoolDiscoveryPage = () => {
         const label = pool.ticker || pool.name || compactPoolId(pool.pool_id);
         return (
           <Link className="discovery-pool" to={`/pool/${encodeURIComponent(pool.pool_id)}`}>
-            <Avatar shape="square" size={40} src={pool.logo || undefined}>{label.slice(0, 2).toUpperCase()}</Avatar>
+            <Avatar className="pool-fallback-avatar discovery-pool-avatar" shape="square" size={40} src={pool.logo || undefined}>{label.slice(0, 2).toUpperCase()}</Avatar>
             <span>
               <strong>{label}</strong>
               <small>{pool.name || compactPoolId(pool.pool_id)}</small>

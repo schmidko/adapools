@@ -28,7 +28,7 @@ const PoolAdTile = ({ slot, booking, onPromote, preview = false }) => {
   const campaign = campaignCopy[slot === 'header-2' ? 1 : 0];
   const content = booking ? (
     <>
-      <Avatar className="pool-ad-logo" shape="square" size={52} src={pool.logo || undefined}>
+      <Avatar className="pool-fallback-avatar pool-ad-logo" shape="square" size={52} src={pool.logo || undefined}>
         {title.slice(0, 2).toUpperCase()}
       </Avatar>
       <div className="pool-ad-copy">

@@ -66,7 +66,7 @@ const RetiredPoolsPage = () => {
         const label = pool.ticker || pool.name || compactPoolId(pool.pool_id);
         return (
           <div className="retired-pool-cell">
-            <Avatar shape="square" size={44} src={pool.logo || undefined}>{label.slice(0, 2).toUpperCase()}</Avatar>
+            <Avatar className="pool-fallback-avatar retired-pool-avatar" shape="square" size={44} src={pool.logo || undefined}>{label.slice(0, 2).toUpperCase()}</Avatar>
             <div className="retired-pool-identity">
               <Link to={`/pool/${encodeURIComponent(pool.pool_id)}`}>{label}</Link>
               <span title={pool.pool_id}>{pool.name || compactPoolId(pool.pool_id)}</span>

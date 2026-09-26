@@ -42,7 +42,7 @@ const HomeBlockTile = ({ block, now }) => {
             </HomeTooltip>
           </div>
           <HomeTooltip title={`Pool that minted this block${pool.name ? `: ${pool.name}` : ''}`}>
-            <Avatar className="home-block-pool-logo home-block-info" shape="square" size={44} src={pool.logo || undefined}>
+            <Avatar className="pool-fallback-avatar home-block-pool-logo home-block-info" shape="square" size={44} src={pool.logo || undefined}>
               {poolLabel.slice(0, 2).toUpperCase()}
             </Avatar>
           </HomeTooltip>
