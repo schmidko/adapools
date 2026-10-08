@@ -23,14 +23,6 @@ const MetricsBar = ({metrics = {}, type = 'cardano', epoch, poolId}) => {
 
   const items = type === 'pool'
     ? [
-      {
-        label: 'Delegators',
-        value: formatNumber(metrics.delegators),
-        variant: 'compact',
-        href: poolId ? `/pool/${encodeURIComponent(poolId)}/delegators` : null
-      },
-      {label: 'Epoch blocks', value: formatNumber(metrics.blocks_epoch), variant: 'compact'},
-      {label: 'Total blocks', value: formatNumber(metrics.total_blocks ?? metrics.lifetime_blocks), variant: 'compact'},
       {label: 'Saturation', value: formatPercent(metrics.saturation_percent), variant: 'compact'},
       {label: 'Fixed cost', value: formatAda(metrics.fixed_cost_lovelace, 0), variant: 'compact'},
       {label: 'Margin', value: formatPercent(metrics.margin_percent), variant: 'compact'}
@@ -42,6 +34,14 @@ const MetricsBar = ({metrics = {}, type = 'cardano', epoch, poolId}) => {
     ];
 
   const currentPoolItems = [
+    {label: 'Total blocks', value: formatNumber(metrics.total_blocks ?? metrics.lifetime_blocks), variant: 'compact'},
+    {label: 'Epoch blocks', value: formatNumber(metrics.blocks_epoch), variant: 'compact'},
+      {
+        label: 'Delegators',
+        value: formatNumber(metrics.delegators),
+        variant: 'compact',
+        href: poolId ? `/pool/${encodeURIComponent(poolId)}/delegators` : null
+      },
     {
       label: 'Current balance',
       value: formatAda(metrics.current_balance_lovelace, 0),

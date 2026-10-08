@@ -878,11 +878,11 @@ button.pool-ad-tile {
 }
 
 .metrics-grid-pool-primary {
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: minmax(260px, 2fr) repeat(3, minmax(130px, 1fr));
 }
 
 .metrics-grid-pool-current {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .metrics-grid-pool > .metric-card,
@@ -895,7 +895,7 @@ button.pool-ad-tile {
 }
 
 .metrics-grid-pool-primary > .metric-card-epoch {
-  grid-column: span 2;
+  grid-column: auto;
 }
 
 .metrics-grid-pool > .metric-card-big,
