@@ -4,53 +4,32 @@ const normalizePoolEntry = (document) => ({
   name: document.name || null
 });
 
-const RETIRED_POOLS_SOURCE_URL = process.env.RETIRED_POOLS_SOURCE_URL || 'https://adablox.com/api/pools/retired-recent';
-const RETIRED_POOLS_CACHE_MS = 60 * 60 * 1000;
-let retiredPoolsCache = null;
-let retiredPoolsRequest = null;
-
-const normalizeRetirement = (pool) => ({
-  pool_id: pool?.pool_id || null,
-  ticker: pool?.ticker || null,
-  name: pool?.name || null,
-  logo: pool?.logo || null,
-  website: pool?.website || null,
-  announced_epoch: Number.isFinite(Number(pool?.announced_epoch)) ? Number(pool.announced_epoch) : null,
-  announced_time: pool?.announced_time || null,
-  retiring_epoch: Number.isFinite(Number(pool?.retiring_epoch)) ? Number(pool.retiring_epoch) : null,
-  active_stake: String(pool?.active_stake || '0')
-});
-
-const fetchRetiredPools = async () => {
-  const now = Date.now();
-  if (retiredPoolsCache?.expiresAt > now) return retiredPoolsCache.value;
-  if (retiredPoolsRequest) return retiredPoolsRequest;
-
-  retiredPoolsRequest = (async () => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10_000);
-    try {
-      const response = await fetch(RETIRED_POOLS_SOURCE_URL, { signal: controller.signal });
-      if (!response.ok) throw new Error(`retired_pools_source_${response.status}`);
-      const payload = await response.json();
-      const retirements = Array.isArray(payload?.retirements)
-        ? payload.retirements.map(normalizeRetirement).filter((pool) => pool.pool_id).slice(0, 15)
-        : [];
-      const value = { retirements, cached_at: new Date().toISOString() };
-      retiredPoolsCache = { value, expiresAt: Date.now() + RETIRED_POOLS_CACHE_MS };
-      return value;
-    } finally {
-      clearTimeout(timeout);
-      retiredPoolsRequest = null;
-    }
-  })();
-
-  try {
-    return await retiredPoolsRequest;
-  } catch (error) {
-    if (retiredPoolsCache?.value) return { ...retiredPoolsCache.value, stale: true };
-    throw error;
-  }
+const fetchRetiredPools = async (collections) => {
+  const rows = await collections.retiredPoolMetrics.find({}).sort({ announced_tx_id: -1 }).limit(15).toArray();
+  const cacheDocs = rows.length
+    ? await collections.poolCache.find({ bech32_pool_id: { $in: rows.map((row) => row.bech32_pool_id) } }).toArray()
+    : [];
+  const cacheByPoolId = new Map(cacheDocs.map((document) => [document.bech32_pool_id, document]));
+  return {
+    retirements: rows.map((row) => {
+      const cache = cacheByPoolId.get(row.bech32_pool_id) || {};
+      return {
+        pool_id: row.bech32_pool_id,
+        ticker: cache.ticker || null,
+        name: cache.name || null,
+        logo: cache.logo || null,
+        website: cache.website || null,
+        announced_epoch: Number(row.announced_epoch),
+        announced_time: row.announced_time,
+        retiring_epoch: Number(row.retiring_epoch),
+        stake_at_retirement_lovelace: String(row.stake_at_retirement_lovelace || '0'),
+        current_remaining_balance_lovelace: String(row.current_remaining_balance_lovelace || '0'),
+        current_remaining_delegators: Number(row.current_remaining_delegators || 0),
+        updated_at: row.updated_at
+      };
+    }),
+    cached_at: new Date().toISOString()
+  };
 };
 
 const DISCOVERY_SORTS = {
@@ -146,7 +125,7 @@ const buildDiscoveryQuery = (query) => {
 export const registerPoolRoutes = ({ app, collections, postgres }) => {
   app.get('/api/pools/retired', async (req, res) => {
     try {
-      res.json(await fetchRetiredPools());
+      res.json(await fetchRetiredPools(collections));
     } catch (error) {
       console.error('[adapools] Failed to load retired pools:', error);
       res.status(502).json({ error: 'retired_pools_unavailable' });

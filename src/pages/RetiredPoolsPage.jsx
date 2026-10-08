@@ -95,11 +95,16 @@ const RetiredPoolsPage = () => {
       render: (_, pool) => <strong>Epoch {pool.retiring_epoch ?? '—'}</strong>
     },
     {
-      title: 'Remaining stake',
+      title: 'Current remaining balance',
       key: 'stake',
       align: 'right',
       width: 190,
-      render: (_, pool) => <strong>{formatAda(pool.active_stake, 0)}</strong>
+      render: (_, pool) => (
+        <div className="retired-metric-cell">
+          <strong>{formatAda(pool.current_remaining_balance_lovelace, 0)}</strong>
+          <small>{pool.current_remaining_delegators?.toLocaleString() || 0} delegators</small>
+        </div>
+      )
     },
     {
       title: '',
