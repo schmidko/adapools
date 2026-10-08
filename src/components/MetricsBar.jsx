@@ -1,5 +1,5 @@
 import { LinkOutlined } from '@ant-design/icons';
-import { Card, Progress, Statistic, Typography } from 'antd';
+import { Card, Progress, Statistic, Tooltip, Typography } from 'antd';
 import { Link } from 'react-router-dom';
 import {formatAda, formatNumber, formatPercent} from '../utils/format.js';
 
@@ -23,7 +23,6 @@ const MetricsBar = ({metrics = {}, type = 'cardano', epoch, poolId}) => {
 
   const items = type === 'pool'
     ? [
-      {label: 'Active stake', value: formatAda(metrics.active_stake_lovelace, 0), variant: 'big'},
       {
         label: 'Delegators',
         value: formatNumber(metrics.delegators),
@@ -42,24 +41,52 @@ const MetricsBar = ({metrics = {}, type = 'cardano', epoch, poolId}) => {
       {label: 'Avg full 1h', value: formatPercent(metrics.avg_block_fullness_1h)}
     ];
 
+  const currentPoolItems = [
+    {
+      label: 'Current balance',
+      value: formatAda(metrics.current_balance_lovelace, 0),
+      description: 'Confirmed unspent ADA held by payment addresses currently delegated to this pool. Updates after indexed blocks.'
+    },
+    {
+      label: 'Current stake',
+      value: formatAda(metrics.current_stake_lovelace ?? metrics.active_stake_lovelace, 0),
+      description: 'The latest active stake snapshot. Newly delegated ADA becomes active after Cardano’s stake activation delay.'
+    }
+  ];
+
+  const renderItem = ({ label, value, variant, href, description }) => {
+    const slotClassName = `metric-card-slot${variant ? ` metric-card-${variant}` : ''}`;
+    const title = description ? <Tooltip title={description}>{label}</Tooltip> : label;
+    const card = (
+      <Card className={`metric-card${variant ? ` metric-card-${variant}` : ''}`} size="small">
+        <Statistic
+          title={href ? <>{title} <LinkOutlined className="metric-card-link-icon" /></> : title}
+          value={value || '-'}
+        />
+      </Card>
+    );
+    return href
+      ? <Link key={label} className={`metric-card-link ${slotClassName}`} to={href}>{card}</Link>
+      : <span key={label} className={slotClassName}>{card}</span>;
+  };
+
   return (
-    <div className={`metrics-grid${type === 'pool' ? ' metrics-grid-pool' : ''}`}>
-      <EpochProgressCard epoch={epochMetrics} />
-      {items.map(({label, value, variant, href}) => {
-        const slotClassName = `metric-card-slot${variant ? ` metric-card-${variant}` : ''}`;
-        const card = (
-          <Card className={`metric-card${variant ? ` metric-card-${variant}` : ''}`} size="small">
-            <Statistic
-              title={href ? <>{label} <LinkOutlined className="metric-card-link-icon" /></> : label}
-              value={value || '-'}
-            />
-          </Card>
-        );
-        return href
-          ? <Link key={label} className={`metric-card-link ${slotClassName}`} to={href}>{card}</Link>
-          : <span key={label} className={slotClassName}>{card}</span>;
-      })}
-    </div>
+    type === 'pool' ? (
+      <div className="pool-metrics">
+        <div className="metrics-grid metrics-grid-pool metrics-grid-pool-primary">
+          <EpochProgressCard epoch={epochMetrics} />
+          {items.map(renderItem)}
+        </div>
+        <div className="metrics-grid metrics-grid-pool-current">
+          {currentPoolItems.map(renderItem)}
+        </div>
+      </div>
+    ) : (
+      <div className="metrics-grid">
+        <EpochProgressCard epoch={epochMetrics} />
+        {items.map(renderItem)}
+      </div>
+    )
   );
 };
 

@@ -872,6 +872,19 @@ button.pool-ad-tile {
   grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 
+.pool-metrics {
+  display: grid;
+  gap: 12px;
+}
+
+.metrics-grid-pool-primary {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+.metrics-grid-pool-current {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .metrics-grid-pool > .metric-card,
 .metrics-grid-pool > .metric-card-slot {
   grid-column: span 1;
@@ -879,6 +892,10 @@ button.pool-ad-tile {
 
 .metrics-grid-pool > .metric-card-epoch {
   grid-column: span 4;
+}
+
+.metrics-grid-pool-primary > .metric-card-epoch {
+  grid-column: span 2;
 }
 
 .metrics-grid-pool > .metric-card-big,
