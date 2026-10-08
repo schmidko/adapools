@@ -45,7 +45,7 @@ const MetricsBar = ({metrics = {}, type = 'cardano', epoch, poolId}) => {
     {
       label: 'Current balance',
       value: formatAda(metrics.current_balance_lovelace, 0),
-      description: 'Confirmed unspent ADA held by payment addresses currently delegated to this pool. Updates after indexed blocks.'
+      description: 'Confirmed unspent ADA and unwithdrawn staking rewards for addresses currently delegated to this pool. Updates after indexed blocks.'
     },
     {
       label: 'Current stake',
