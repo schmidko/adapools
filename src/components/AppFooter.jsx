@@ -30,6 +30,10 @@ const AppFooter = () => {
               <span>Latest Cardano retirement filings</span>
             </div>
             <div className="footer-project-link">
+              <Link to="/guides">Cardano staking guides</Link>
+              <span>Understand pool metrics and delegation</span>
+            </div>
+            <div className="footer-project-link">
               <a href="https://adablox.com" target="_blank" rel="noreferrer">adablox.com</a>
               <span>Cardano network explorer</span>
             </div>

@@ -3,6 +3,11 @@ import path from 'path';
 
 const SITE_URL = 'https://adapools.xyz';
 const SITEMAP_CACHE_MS = 15 * 60 * 1000;
+const GUIDE_PAGES = [
+  ['choose-cardano-stake-pool', 'How to Choose a Cardano Stake Pool', 'A practical guide to comparing Cardano stake pools by status, saturation, fees, pledge and block activity.'],
+  ['cardano-pool-saturation', 'Cardano Pool Saturation Explained', 'Learn what Cardano stake pool saturation means, how it relates to rewards and why it should be read with other pool metrics.'],
+  ['cardano-stake-pool-fees', 'Cardano Stake Pool Fees: Margin and Fixed Cost', 'Understand Cardano stake pool margin and fixed cost, and how both settings relate to pool size, block production and delegation.']
+];
 
 const escapeHtml = (value) => String(value || '')
   .replace(/&/g, '&amp;')
@@ -156,6 +161,7 @@ const sitemapUrl = (loc, lastmod) => [
 ].filter(Boolean).join('\n');
 
 const renderHubIntro = (heading, text) => `<section class="seo-hub-intro"><h1>${heading}</h1><p>${text}</p></section>`;
+const renderGuidePreview = (heading, text) => `<article class="seo-hub-intro"><h1>${heading}</h1><p>${text}</p></article>`;
 
 export const registerSeoRoutes = async ({ app, collections, distDir }) => {
   const template = await readFile(path.join(distDir, 'index.html'), 'utf8');
@@ -186,6 +192,8 @@ export const registerSeoRoutes = async ({ app, collections, distDir }) => {
           sitemapUrl(`${SITE_URL}/`),
           sitemapUrl(`${SITE_URL}/discover`),
           sitemapUrl(`${SITE_URL}/pools/retired`),
+          sitemapUrl(`${SITE_URL}/guides`),
+          ...GUIDE_PAGES.map(([slug]) => sitemapUrl(`${SITE_URL}/guides/${slug}`)),
           ...pools.map((pool) => sitemapUrl(
             `${SITE_URL}/pool/${encodeURIComponent(pool.bech32_pool_id)}`,
             isoDate(pool.synced_at || pool.updated_at)
@@ -249,6 +257,33 @@ export const registerSeoRoutes = async ({ app, collections, distDir }) => {
         name: 'Recently Retired Cardano Pools',
         url: `${SITE_URL}/pools/retired`,
         description: 'Recent Cardano stake pool retirement filings with effective epochs, remaining active stake and delegator balances.'
+      }
+    });
+  });
+
+  app.get('/guides', (req, res) => {
+    sendPage(res, {
+      title: 'Cardano Staking Guides & Pool Metrics Explained | adapools.xyz',
+      description: 'Practical Cardano staking guides: compare stake pools, understand saturation, margins, fixed costs, pledge and block performance.',
+      path: '/guides',
+      bodyHtml: renderGuidePreview('Cardano staking guides', 'Practical explainers for comparing Cardano stake pools and understanding the pool metrics used in delegation.'),
+      jsonLd: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Cardano staking guides', url: `${SITE_URL}/guides` }
+    });
+  });
+
+  app.get('/guides/:guideSlug', (req, res, next) => {
+    const guide = GUIDE_PAGES.find(([slug]) => slug === req.params.guideSlug);
+    if (!guide) return next();
+    const [slug, heading, description] = guide;
+    sendPage(res, {
+      title: `${heading} | adapools.xyz`,
+      description,
+      path: `/guides/${slug}`,
+      bodyHtml: renderGuidePreview(heading, description),
+      jsonLd: {
+        '@context': 'https://schema.org', '@type': 'Article', headline: heading,
+        description, mainEntityOfPage: `${SITE_URL}/guides/${slug}`,
+        publisher: { '@type': 'Organization', name: 'adapools.xyz' }
       }
     });
   });

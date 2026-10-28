@@ -697,6 +697,57 @@ button.pool-ad-tile {
   gap: 20px;
 }
 
+.guides-page { gap: 28px; }
+
+.guides-hero,
+.guide-article-header {
+  max-width: 900px;
+}
+
+.guides-hero .ant-tag { margin: 0 0 16px; }
+.guides-hero .ant-typography { margin-top: 0; }
+.guides-hero h1,
+.guide-article-header h1 { margin-bottom: 14px !important; }
+.guides-hero p,
+.guide-article-header p { max-width: 760px; color: var(--tile-muted); font-size: 17px; line-height: 1.7; }
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.guide-card-link { color: inherit; text-decoration: none; }
+.guide-card { height: 100%; background: var(--app-surface); border-color: var(--tile-border); transition: transform 160ms ease, border-color 160ms ease; }
+.guide-card:hover { border-color: var(--event-block); transform: translateY(-3px); }
+.guide-card .ant-card-body { display: flex; min-height: 248px; flex-direction: column; padding: 24px; }
+.guide-card-eyebrow { color: var(--event-block); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.guide-card h2 { margin: 16px 0 10px !important; font-size: 22px !important; line-height: 1.25 !important; }
+.guide-card p { color: var(--tile-muted); line-height: 1.6; }
+.guide-card-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: auto; color: var(--event-block); font-weight: 700; }
+
+.guide-article { display: grid; gap: 24px; max-width: 1120px; margin: 0 auto; }
+.guide-article-topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.guide-article-topline .ant-tag { margin: 0; }
+.guide-notice { border-radius: 10px; }
+.guide-article-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; align-items: start; }
+.guide-toc { position: sticky; top: 104px; display: grid; gap: 10px; padding: 18px 0 18px 18px; border-left: 2px solid var(--tile-border); }
+.guide-toc strong { margin-bottom: 4px; }
+.guide-toc a { color: var(--tile-muted); font-size: 14px; line-height: 1.4; text-decoration: none; }
+.guide-toc a:hover { color: var(--event-block); }
+.guide-content { display: grid; gap: 24px; }
+.guide-section { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 18px; padding-bottom: 24px; border-bottom: 1px solid var(--tile-border); }
+.guide-section > span { color: var(--event-block); font-size: 13px; font-weight: 800; letter-spacing: .08em; }
+.guide-section h2 { margin: 0 0 10px !important; font-size: 24px !important; }
+.guide-section p { max-width: 720px; margin: 0 !important; color: var(--tile-muted); font-size: 16px; line-height: 1.75; }
+.guide-action { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 28px; border: 1px solid var(--tile-border); border-radius: 12px; background: var(--app-surface); }
+.guide-action > div > span { color: var(--event-block); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.guide-action h3 { margin: 10px 0 8px !important; }
+.guide-action p { max-width: 560px; margin: 0 !important; color: var(--tile-muted); }
+.guide-action-link { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 8px; background: var(--event-block); color: #fff; font-weight: 700; text-decoration: none; }
+.guide-source { margin: 0; color: var(--tile-muted); font-size: 13px; }
+.guide-source a { color: inherit; }
+
 .timeline-preview-section {
   display: grid;
   gap: 20px;
@@ -1565,6 +1616,14 @@ a.timeline-event-meta:hover {
     width: min(100% - 20px, 1440px);
     padding-top: 18px;
   }
+
+  .guide-grid { grid-template-columns: 1fr; }
+  .guide-card .ant-card-body { min-height: 0; }
+  .guide-article { gap: 20px; }
+  .guide-article-layout { grid-template-columns: 1fr; gap: 24px; }
+  .guide-toc { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 14px 0 0; border-top: 2px solid var(--tile-border); border-left: 0; }
+  .guide-toc strong { grid-column: 1 / -1; }
+  .guide-action { align-items: flex-start; flex-direction: column; gap: 18px; padding: 22px; }
 
   .page-heading-with-ads,
   .pool-identity.pool-identity-with-aside {
