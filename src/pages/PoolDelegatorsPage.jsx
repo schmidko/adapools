@@ -72,6 +72,7 @@ const PoolDelegatorsPage = () => {
         title={`Delegators | ${compactPoolId(poolId)} | adapools.xyz`}
         description={`Current delegators for Cardano stake pool ${poolId}, ranked by delegated stake.`}
         path={`/pool/${poolId}/delegators`}
+        noIndex
       />
       <div className="delegators-page-heading">
         <div>

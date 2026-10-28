@@ -51,7 +51,8 @@ const Seo = ({
   path = '/',
   image = '/social-card.png',
   type = 'website',
-  jsonLd
+  jsonLd,
+  noIndex = false
 }) => {
   useEffect(() => {
     const canonicalUrl = new URL(path, SITE_URL).toString();
@@ -59,6 +60,11 @@ const Seo = ({
 
     document.title = title;
     upsertMeta({ attr: 'name', key: 'description', content: description });
+    upsertMeta({
+      attr: 'name',
+      key: 'robots',
+      content: noIndex ? 'noindex, follow' : 'index, follow'
+    });
     upsertLink({ rel: 'canonical', href: canonicalUrl });
 
     upsertMeta({ attr: 'property', key: 'og:title', content: title });
@@ -77,7 +83,7 @@ const Seo = ({
     upsertMeta({ attr: 'name', key: 'twitter:image', content: imageUrl });
 
     upsertJsonLd('page-json-ld', jsonLd);
-  }, [description, image, jsonLd, path, title, type]);
+  }, [description, image, jsonLd, noIndex, path, title, type]);
 
   return null;
 };

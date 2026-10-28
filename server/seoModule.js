@@ -232,6 +232,36 @@ export const registerSeoRoutes = async ({ app, collections, distDir }) => {
     });
   });
 
+  app.get('/pool/:poolId/delegators', async (req, res) => {
+    try {
+      const pool = await collections.poolCache.findOne(
+        { bech32_pool_id: req.params.poolId },
+        { projection: { _id: 0, bech32_pool_id: 1, ticker: 1, name: 1 } }
+      );
+      if (!pool) {
+        sendPage(res, {
+          title: 'Pool not found | adapools.xyz',
+          description: 'This Cardano stake pool could not be found.',
+          path: req.path,
+          noIndex: true
+        }, 404);
+        return;
+      }
+
+      const label = pool.ticker || pool.name || pool.bech32_pool_id;
+      sendPage(res, {
+        title: `Delegators | ${label} | adapools.xyz`,
+        description: `Current delegators for Cardano stake pool ${label}, ranked by delegated stake.`,
+        path: req.path,
+        noIndex: true,
+        bodyHtml: `<section class="pool-server-summary"><div class="pool-server-summary-inner"><h1>Pool delegators</h1><p>Current delegators for ${escapeHtml(label)}. This live table is available in the application.</p></div></section>`
+      });
+    } catch (error) {
+      console.error('[adapools] Failed to render pool delegators SEO page:', error);
+      res.status(503).type('text/plain').send('Page temporarily unavailable');
+    }
+  });
+
   app.get('/pool/:poolId', async (req, res) => {
     try {
       const pool = await collections.poolCache.findOne(
