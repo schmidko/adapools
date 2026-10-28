@@ -46,14 +46,20 @@ body {
 #root:not(:empty) + .pool-server-summary { display: none; }
 
 .seo-hub-intro {
-  width: min(1440px, calc(100% - 32px));
-  margin: 24px auto;
-  padding: 0 4px;
+  width: 100%;
+  margin: -4px 0 0;
+  padding: 0;
   color: var(--app-text);
 }
 
 .seo-hub-intro h1 { margin: 0 0 10px; font-size: 28px; }
-.seo-hub-intro p { max-width: 760px; margin: 0; color: var(--tile-muted); line-height: 1.6; }
+.seo-hub-intro p,
+.seo-hub-intro .ant-typography {
+  max-width: 1040px;
+  margin: 0 !important;
+  color: var(--tile-muted);
+  line-height: 1.6;
+}
 #root:not(:empty) + .seo-hub-intro { display: none; }
 
 @media (max-width: 760px) {
