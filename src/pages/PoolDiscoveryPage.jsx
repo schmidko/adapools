@@ -219,6 +219,7 @@ const PoolDiscoveryPage = () => {
         <Typography.Paragraph>
           Compare Cardano stake pools using live active stake, saturation, margin, fixed cost, pledge, delegator count and block history. Filter by the criteria that fit your staking preferences, then open a pool page for its current performance data.
         </Typography.Paragraph>
+        <Link className="discovery-guide-link" to="/guides">New to pool metrics? Read the Cardano staking guides.</Link>
       </div>
       <div className="discovery-controls">
         <Input.Search

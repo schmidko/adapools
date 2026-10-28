@@ -160,7 +160,7 @@ const sitemapUrl = (loc, lastmod) => [
   '  </url>'
 ].filter(Boolean).join('\n');
 
-const renderHubIntro = (heading, text) => `<section class="seo-hub-intro"><h1>${heading}</h1><p>${text}</p></section>`;
+const renderHubIntro = (heading, text, link) => `<section class="seo-hub-intro"><h1>${heading}</h1><p>${text}</p>${link ? `<a class="discovery-guide-link" href="${link.href}">${link.label}</a>` : ''}</section>`;
 const renderGuidePreview = (heading, text) => `<article class="seo-hub-intro"><h1>${heading}</h1><p>${text}</p></article>`;
 
 export const registerSeoRoutes = async ({ app, collections, distDir }) => {
@@ -237,7 +237,8 @@ export const registerSeoRoutes = async ({ app, collections, distDir }) => {
       path: '/discover',
       bodyHtml: renderHubIntro(
         'Compare Cardano stake pools',
-        'Compare Cardano stake pools using live active stake, saturation, margin, fixed cost, pledge, delegator count and block history. Filter by the criteria that fit your staking preferences.'
+        'Compare Cardano stake pools using live active stake, saturation, margin, fixed cost, pledge, delegator count and block history. Filter by the criteria that fit your staking preferences.',
+        { href: '/guides', label: 'New to pool metrics? Read the Cardano staking guides.' }
       )
     });
   });

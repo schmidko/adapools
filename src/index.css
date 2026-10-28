@@ -60,6 +60,17 @@ body {
   color: var(--tile-muted);
   line-height: 1.6;
 }
+
+.discovery-guide-link {
+  display: inline-flex;
+  margin-top: 10px;
+  color: var(--event-block);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.discovery-guide-link:hover { text-decoration: underline; }
 #root:not(:empty) + .seo-hub-intro { display: none; }
 
 @media (max-width: 760px) {
