@@ -26,6 +26,8 @@ const formatNumber = (value) => new Intl.NumberFormat('en-US').format(asNumber(v
 const formatAda = (lovelace) => `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(asNumber(lovelace) / 1_000_000)} ADA`;
 const formatPercent = (value) => `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(asNumber(value))}%`;
 
+const shortPoolId = (poolId) => `${poolId.slice(0, 12)}…${poolId.slice(-6)}`;
+
 const poolStatus = (pool) => {
   const retiringEpoch = Number(pool.retiring_epoch);
   if (!Number.isFinite(retiringEpoch)) return 'Active';
@@ -89,6 +91,8 @@ const poolSummaryData = (pool) => {
     delegators: asNumber(pool.delegators_numeric ?? pool.delegators),
     saturation_percent: asNumber(pool.pool_interest_numeric ?? pool.saturation_percent),
     total_blocks: asNumber(pool.blocks_numeric ?? pool.lifetime_blocks ?? pool.blocks),
+    website: pool.website || pool.homepage || null,
+    registered_on: isoDate(pool.registered_on),
     label
   };
 };
@@ -106,7 +110,9 @@ const renderPoolSummary = (pool) => {
       <div><dt>Delegators</dt><dd>${formatNumber(summary.delegators)}</dd></div>
       <div><dt>Saturation</dt><dd>${formatPercent(summary.saturation_percent)}</dd></div>
       <div><dt>Total blocks</dt><dd>${formatNumber(summary.total_blocks)}</dd></div>
+      ${summary.registered_on ? `<div><dt>Registered</dt><dd>${escapeHtml(summary.registered_on.slice(0, 10))}</dd></div>` : ''}
     </dl>
+    ${summary.website ? `<p class="pool-server-summary-website">Operator website: ${escapeHtml(summary.website)}</p>` : ''}
     <p class="pool-server-summary-id">Pool ID: <code>${escapeHtml(summary.poolId)}</code></p>
   </div>
 </section>
@@ -115,7 +121,7 @@ const renderPoolSummary = (pool) => {
 
 const poolPageData = (pool) => {
   const label = pool.ticker || pool.name || pool.bech32_pool_id;
-  const title = `${label} | Cardano Stake Pool | adapools.xyz`;
+  const title = `${label} (${shortPoolId(pool.bech32_pool_id)}) | Cardano Stake Pool | adapools.xyz`;
   const description = trimDescription(
     pool.description,
     `${label} is a Cardano stake pool. View stake, delegators, block history, costs and saturation on adapools.xyz.`
@@ -127,6 +133,7 @@ const poolPageData = (pool) => {
     path: `/pool/${encodeURIComponent(poolId)}`,
     image: pool.logo || '/social-card.png',
     bodyHtml: renderPoolSummary(pool),
+    noIndex: !pool.ticker && !pool.name,
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
@@ -271,7 +278,8 @@ export const registerSeoRoutes = async ({ app, collections, distDir }) => {
             _id: 0, bech32_pool_id: 1, ticker: 1, name: 1, description: 1, logo: 1,
             active_stake: 1, active_stake_lovelace: 1, delegators: 1, delegators_numeric: 1,
             pool_interest_numeric: 1, saturation_percent: 1, blocks_numeric: 1,
-            lifetime_blocks: 1, blocks: 1, retiring_epoch: 1, current_epoch: 1
+            lifetime_blocks: 1, blocks: 1, retiring_epoch: 1, current_epoch: 1,
+            website: 1, homepage: 1, registered_on: 1
           }
         }
       );

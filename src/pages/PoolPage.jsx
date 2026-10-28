@@ -64,10 +64,13 @@ const PoolPage = () => {
 
   const pool = { ...(serverSummary || {}), ...(recentBlocks?.pool || {}), ...(metrics || {}) };
   const poolDisplayName = pool.ticker || pool.name || poolId;
-  const poolSeoTitle = `${poolDisplayName} | adapools.xyz`;
+  const shortPoolId = `${poolId.slice(0, 12)}…${poolId.slice(-6)}`;
+  const poolSeoTitle = `${poolDisplayName} (${shortPoolId}) | Cardano Stake Pool | adapools.xyz`;
   const poolSeoDescription = metrics
     ? `View ${poolDisplayName} Cardano stake pool details including active stake, delegators, blocks, fixed cost, margin and saturation.`
     : `View Cardano stake pool details for ${poolId} on adapools.xyz.`;
+  const hasPoolData = Boolean(serverSummary || recentBlocks?.pool || metrics);
+  const noIndex = hasPoolData && !pool.ticker && !pool.name;
 
   return (
     <section className="page-stack">
@@ -76,6 +79,7 @@ const PoolPage = () => {
         description={poolSeoDescription}
         path={`/pool/${poolId}`}
         image={pool.logo || '/icon-512.png'}
+        noIndex={noIndex}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'WebPage',
