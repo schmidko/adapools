@@ -155,6 +155,8 @@ const sitemapUrl = (loc, lastmod) => [
   '  </url>'
 ].filter(Boolean).join('\n');
 
+const renderHubIntro = (heading, text) => `<section class="seo-hub-intro"><h1>${heading}</h1><p>${text}</p></section>`;
+
 export const registerSeoRoutes = async ({ app, collections, distDir }) => {
   const template = await readFile(path.join(distDir, 'index.html'), 'utf8');
   let sitemapCache = null;
@@ -203,38 +205,50 @@ export const registerSeoRoutes = async ({ app, collections, distDir }) => {
 
   app.get('/', (req, res) => {
     sendPage(res, {
-      title: 'adapools.xyz | Cardano Stake Pool Explorer',
-      description: 'Real-time Cardano stake pool explorer: live block ticker, epoch progress and pool metrics for the Cardano mainnet, updated within seconds of each new block.',
+      title: 'Cardano Stake Pool Explorer & Live Block Tracker | adapools.xyz',
+      description: 'Explore Cardano stake pools in real time. Compare pool stake, saturation, fees, delegators and block history with a live Cardano block tracker.',
       path: '/',
+      bodyHtml: renderHubIntro(
+        'Cardano stake pool explorer',
+        'Explore Cardano stake pools with live data for active stake, saturation, delegators, fees and block history. Follow the latest pool blocks and compare the metrics that matter when choosing a stake pool.'
+      ),
       jsonLd: {
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         name: 'adapools.xyz',
         url: `${SITE_URL}/`,
-        description: 'Real-time Cardano stake pool explorer with a live block ticker and pool metrics.'
+        description: 'Explore Cardano stake pools, compare live pool metrics and follow the latest Cardano blocks.'
       }
     });
   });
 
   app.get('/discover', (req, res) => {
     sendPage(res, {
-      title: 'Discover Cardano Pools | adapools.xyz',
-      description: 'Find Cardano stake pools by stake, delegators, saturation, margin, pledge, blocks and registration date.',
-      path: '/discover'
+      title: 'Compare Cardano Stake Pools: Fees, Saturation & Blocks | adapools.xyz',
+      description: 'Find and compare Cardano stake pools by stake, saturation, margin, pledge, delegators, blocks and registration date.',
+      path: '/discover',
+      bodyHtml: renderHubIntro(
+        'Compare Cardano stake pools',
+        'Compare Cardano stake pools using live active stake, saturation, margin, fixed cost, pledge, delegator count and block history. Filter by the criteria that fit your staking preferences.'
+      )
     });
   });
 
   app.get('/pools/retired', (req, res) => {
     sendPage(res, {
-      title: 'Recently Retired Cardano Pools | adapools.xyz',
-      description: 'Monitor recent Cardano stake pool retirement filings, their effective epochs, and the active stake remaining at retirement.',
+      title: 'Recently Retired Cardano Stake Pools & Retirement Data | adapools.xyz',
+      description: 'Track recent Cardano stake pool retirement filings, effective epochs, remaining active stake and delegator balances.',
       path: '/pools/retired',
+      bodyHtml: renderHubIntro(
+        'Recently retired Cardano stake pools',
+        'Track recent Cardano stake pool retirement filings, including the effective epoch, remaining active stake and delegator balances.'
+      ),
       jsonLd: {
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
         name: 'Recently Retired Cardano Pools',
         url: `${SITE_URL}/pools/retired`,
-        description: 'Recent Cardano stake pool retirement filings with effective epochs and remaining active stake.'
+        description: 'Recent Cardano stake pool retirement filings with effective epochs, remaining active stake and delegator balances.'
       }
     });
   });

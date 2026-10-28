@@ -6,8 +6,8 @@ import { api } from '../api/client.js';
 import Seo from '../components/Seo.jsx';
 import { compactPoolId, formatAda, formatAgeAgo } from '../utils/format.js';
 
-const PAGE_TITLE = 'Recently Retired Cardano Pools | adapools.xyz';
-const PAGE_DESCRIPTION = 'Monitor recent Cardano stake pool retirement filings, their effective epochs, and the active stake remaining at retirement.';
+const PAGE_TITLE = 'Recently Retired Cardano Stake Pools & Retirement Data | adapools.xyz';
+const PAGE_DESCRIPTION = 'Track recent Cardano stake pool retirement filings, effective epochs, remaining active stake and delegator balances.';
 
 const formatTimestamp = (value) => {
   if (!value) return 'Unknown';
@@ -126,7 +126,7 @@ const RetiredPoolsPage = () => {
         <div>
           <Typography.Title level={1}>Recently retired pools</Typography.Title>
           <Typography.Paragraph type="secondary">
-            The latest Cardano pool retirement filings, including the effective epoch and remaining active stake.
+            Track recent Cardano stake pool retirement filings, including the effective epoch, remaining active stake and delegator balances.
           </Typography.Paragraph>
         </div>
         <Link className="back-link" to="/discover"><ArrowLeftOutlined /> Discover pools</Link>

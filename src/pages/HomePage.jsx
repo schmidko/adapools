@@ -89,23 +89,28 @@ const HomePage = () => {
   return (
     <section className="page-stack">
       <Seo
-        title="adapools.xyz | Cardano Stake Pool Explorer"
-        description="Real-time Cardano stake pool explorer: live block ticker, epoch progress and pool metrics for the Cardano mainnet, updated within seconds of each new block."
+        title="Cardano Stake Pool Explorer & Live Block Tracker | adapools.xyz"
+        description="Explore Cardano stake pools in real time. Compare pool stake, saturation, fees, delegators and block history with a live Cardano block tracker."
         path="/"
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'WebSite',
           name: 'adapools.xyz',
           url: 'https://adapools.xyz/',
-          description: 'Real-time Cardano stake pool explorer with a live block ticker and pool metrics.'
+          description: 'Explore Cardano stake pools, compare live pool metrics and follow the latest Cardano blocks.'
         }}
       />
       <div className="page-heading-with-ads">
         <div>
-          <Typography.Title level={1}>Latest blocks</Typography.Title>
-          <Typography.Text type="secondary">Live Cardano pool blocks</Typography.Text>
+          <Typography.Title level={1}>Cardano stake pool explorer</Typography.Title>
+          <Typography.Text type="secondary">Live pool metrics and Cardano block tracking</Typography.Text>
         </div>
         <PoolAdsBanner />
+      </div>
+      <div className="seo-hub-intro">
+        <Typography.Paragraph>
+          Explore Cardano stake pools with live data for active stake, saturation, delegators, fees and block history. Use adapools.xyz to follow the latest pool blocks and compare the metrics that matter when choosing a stake pool.
+        </Typography.Paragraph>
       </div>
       <MetricsBar metrics={metrics} />
       <SyncStatus states={syncStates} />

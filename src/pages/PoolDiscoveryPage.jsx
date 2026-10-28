@@ -204,16 +204,21 @@ const PoolDiscoveryPage = () => {
   return (
     <section className="page-stack pool-discovery-page">
       <Seo
-        title="Discover Cardano Pools | adapools.xyz"
-        description="Find Cardano stake pools by stake, delegators, saturation, margin, pledge, blocks and registration date."
+        title="Compare Cardano Stake Pools: Fees, Saturation & Blocks | adapools.xyz"
+        description="Find and compare Cardano stake pools by stake, saturation, margin, pledge, delegators, blocks and registration date."
         path="/discover"
       />
       <div className="page-heading-with-ads discovery-heading">
         <div>
-          <Typography.Title level={1}>Discover new pools</Typography.Title>
-          <Typography.Text type="secondary">Search and compare Cardano stake pools</Typography.Text>
+          <Typography.Title level={1}>Compare Cardano stake pools</Typography.Title>
+          <Typography.Text type="secondary">Search pools by stake, fees, saturation, delegators and blocks</Typography.Text>
         </div>
         <PoolAdsBanner />
+      </div>
+      <div className="seo-hub-intro">
+        <Typography.Paragraph>
+          Compare Cardano stake pools using live active stake, saturation, margin, fixed cost, pledge, delegator count and block history. Filter by the criteria that fit your staking preferences, then open a pool page for its current performance data.
+        </Typography.Paragraph>
       </div>
       <div className="discovery-controls">
         <Input.Search
